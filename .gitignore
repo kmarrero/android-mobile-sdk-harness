@@ -4,3 +4,8 @@ obj
 libs
 Include
 .DS_Store
+.classpath
+.cproject
+.project
+.settings/
+project.properties
