@@ -13,6 +13,8 @@ LOCAL_STATIC_LIBRARIES := android_native_app_glue native-activity-lib
 LOCAL_SRC_FILES += ./main.cpp
 LOCAL_SRC_FILES += ./Examples/DebugSphereExample.cpp
 LOCAL_SRC_FILES += ./Examples/ScreenUnprojectExample.cpp
+LOCAL_SRC_FILES += ./Examples/LoadModelExample.cpp
+LOCAL_SRC_FILES += ./Examples/EnvironmentNotifierExample.cpp
 
 LOCAL_C_INCLUDES += ./jni/Examples 
 
@@ -24,6 +26,7 @@ LOCAL_C_INCLUDES += ./libs/platform
 LOCAL_C_INCLUDES += ./libs/platform/Android
 LOCAL_C_INCLUDES += ./libs/platform/Android/KtxTextures/
 LOCAL_C_INCLUDES += ./libs/platform/Base
+LOCAL_C_INCLUDES += ./libs/platform/Base/Model
 LOCAL_C_INCLUDES += ./libs/platform/Camera
 LOCAL_C_INCLUDES += ./libs/platform/Culling
 LOCAL_C_INCLUDES += ./libs/platform/DataStructures

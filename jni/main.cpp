@@ -18,10 +18,64 @@ static void engine_handle_cmd(struct android_app* state, int32_t cmd)
 void android_main(struct android_app* state)
 {
     app_dummy();
-    AppOnMap app;
+    MyApp app;
 	AppWindow window(state, &app);
     state->onAppCmd = engine_handle_cmd;
     state->onInputEvent = engine_handle_input;
     state->userData = &window;
     window.Run();
+}
+
+
+#include "new"
+#include <stdlib.h>
+
+const std::nothrow_t std::nothrow = {};
+
+void* operator new(std::size_t size)
+{
+    void* p = calloc(1, size);
+    if (p == NULL) {
+        abort();
+    }
+    return p;
+}
+
+void* operator new[](std::size_t size)
+{
+    void* p = calloc(1, size);
+    if (p == NULL) {
+        abort();
+    }
+    return p;
+}
+
+void  operator delete(void* ptr)
+{
+    free(ptr);
+}
+
+void  operator delete[](void* ptr)
+{
+    free(ptr);
+}
+
+void* operator new(std::size_t size, const std::nothrow_t&)
+{
+    return malloc(size);
+}
+
+void* operator new[](std::size_t size, const std::nothrow_t&)
+{
+    return malloc(size);
+}
+
+void  operator delete(void* ptr, const std::nothrow_t&)
+{
+    free(ptr);
+}
+
+void  operator delete[](void* ptr, const std::nothrow_t&)
+{
+    free(ptr);
 }
