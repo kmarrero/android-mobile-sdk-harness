@@ -2,6 +2,7 @@
 #include <android_native_app_glue.h>
 #include "AppWindow.hpp"
 #include "AppOnMap.h"
+#include "AndroidInputProcessor.h"
 
 static int32_t engine_handle_input(struct android_app* state, AInputEvent* event)
 {
@@ -19,7 +20,8 @@ void android_main(struct android_app* state)
 {
     app_dummy();
     MyApp app;
-	AppWindow window(state, &app);
+    AndroidInputProcessor inputProcessor(&app);
+	AppWindow window(state, &app, &inputProcessor);
     state->onAppCmd = engine_handle_cmd;
     state->onInputEvent = engine_handle_input;
     state->userData = &window;

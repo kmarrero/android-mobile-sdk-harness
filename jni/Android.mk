@@ -11,6 +11,7 @@ LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv2 -L./libs/ -lpng -lz -lm -L./li
 LOCAL_STATIC_LIBRARIES := android_native_app_glue native-activity-lib
 
 LOCAL_SRC_FILES += ./main.cpp
+LOCAL_SRC_FILES += ./AppWindow.cpp
 LOCAL_SRC_FILES += ./Examples/DebugSphereExample.cpp
 LOCAL_SRC_FILES += ./Examples/ScreenUnprojectExample.cpp
 LOCAL_SRC_FILES += ./Examples/LoadModelExample.cpp
