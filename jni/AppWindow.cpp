@@ -19,7 +19,12 @@
 #include "VehicleModelRepository.h"
 #include "AndroidTextRenderer.h"
 
-AppWindow::AppWindow(struct android_app* pState, MyApp* pAppOnMap, AndroidInputProcessor* pInputProcessor)
+using namespace Eegeo::Android;
+
+AppWindow::AppWindow(
+		struct android_app* pState,
+		MyApp* pAppOnMap,
+		Eegeo::Android::AndroidInputProcessor* pInputProcessor)
 : pState(pState)
 , pAppOnMap(pAppOnMap)
 , pInputProcessor(pInputProcessor)

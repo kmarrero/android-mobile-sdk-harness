@@ -21,7 +21,7 @@ class AppWindow
 {
 private:
 	MyApp* pAppOnMap;
-	AndroidInputProcessor* pInputProcessor;
+	Eegeo::Android::AndroidInputProcessor* pInputProcessor;
 	Eegeo::EegeoWorld* pWorld;
 	struct android_app* pState;
 	int width;
@@ -31,22 +31,22 @@ private:
     EGLSurface shareSurface;
     EGLContext context;
     EGLContext resourceBuildShareContext;
-    AndroidWebRequestService* pAndroidWebRequestService;
-    AndroidFileIO* pFileIO;
-	AndroidHttpCache* pHttpCache;
-	AndroidTextureFileLoader* pTextureLoader;
-	AndroidDebugStats* pAndroidDebugStats;
+    Eegeo::Android::AndroidWebRequestService* pAndroidWebRequestService;
+    Eegeo::Android::AndroidFileIO* pFileIO;
+    Eegeo::Android::AndroidHttpCache* pHttpCache;
+    Eegeo::Android::AndroidTextureFileLoader* pTextureLoader;
+	Eegeo::Android::AndroidDebugStats* pAndroidDebugStats;
 	Eegeo::Camera::CameraModel* pCameraModel;
 	Eegeo::Camera::NewGlobeCamera* pGlobeCamera;
-	AndroidTaskQueue* pTaskQueue;
+	Eegeo::Android::AndroidTaskQueue* pTaskQueue;
 	Eegeo::Rendering::RenderContext* pRenderContext;
 	Eegeo::Lighting::GlobalLighting *pLighting;
 	Eegeo::Blitter* pBlitter;
 	Eegeo::Rendering::DefaultMaterialFactory* pMaterialFactory ;
-	AndroidPayloadLoadRequestItemFactory* pPayloadLoadRequestItemFactory;
+	Eegeo::Android::AndroidPayloadLoadRequestItemFactory* pPayloadLoadRequestItemFactory;
 	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
 	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
-	AndroidTextRenderer * pTextRenderer;
+	Eegeo::Android::AndroidTextRenderer * pTextRenderer;
 	Eegeo::RenderCamera* pCamera;
 	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
 	Eegeo::v3 lastGlobeCameraHeading;
@@ -62,7 +62,10 @@ private:
 
 public:
 
-	AppWindow(struct android_app* pState, MyApp* pAppOnMap, AndroidInputProcessor* pInputProcessor);
+	AppWindow(
+			struct android_app* pState,
+			MyApp* pAppOnMap,
+			Eegeo::Android::AndroidInputProcessor* pInputProcessor);
 	void Run();
 	int32_t HandleInput(AInputEvent* event);
 	void HandleCommand(int32_t cmd);
