@@ -25,6 +25,7 @@ LOCAL_C_INCLUDES += ./libs/jpeg
 
 LOCAL_C_INCLUDES += ./libs/platform
 LOCAL_C_INCLUDES += ./libs/platform/Android
+LOCAL_C_INCLUDES += ./libs/platform/Android/Input/
 LOCAL_C_INCLUDES += ./libs/platform/Android/KtxTextures/
 LOCAL_C_INCLUDES += ./libs/platform/Base
 LOCAL_C_INCLUDES += ./libs/platform/Base/Model

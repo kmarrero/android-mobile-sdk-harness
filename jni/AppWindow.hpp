@@ -21,7 +21,7 @@ class AppWindow
 {
 private:
 	MyApp* pAppOnMap;
-	Eegeo::Android::AndroidInputProcessor* pInputProcessor;
+	Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor;
 	Eegeo::EegeoWorld* pWorld;
 	struct android_app* pState;
 	int width;
@@ -65,7 +65,7 @@ public:
 	AppWindow(
 			struct android_app* pState,
 			MyApp* pAppOnMap,
-			Eegeo::Android::AndroidInputProcessor* pInputProcessor);
+			Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor);
 	void Run();
 	int32_t HandleInput(AInputEvent* event);
 	void HandleCommand(int32_t cmd);

@@ -20,11 +20,12 @@
 #include "AndroidTextRenderer.h"
 
 using namespace Eegeo::Android;
+using namespace Eegeo::Android::Input;
 
 AppWindow::AppWindow(
 		struct android_app* pState,
 		MyApp* pAppOnMap,
-		Eegeo::Android::AndroidInputProcessor* pInputProcessor)
+		Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor)
 : pState(pState)
 , pAppOnMap(pAppOnMap)
 , pInputProcessor(pInputProcessor)

@@ -20,7 +20,7 @@ void android_main(struct android_app* state)
 {
     app_dummy();
     MyApp app;
-    Eegeo::Android::AndroidInputProcessor inputProcessor(&app);
+    Eegeo::Android::Input::AndroidInputProcessor inputProcessor(&app);
 	AppWindow window(state, &app, &inputProcessor);
     state->onAppCmd = engine_handle_cmd;
     state->onInputEvent = engine_handle_input;
