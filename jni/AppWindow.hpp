@@ -9,7 +9,7 @@
 #include "AndroidDebugStats.h"
 #include "AndroidTaskQueue.h"
 #include "DefaultMaterialFactory.h"
-#include "AndroidPayloadLoadRequestItemFactory.hpp"
+#include "AndroidWebLoadRequestFactory.h"
 #include "AndroidInputProcessor.h"
 
 namespace Eegeo
@@ -43,7 +43,7 @@ private:
 	Eegeo::Lighting::GlobalLighting *pLighting;
 	Eegeo::Blitter* pBlitter;
 	Eegeo::Rendering::DefaultMaterialFactory* pMaterialFactory ;
-	Eegeo::Android::AndroidPayloadLoadRequestItemFactory* pPayloadLoadRequestItemFactory;
+	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
 	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
 	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
 	Eegeo::Android::AndroidTextRenderer * pTextRenderer;

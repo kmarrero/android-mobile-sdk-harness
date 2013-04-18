@@ -2,7 +2,6 @@
 
 #include "AppWindow.hpp"
 #include "AndroidWebRequestService.hpp"
-#include "AndroidPayloadLoadRequestItemFactory.hpp"
 #include "AndroidTaskQueue.h"
 #include "LatLongAltitude.h"
 #include "EegeoWorld.h"
@@ -260,7 +259,7 @@ void AppWindow::TerminateDisplay()
     delete pAndroidDebugStats;
     delete pMaterialFactory;
     delete pAndroidWebRequestService;
-    delete pPayloadLoadRequestItemFactory;
+    delete pAndroidWebLoadRequestFactory;
     delete pVehicleModelRepository;
     delete pVehicleModelLoader;
 
@@ -334,8 +333,7 @@ void AppWindow::InitWorld()
 
 	pAndroidWebRequestService = new AndroidWebRequestService(*pFileIO, pHttpCache, pTaskQueue, 50);
 
-	pPayloadLoadRequestItemFactory =
-			new AndroidPayloadLoadRequestItemFactory(pAndroidWebRequestService);
+	pAndroidWebLoadRequestFactory = new AndroidWebLoadRequestFactory(pAndroidWebRequestService);
 
 	pVehicleModelRepository = new Eegeo::Traffic::VehicleModelRepository;
 	pVehicleModelLoader = new Eegeo::Traffic::VehicleModelLoader(pRenderContext->GetGLState(),
@@ -353,7 +351,7 @@ void AppWindow::InitWorld()
 		pHttpCache,
 		pFileIO,
 		pTextureLoader,
-		pPayloadLoadRequestItemFactory,
+		pAndroidWebLoadRequestFactory,
 		pTaskQueue,
 		pVehicleModelRepository,
 		*pRenderContext,
