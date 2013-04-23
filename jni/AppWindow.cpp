@@ -21,13 +21,10 @@
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
 
-AppWindow::AppWindow(
-		struct android_app* pState,
-		MyApp* pAppOnMap,
-		Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor)
+AppWindow::AppWindow(struct android_app* pState)
 : pState(pState)
-, pAppOnMap(pAppOnMap)
-, pInputProcessor(pInputProcessor)
+, pAppOnMap(NULL)
+, pInputProcessor(NULL)
 , pWorld(NULL)
 , active(false)
 , firstTime(true)
@@ -362,17 +359,21 @@ void AppWindow::InitWorld()
 		pBlitter,
 		true);
 
-	pAppOnMap->Start(pWorld);
-
 	if(!firstTime)
 	{
 		pGlobeCamera->SetInterestHeadingDistance(lastGlobeCameraLatLong, lastGlobeCameraHeading, lastGlobeCameraDistanceToInterest);
 	}
 	else
 	{
+		pAppOnMap = new MyApp();
+		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(pAppOnMap);
+
 		pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),
 														351.0f,
 													   2731.0f);
 	}
+
+	pAppOnMap->Start(pWorld);
+
 	firstTime = false;
 }

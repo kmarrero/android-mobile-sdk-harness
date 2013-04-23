@@ -62,10 +62,7 @@ private:
 
 public:
 
-	AppWindow(
-			struct android_app* pState,
-			MyApp* pAppOnMap,
-			Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor);
+	AppWindow(struct android_app* pState);
 	void Run();
 	int32_t HandleInput(AInputEvent* event);
 	void HandleCommand(int32_t cmd);

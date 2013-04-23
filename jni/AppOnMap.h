@@ -11,6 +11,7 @@
 #include "ScreenUnprojectExample.h"
 #include "LoadModelExample.h"
 #include "EnvironmentNotifierExample.h"
+#include "AndroidInputHandler.h"
 
 namespace ExampleTypes
 {
@@ -24,13 +25,13 @@ enum Examples
 };
 }
 
-class MyApp : public Eegeo::IAppOnMap
+class MyApp : public Eegeo::IAppOnMap, public Eegeo::Android::Input::AndroidInputHandler
 {
 private:
 	Examples::IExample *pExample;
+	Eegeo::Camera::NewGlobeCamera* globeCamera;
 
 public:
-
 	~MyApp()
 	{
 		pExample->Suspend();
@@ -55,9 +56,9 @@ public:
 		float cameraControllerOrientationDegrees = 0.0f;
 		float cameraControllerDistanceFromInterestPointMeters = 1781.0f;
 
-		Eegeo::Camera::NewGlobeCamera& controller = ((Eegeo::Camera::NewGlobeCamera&)World().GetCameraController());
+		globeCamera = &((Eegeo::Camera::NewGlobeCamera&)World().GetCameraController());
 
-		controller.SetInterestHeadingDistance(location,
+		globeCamera->SetInterestHeadingDistance(location,
 				cameraControllerOrientationDegrees,
 				cameraControllerDistanceFromInterestPointMeters);
 
@@ -65,8 +66,8 @@ public:
 				World().GetRenderContext(),
 				location,
 				World().GetCameraModel(),
-				controller,
-				*controller.GetCamera(),
+				*globeCamera,
+				*globeCamera->GetCamera(),
 				World().GetTerrainHeightProvider(),
 				World().GetTextureLoader(),
 				World().GetFileIO(),
@@ -129,24 +130,24 @@ public:
 		}
 	}
 
-	void Event_TouchRotate      (const AppInterface::RotateData& data) { World().GetCameraController().Event_TouchRotate(data); }
-	void Event_TouchRotate_Start  (const AppInterface::RotateData& data) { World().GetCameraController().Event_TouchRotate_Start(data); }
-	void Event_TouchRotate_End    (const AppInterface::RotateData& data) { World().GetCameraController().Event_TouchRotate_End(data); }
+	void Event_TouchRotate      (const AppInterface::RotateData& data) { globeCamera->Event_TouchRotate(data); }
+	void Event_TouchRotate_Start  (const AppInterface::RotateData& data) { globeCamera->Event_TouchRotate_Start(data); }
+	void Event_TouchRotate_End    (const AppInterface::RotateData& data) { globeCamera->Event_TouchRotate_End(data); }
 
-	void Event_TouchPinch       (const AppInterface::PinchData& data) { World().GetCameraController().Event_TouchPinch(data); }
-	void Event_TouchPinch_Start   (const AppInterface::PinchData& data) { World().GetCameraController().Event_TouchPinch_Start(data); }
-	void Event_TouchPinch_End     (const AppInterface::PinchData& data) { World().GetCameraController().Event_TouchPinch_End(data); }
+	void Event_TouchPinch       (const AppInterface::PinchData& data) { globeCamera->Event_TouchPinch(data); }
+	void Event_TouchPinch_Start   (const AppInterface::PinchData& data) { globeCamera->Event_TouchPinch_Start(data); }
+	void Event_TouchPinch_End     (const AppInterface::PinchData& data) { globeCamera->Event_TouchPinch_End(data); }
 
-	void Event_TouchPan       (const AppInterface::PanData& data) { World().GetCameraController().Event_TouchPan(data); }
-	void Event_TouchPan_Start   (const AppInterface::PanData& data) { World().GetCameraController().Event_TouchPan_Start(data); }
-	void Event_TouchPan_End     (const AppInterface::PanData& data) { World().GetCameraController().Event_TouchPan_End(data); }
+	void Event_TouchPan       (const AppInterface::PanData& data) { globeCamera->Event_TouchPan(data); }
+	void Event_TouchPan_Start   (const AppInterface::PanData& data) { globeCamera->Event_TouchPan_Start(data); }
+	void Event_TouchPan_End     (const AppInterface::PanData& data) { globeCamera->Event_TouchPan_End(data); }
 
-	void Event_TouchTap       (const AppInterface::TapData& data) { World().GetCameraController().Event_TouchTap(data); }
-	void Event_TouchDoubleTap   (const AppInterface::TapData& data) { World().GetCameraController().Event_TouchDoubleTap(data); }
+	void Event_TouchTap       (const AppInterface::TapData& data) {globeCamera->Event_TouchTap(data); }
+	void Event_TouchDoubleTap   (const AppInterface::TapData& data) { globeCamera->Event_TouchDoubleTap(data); }
 
-	void Event_TouchDown      (const AppInterface::TouchData& data) { World().GetCameraController().Event_TouchDown(data); }
-	void Event_TouchMove      (const AppInterface::TouchData& data) { World().GetCameraController().Event_TouchMove(data); }
-	void Event_TouchUp        (const AppInterface::TouchData& data) { World().GetCameraController().Event_TouchUp(data); }
+	void Event_TouchDown      (const AppInterface::TouchData& data) { globeCamera->Event_TouchDown(data); }
+	void Event_TouchMove      (const AppInterface::TouchData& data) { globeCamera->Event_TouchMove(data); }
+	void Event_TouchUp        (const AppInterface::TouchData& data) { globeCamera->Event_TouchUp(data); }
 };
 
 #endif /* defined(__ExampleApp__AppOnMap__) */
