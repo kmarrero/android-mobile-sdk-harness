@@ -369,7 +369,7 @@ void AppWindow::InitWorld()
 	else
 	{
 		pAppOnMap = new MyApp();
-		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(pAppOnMap);
+		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(pAppOnMap, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
 
 		pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),
 														351.0f,
