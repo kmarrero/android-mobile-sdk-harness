@@ -21,6 +21,8 @@
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
 
+#define API_KEY "OBTAIN API_KEY FROM https://appstore.eegeo.com AND INSERT IT HERE"
+
 AppWindow::AppWindow(struct android_app* pState)
 : pState(pState)
 , pAppOnMap(NULL)
@@ -345,6 +347,7 @@ void AppWindow::InitWorld()
 	}
 
 	pWorld = new Eegeo::EegeoWorld(
+		API_KEY,
 		pHttpCache,
 		pFileIO,
 		pTextureLoader,
