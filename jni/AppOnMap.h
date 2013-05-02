@@ -5,24 +5,29 @@
 #include "EegeoWorld.h"
 #include "RenderContext.h"
 #include "NewGlobeCamera.h"
+#include "AndroidInputHandler.h"
 #include "IExample.h"
+
 #include "TerrainHeightProvider.h"
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
 #include "LoadModelExample.h"
 #include "EnvironmentNotifierExample.h"
-#include "AndroidInputHandler.h"
+#include "FileIOExample.h"
+#include "WebRequestExample.h"
 
 namespace ExampleTypes
 {
-enum Examples
-{
-	DebugSphere=0,
-	ScreenUnproject,
-	TerrainHeightQuery,
-	LoadModel,
-	EnvironmentNotifier
-};
+	enum Examples
+	{
+		DebugSphere=0,
+		ScreenUnproject,
+		TerrainHeightQuery,
+		LoadModel,
+		EnvironmentNotifier,
+		FileIO,
+		WebRequest
+	};
 }
 
 class MyApp : public Eegeo::IAppOnMap, public Eegeo::Android::Input::AndroidInputHandler
@@ -40,7 +45,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::EnvironmentNotifier;
+		ExampleTypes::Examples selectedExample = ExampleTypes::WebRequest;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -71,7 +76,9 @@ public:
 				World().GetTerrainHeightProvider(),
 				World().GetTextureLoader(),
 				World().GetFileIO(),
-				World().GetTerrainStreaming());
+				World().GetTerrainStreaming(),
+				World().GetWebRequestFactory()
+		);
 
 		pExample->Start();
 	}
@@ -99,10 +106,12 @@ public:
 			Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
 			Eegeo::Helpers::ITextureFileLoader& textureLoader,
 			Eegeo::Helpers::IFileIO& fileIO,
-			Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming)
+			Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
+			Eegeo::Web::IWebLoadRequestFactory& webRequestFactory)
 	{
 		switch(example)
 		{
+
 		case ExampleTypes::LoadModel:
 			return new Examples::LoadModelExample(renderContext,
 					interestLocation,
@@ -110,23 +119,31 @@ public:
 					renderCamera,
 					fileIO,
 					textureLoader);
+
 		case ExampleTypes::ScreenUnproject:
 		case ExampleTypes::TerrainHeightQuery:
 			return new Examples::ScreenUnprojectExample(renderContext,
 					cameraModel,
 					renderCamera,
 					terrainHeightProvider);
+
 		case ExampleTypes::DebugSphere:
 			return new Examples::DebugSphereExample(renderContext,
 					interestLocation,
 					cameraModel,
 					renderCamera);
+
 		case ExampleTypes::EnvironmentNotifier:
 			return new Examples::EnvironmentNotifierExample(renderContext,
 					cameraModel,
 					renderCamera,
 					terrainStreaming);
 
+		case ExampleTypes::FileIO:
+			return new Examples::FileIOExample(fileIO);
+
+		case ExampleTypes::WebRequest:
+			return new Examples::WebRequestExample(webRequestFactory);
 		}
 	}
 
