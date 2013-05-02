@@ -6,15 +6,17 @@
 #include "RenderContext.h"
 #include "NewGlobeCamera.h"
 #include "AndroidInputHandler.h"
-#include "IExample.h"
-
 #include "TerrainHeightProvider.h"
+#include "NavigationGraphRepository.h"
+
+#include "IExample.h"
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
 #include "LoadModelExample.h"
 #include "EnvironmentNotifierExample.h"
 #include "FileIOExample.h"
 #include "WebRequestExample.h"
+#include "NavigationGraphExample.h"
 
 namespace ExampleTypes
 {
@@ -26,7 +28,8 @@ namespace ExampleTypes
 		LoadModel,
 		EnvironmentNotifier,
 		FileIO,
-		WebRequest
+		WebRequest,
+		NavigationGraph
 	};
 }
 
@@ -45,7 +48,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::WebRequest;
+		ExampleTypes::Examples selectedExample = ExampleTypes::NavigationGraph;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -77,7 +80,8 @@ public:
 				World().GetTextureLoader(),
 				World().GetFileIO(),
 				World().GetTerrainStreaming(),
-				World().GetWebRequestFactory()
+				World().GetWebRequestFactory(),
+				World().GetNavigationGraphRepository()
 		);
 
 		pExample->Start();
@@ -107,7 +111,8 @@ public:
 			Eegeo::Helpers::ITextureFileLoader& textureLoader,
 			Eegeo::Helpers::IFileIO& fileIO,
 			Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
-			Eegeo::Web::IWebLoadRequestFactory& webRequestFactory)
+			Eegeo::Web::IWebLoadRequestFactory& webRequestFactory,
+			Eegeo::Resources::Roads::Navigation::NavigationGraphRepository& navigationGraphs)
 	{
 		switch(example)
 		{
@@ -144,6 +149,12 @@ public:
 
 		case ExampleTypes::WebRequest:
 			return new Examples::WebRequestExample(webRequestFactory);
+
+		case ExampleTypes::NavigationGraph:
+			return new Examples::NavigationGraphExample(renderContext,
+					renderCamera,
+					cameraModel,
+					navigationGraphs);
 		}
 	}
 

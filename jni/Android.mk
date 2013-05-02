@@ -16,6 +16,7 @@ LOCAL_SRC_FILES += ./Examples/DebugSphereExample.cpp
 LOCAL_SRC_FILES += ./Examples/EnvironmentNotifierExample.cpp
 LOCAL_SRC_FILES += ./Examples/FileIOExample.cpp
 LOCAL_SRC_FILES += ./Examples/LoadModelExample.cpp
+LOCAL_SRC_FILES += ./Examples/NavigationGraphExample.cpp
 LOCAL_SRC_FILES += ./Examples/ScreenUnprojectExample.cpp
 LOCAL_SRC_FILES += ./Examples/WebRequestExample.cpp
 
