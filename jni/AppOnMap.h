@@ -8,6 +8,8 @@
 #include "AndroidInputHandler.h"
 #include "TerrainHeightProvider.h"
 #include "NavigationGraphRepository.h"
+#include "IStreamingVolume.h"
+#include "GlobalLighting.h"
 
 #include "IExample.h"
 #include "DebugSphereExample.h"
@@ -17,6 +19,7 @@
 #include "FileIOExample.h"
 #include "WebRequestExample.h"
 #include "NavigationGraphExample.h"
+#include "ModifiedRenderingExample.h"
 
 namespace ExampleTypes
 {
@@ -29,7 +32,8 @@ namespace ExampleTypes
 		EnvironmentNotifier,
 		FileIO,
 		WebRequest,
-		NavigationGraph
+		NavigationGraph,
+        ModifiedRendering
 	};
 }
 
@@ -48,7 +52,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::NavigationGraph;
+		ExampleTypes::Examples selectedExample = ExampleTypes::ModifiedRendering;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -70,19 +74,22 @@ public:
 				cameraControllerOrientationDegrees,
 				cameraControllerDistanceFromInterestPointMeters);
 
-		pExample = CreateExample(selectedExample,
-				World().GetRenderContext(),
-				location,
-				World().GetCameraModel(),
-				*globeCamera,
-				*globeCamera->GetCamera(),
-				World().GetTerrainHeightProvider(),
-				World().GetTextureLoader(),
-				World().GetFileIO(),
-				World().GetTerrainStreaming(),
-				World().GetWebRequestFactory(),
-				World().GetNavigationGraphRepository()
-		);
+        pExample = CreateExample(selectedExample,
+                                 World().GetRenderContext(),
+                                 location,
+                                 World().GetCameraModel(),
+                                 *globeCamera,
+                                 *globeCamera->GetCamera(),
+                                 World().GetTerrainHeightProvider(),
+                                 World().GetTextureLoader(),
+                                 World().GetFileIO(),
+                                 World().GetTerrainStreaming(),
+                                 World().GetWebRequestFactory(),
+                                 World().GetNavigationGraphRepository(),
+                                 World().GetBuildingMeshPool(),
+                                 World().GetShadowMeshPool(),
+                                 World().GetStreamingVolume(),
+                                 World().GetGlobalLighting());
 
 		pExample->Start();
 	}
@@ -101,18 +108,22 @@ public:
 		pExample->Draw();
 	}
 
-	Examples::IExample* CreateExample(ExampleTypes::Examples example,
-			Eegeo::Rendering::RenderContext& renderContext,
-			Eegeo::Space::LatLongAltitude interestLocation,
-			Eegeo::Camera::CameraModel& cameraModel,
-			Eegeo::Camera::NewGlobeCamera& globeCamera,
-			Eegeo::RenderCamera& renderCamera,
-			Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
-			Eegeo::Helpers::ITextureFileLoader& textureLoader,
-			Eegeo::Helpers::IFileIO& fileIO,
-			Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
-			Eegeo::Web::IWebLoadRequestFactory& webRequestFactory,
-			Eegeo::Resources::Roads::Navigation::NavigationGraphRepository& navigationGraphs)
+    Examples::IExample* CreateExample(ExampleTypes::Examples example,
+                                      Eegeo::Rendering::RenderContext& renderContext,
+                                      Eegeo::Space::LatLongAltitude interestLocation,
+                                      Eegeo::Camera::CameraModel& cameraModel,
+                                      Eegeo::Camera::NewGlobeCamera& globeCamera,
+                                      Eegeo::RenderCamera& renderCamera,
+                                      Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
+                                      Eegeo::Helpers::ITextureFileLoader& textureLoader,
+                                      Eegeo::Helpers::IFileIO& fileIO,
+                                      Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
+                                      Eegeo::Web::IWebLoadRequestFactory& webRequestFactory,
+                                      Eegeo::Resources::Roads::Navigation::NavigationGraphRepository& navigationGraphs,
+                                      Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& buildingPool,
+                                      Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool,
+                                      Eegeo::Streaming::IStreamingVolume& visibleVolume,
+                                      Eegeo::Lighting::GlobalLighting& lighting)
 	{
 		switch(example)
 		{
@@ -155,6 +166,16 @@ public:
 					renderCamera,
 					cameraModel,
 					navigationGraphs);
+
+        case ExampleTypes::ModifiedRendering:
+            return new Examples::ModifiedRenderingExample(renderContext,
+                                                          renderCamera,
+                                                          cameraModel,
+                                                          globeCamera,
+                                                          visibleVolume,
+                                                          lighting,
+                                                          buildingPool,
+                                                          shadowPool);
 		}
 	}
 
