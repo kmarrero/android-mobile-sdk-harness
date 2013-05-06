@@ -11,6 +11,7 @@
 #include "DefaultMaterialFactory.h"
 #include "AndroidWebLoadRequestFactory.h"
 #include "AndroidInputProcessor.h"
+#include "AndroidLocationService.h"
 
 namespace Eegeo
 {
@@ -51,6 +52,7 @@ private:
 	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
 	Eegeo::v3 lastGlobeCameraHeading;
 	float lastGlobeCameraDistanceToInterest;
+	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 
 	bool active;
 	bool firstTime;

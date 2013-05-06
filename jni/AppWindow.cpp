@@ -242,6 +242,7 @@ void AppWindow::TerminateDisplay()
     delete pWorld;
     pWorld = NULL;
 
+    delete pAndroidLocationService;
     delete pRenderContext;
     delete pCamera;
     delete pCameraModel ;
@@ -298,6 +299,8 @@ void AppWindow::TerminateDisplay()
 
 void AppWindow::InitWorld()
 {
+	pAndroidLocationService = new AndroidLocationService;
+
 	pRenderContext = new Eegeo::Rendering::RenderContext();
 	pRenderContext->SetScreenDimensions(width, height, 1.0f);
 
@@ -359,8 +362,8 @@ void AppWindow::InitWorld()
 		pGlobeCamera,
 		pLighting,
 		pMaterialFactory,
-		pBlitter,
-		true);
+		pAndroidLocationService,
+		pBlitter);
 
 	if(!firstTime)
 	{

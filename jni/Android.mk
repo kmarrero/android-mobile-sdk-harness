@@ -43,6 +43,7 @@ LOCAL_C_INCLUDES += ./libs/platform/Helpers
 LOCAL_C_INCLUDES += ./libs/platform/Io
 LOCAL_C_INCLUDES += ./libs/platform/Io/ChunkedFileFormat
 LOCAL_C_INCLUDES += ./libs/platform/Lighting
+LOCAL_C_INCLUDES += ./libs/platform/Location
 LOCAL_C_INCLUDES += ./libs/platform/Rendering
 LOCAL_C_INCLUDES += ./libs/platform/Rendering/Materials
 LOCAL_C_INCLUDES += ./libs/platform/Resources
