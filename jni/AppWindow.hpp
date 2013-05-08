@@ -6,7 +6,6 @@
 #include "AndroidWebRequestService.hpp"
 #include "NewGlobeCamera.h"
 #include "AppOnMap.h"
-#include "AndroidDebugStats.h"
 #include "AndroidTaskQueue.h"
 #include "DefaultMaterialFactory.h"
 #include "AndroidWebLoadRequestFactory.h"
@@ -36,7 +35,6 @@ private:
     Eegeo::Android::AndroidFileIO* pFileIO;
     Eegeo::Android::AndroidHttpCache* pHttpCache;
     Eegeo::Android::AndroidTextureFileLoader* pTextureLoader;
-	Eegeo::Android::AndroidDebugStats* pAndroidDebugStats;
 	Eegeo::Camera::CameraModel* pCameraModel;
 	Eegeo::Camera::NewGlobeCamera* pGlobeCamera;
 	Eegeo::Android::AndroidTaskQueue* pTaskQueue;
@@ -47,7 +45,6 @@ private:
 	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
 	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
 	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
-	Eegeo::Android::AndroidTextRenderer * pTextRenderer;
 	Eegeo::RenderCamera* pCamera;
 	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
 	Eegeo::v3 lastGlobeCameraHeading;

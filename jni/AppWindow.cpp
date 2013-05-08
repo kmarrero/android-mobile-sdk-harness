@@ -16,7 +16,6 @@
 #include "EffectHandler.h"
 #include "VehicleModelLoader.h"
 #include "VehicleModelRepository.h"
-#include "AndroidTextRenderer.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
@@ -80,9 +79,6 @@ void AppWindow::UpdateWorld()
 		pAndroidWebRequestService->Update();
 		pAppOnMap->Update(fps);
 		pAppOnMap->Draw(fps);
-
-		pAndroidDebugStats->UpdateStats();
-		pAndroidDebugStats->PrintStats();
 
 		Eegeo_GL(glFinish());
 		Eegeo_GL(eglSwapBuffers(display, surface));
@@ -255,8 +251,6 @@ void AppWindow::TerminateDisplay()
     Eegeo::EffectHandler::Shutdown();
     pBlitter->Shutdown();
     delete pBlitter;
-    delete pTextRenderer;
-    delete pAndroidDebugStats;
     delete pMaterialFactory;
     delete pAndroidWebRequestService;
     delete pAndroidWebLoadRequestFactory;
@@ -319,14 +313,6 @@ void AppWindow::InitWorld()
 	Eegeo::EffectHandler::Initialise();
 	pBlitter = new Eegeo::Blitter(1024 * 128, 1024 * 64, 1024 * 32, *pRenderContext);
 	pBlitter->Initialise();
-
-	pTextRenderer = new AndroidTextRenderer(
-			*pRenderContext,
-			*pBlitter,
-			*pFileIO,
-			*pTextureLoader);
-
-	pAndroidDebugStats = new AndroidDebugStats(1.f, *pTextRenderer, *pRenderContext);
 
 	pMaterialFactory = new Eegeo::Rendering::DefaultMaterialFactory;
 	pMaterialFactory->Initialise(pRenderContext, pLighting, pBlitter, pFileIO, pTextureLoader);
