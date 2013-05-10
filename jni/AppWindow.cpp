@@ -293,7 +293,7 @@ void AppWindow::TerminateDisplay()
 
 void AppWindow::InitWorld()
 {
-	pAndroidLocationService = new AndroidLocationService;
+	pAndroidLocationService = new AndroidLocationService(pState);
 
 	pRenderContext = new Eegeo::Rendering::RenderContext();
 	pRenderContext->SetScreenDimensions(width, height, 1.0f);

@@ -11,7 +11,6 @@
 #include "IStreamingVolume.h"
 #include "GlobalLighting.h"
 
-#include "IExample.h"
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
 #include "LoadModelExample.h"
