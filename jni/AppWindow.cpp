@@ -229,6 +229,8 @@ void AppWindow::InitDisplay()
 
 void AppWindow::TerminateDisplay()
 {
+	pHttpCache->FlushInMemoryCacheRepresentation();
+
     delete pTaskQueue;
 
 	lastGlobeCameraDistanceToInterest = pGlobeCamera->GetDistanceToInterest();
