@@ -19,6 +19,7 @@
 #include "WebRequestExample.h"
 #include "NavigationGraphExample.h"
 #include "ModifiedRenderingExample.h"
+#include "ToggleTrafficExample.h"
 
 namespace ExampleTypes
 {
@@ -32,7 +33,8 @@ namespace ExampleTypes
 		FileIO,
 		WebRequest,
 		NavigationGraph,
-        ModifiedRendering
+        ModifiedRendering,
+        ToggleTraffic
 	};
 }
 
@@ -51,7 +53,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::ModifiedRendering;
+		ExampleTypes::Examples selectedExample = ExampleTypes::ToggleTraffic;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -88,7 +90,8 @@ public:
                                  World().GetBuildingMeshPool(),
                                  World().GetShadowMeshPool(),
                                  World().GetStreamingVolume(),
-                                 World().GetGlobalLighting());
+                                 World().GetGlobalLighting(),
+                                 World().GetTrafficSimulation());
 
 		pExample->Start();
 	}
@@ -122,7 +125,8 @@ public:
                                       Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& buildingPool,
                                       Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool,
                                       Eegeo::Streaming::IStreamingVolume& visibleVolume,
-                                      Eegeo::Lighting::GlobalLighting& lighting)
+                                      Eegeo::Lighting::GlobalLighting& lighting,
+                                      Eegeo::Traffic::TrafficSimulation& trafficSimulation)
 	{
 		switch(example)
 		{
@@ -175,6 +179,9 @@ public:
                                                           lighting,
                                                           buildingPool,
                                                           shadowPool);
+
+        case ExampleTypes::ToggleTraffic:
+            return new Examples::ToggleTrafficExample(trafficSimulation);
 		}
 	}
 

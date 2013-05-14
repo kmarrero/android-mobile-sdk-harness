@@ -36,6 +36,7 @@ namespace Examples
             
         }
         
+        virtual ~EnvironmentNotifierExampleTerrainStreamObserver() {}
         void AddedStreamingResourceToSceneGraph(const Eegeo::Streaming::MortonKeyLong& key);
         void RemovedStreamingResourceFromSceneGraph(const Eegeo::Streaming::MortonKeyLong& key);
     };
