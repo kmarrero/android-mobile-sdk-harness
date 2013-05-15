@@ -20,6 +20,7 @@
 #include "NavigationGraphExample.h"
 #include "ModifiedRenderingExample.h"
 #include "ToggleTrafficExample.h"
+#include "ResourceSpatialQueryExample.h"
 
 namespace ExampleTypes
 {
@@ -34,7 +35,8 @@ namespace ExampleTypes
 		WebRequest,
 		NavigationGraph,
         ModifiedRendering,
-        ToggleTraffic
+        ToggleTraffic,
+        ResourceSpatialQuery
 	};
 }
 
@@ -53,7 +55,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::ToggleTraffic;
+		ExampleTypes::Examples selectedExample = ExampleTypes::ResourceSpatialQuery;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -91,7 +93,8 @@ public:
                                  World().GetShadowMeshPool(),
                                  World().GetStreamingVolume(),
                                  World().GetGlobalLighting(),
-                                 World().GetTrafficSimulation());
+                                 World().GetTrafficSimulation(),
+                                 World().GetResourceSpatialQueryService());
 
 		pExample->Start();
 	}
@@ -126,7 +129,8 @@ public:
                                       Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool,
                                       Eegeo::Streaming::IStreamingVolume& visibleVolume,
                                       Eegeo::Lighting::GlobalLighting& lighting,
-                                      Eegeo::Traffic::TrafficSimulation& trafficSimulation)
+                                      Eegeo::Traffic::TrafficSimulation& trafficSimulation,
+                                      Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService)
 	{
 		switch(example)
 		{
@@ -182,6 +186,10 @@ public:
 
         case ExampleTypes::ToggleTraffic:
             return new Examples::ToggleTrafficExample(trafficSimulation);
+
+        case ExampleTypes::ResourceSpatialQuery:
+            return new Examples::ResourceSpatialQueryExample(resourceSpatialQueryService,
+                                                             globeCamera);
 		}
 	}
 

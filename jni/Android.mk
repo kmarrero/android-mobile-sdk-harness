@@ -18,6 +18,7 @@ LOCAL_SRC_FILES += ./Examples/FileIOExample.cpp
 LOCAL_SRC_FILES += ./Examples/LoadModelExample.cpp
 LOCAL_SRC_FILES += ./Examples/ModifiedRenderingExample.cpp
 LOCAL_SRC_FILES += ./Examples/NavigationGraphExample.cpp
+LOCAL_SRC_FILES += ./Examples/ResourceSpatialQueryExample.cpp
 LOCAL_SRC_FILES += ./Examples/ScreenUnprojectExample.cpp
 LOCAL_SRC_FILES += ./Examples/ToggleTrafficExample.cpp
 LOCAL_SRC_FILES += ./Examples/WebRequestExample.cpp
