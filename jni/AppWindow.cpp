@@ -330,7 +330,8 @@ void AppWindow::InitWorld()
 																									 *pTextureLoader,
 																									 *pFileIO);
 	std::vector<Eegeo::Traffic::VehicleModel*> vehicleModels;
-	pVehicleModelLoader->LoadModels(vehicleModels);
+    std::string root = "Vehicles";
+    pVehicleModelLoader->LoadModels("SanFrancisco_Vehicles.pod", &root, vehicleModels);
 	for(std::vector<Eegeo::Traffic::VehicleModel*>::iterator it = vehicleModels.begin(); it != vehicleModels.end(); ++ it)
 	{
 		Eegeo::Traffic::IVehicleModel* pVehicle = (Eegeo::Traffic::IVehicleModel*)(*it);
