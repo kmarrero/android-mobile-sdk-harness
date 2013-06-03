@@ -40,6 +40,7 @@ private:
 	Eegeo::Android::AndroidTaskQueue* pTaskQueue;
 	Eegeo::Rendering::RenderContext* pRenderContext;
 	Eegeo::Lighting::GlobalLighting *pLighting;
+	Eegeo::Lighting::GlobalFogging *pFogging;
 	Eegeo::Blitter* pBlitter;
 	Eegeo::Rendering::DefaultMaterialFactory* pMaterialFactory ;
 	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
