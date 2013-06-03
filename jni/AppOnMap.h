@@ -10,6 +10,7 @@
 #include "NavigationGraphRepository.h"
 #include "IStreamingVolume.h"
 #include "GlobalLighting.h"
+#include "WeatherController.h"
 
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
@@ -67,6 +68,7 @@ public:
 				Eegeo::Space::LatLongUnits::Degrees);
 
 		World().GetCameraModel().SetWorldPosition(location.ToECEF());
+		World().GetWeatherController().SetWeather(Eegeo::Weather::Sunny, 1.0f);
 
 		float cameraControllerOrientationDegrees = 0.0f;
 		float cameraControllerDistanceFromInterestPointMeters = 1781.0f;
@@ -93,6 +95,7 @@ public:
                                  World().GetShadowMeshPool(),
                                  World().GetStreamingVolume(),
                                  World().GetGlobalLighting(),
+                                 World().GetGlobalFogging(),
                                  World().GetTrafficSimulation(),
                                  World().GetResourceSpatialQueryService());
 
@@ -129,6 +132,7 @@ public:
                                       Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool,
                                       Eegeo::Streaming::IStreamingVolume& visibleVolume,
                                       Eegeo::Lighting::GlobalLighting& lighting,
+                                      Eegeo::Lighting::GlobalFogging& fogging,
                                       Eegeo::Traffic::TrafficSimulation& trafficSimulation,
                                       Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService)
 	{
@@ -141,7 +145,8 @@ public:
 					cameraModel,
 					renderCamera,
 					fileIO,
-					textureLoader);
+					textureLoader,
+					fogging);
 
 		case ExampleTypes::ScreenUnproject:
 		case ExampleTypes::TerrainHeightQuery:

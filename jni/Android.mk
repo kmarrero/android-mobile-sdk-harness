@@ -75,6 +75,7 @@ LOCAL_C_INCLUDES += ./libs/platform/Streaming/Stream
 LOCAL_C_INCLUDES += ./libs/platform/Streaming/Volume
 LOCAL_C_INCLUDES += ./libs/platform/Traffic
 LOCAL_C_INCLUDES += ./libs/platform/Web
+LOCAL_C_INCLUDES += ./libs/platform/Weather
 include $(BUILD_SHARED_LIBRARY)
 
 

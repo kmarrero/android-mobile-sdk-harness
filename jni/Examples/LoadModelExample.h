@@ -28,6 +28,7 @@ namespace Examples
         Eegeo::Helpers::IFileIO& fileIO;
         Eegeo::Helpers::ITextureFileLoader& textureLoader;
         Eegeo::Space::LatLongAltitude interestLocation;
+        Eegeo::Lighting::GlobalFogging& globalFogging;
    
         Eegeo::Model* pModel;
         MeshInstance mesh;
@@ -38,7 +39,8 @@ namespace Examples
                          Eegeo::Camera::CameraModel& cameraModel,
                          Eegeo::RenderCamera& renderCamera,
                          Eegeo::Helpers::IFileIO& fileIO,
-                         Eegeo::Helpers::ITextureFileLoader& textureLoader);
+                         Eegeo::Helpers::ITextureFileLoader& textureLoader,
+                         Eegeo::Lighting::GlobalFogging& globalFogging);
         
         void Start();
         void Update();

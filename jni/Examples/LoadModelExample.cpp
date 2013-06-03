@@ -8,7 +8,8 @@ namespace Examples
                                        Eegeo::Camera::CameraModel& cameraModel,
                                        Eegeo::RenderCamera& renderCamera,
                                        Eegeo::Helpers::IFileIO& fileIO,
-                                       Eegeo::Helpers::ITextureFileLoader& textureLoader)
+                                       Eegeo::Helpers::ITextureFileLoader& textureLoader,
+                                       Eegeo::Lighting::GlobalFogging& globalFogging)
     :renderContext(renderContext)
     ,interestLocation(interestLocation)
     ,cameraModel(cameraModel)
@@ -16,6 +17,7 @@ namespace Examples
     ,fileIO(fileIO)
     ,textureLoader(textureLoader)
     ,pModel(NULL)
+    ,globalFogging(globalFogging)
     {
         
     }
@@ -96,7 +98,7 @@ namespace Examples
         mesh.node->UpdateSphereRecursive();
         
         //draw the mesh
-        mesh.node->Draw(renderContext);
+        mesh.node->Draw(renderContext, globalFogging);
 
     }
 }
