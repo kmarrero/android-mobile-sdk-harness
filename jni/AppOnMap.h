@@ -10,6 +10,7 @@
 #include "NavigationGraphRepository.h"
 #include "IStreamingVolume.h"
 #include "GlobalLighting.h"
+#include "WeatherController.h"
 
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
@@ -20,6 +21,8 @@
 #include "NavigationGraphExample.h"
 #include "ModifiedRenderingExample.h"
 #include "ToggleTrafficExample.h"
+#include "ResourceSpatialQueryExample.h"
+#include "EnvironmentFlatteningExample.h"
 
 namespace ExampleTypes
 {
@@ -34,7 +37,9 @@ namespace ExampleTypes
 		WebRequest,
 		NavigationGraph,
         ModifiedRendering,
-        ToggleTraffic
+        ToggleTraffic,
+        ResourceSpatialQuery,
+        EnvironmentFlattening
 	};
 }
 
@@ -53,7 +58,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::ToggleTraffic;
+		ExampleTypes::Examples selectedExample = ExampleTypes::EnvironmentFlattening;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -65,6 +70,7 @@ public:
 				Eegeo::Space::LatLongUnits::Degrees);
 
 		World().GetCameraModel().SetWorldPosition(location.ToECEF());
+		World().GetWeatherController().SetWeather(Eegeo::Weather::Sunny, 1.0f);
 
 		float cameraControllerOrientationDegrees = 0.0f;
 		float cameraControllerDistanceFromInterestPointMeters = 1781.0f;
@@ -91,7 +97,10 @@ public:
                                  World().GetShadowMeshPool(),
                                  World().GetStreamingVolume(),
                                  World().GetGlobalLighting(),
-                                 World().GetTrafficSimulation());
+                                 World().GetGlobalFogging(),
+                                 World().GetTrafficSimulation(),
+                                 World().GetResourceSpatialQueryService(),
+                                 World().GetEnvironmentFlatteningService());
 
 		pExample->Start();
 	}
@@ -126,7 +135,10 @@ public:
                                       Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool,
                                       Eegeo::Streaming::IStreamingVolume& visibleVolume,
                                       Eegeo::Lighting::GlobalLighting& lighting,
-                                      Eegeo::Traffic::TrafficSimulation& trafficSimulation)
+                                      Eegeo::Lighting::GlobalFogging& fogging,
+                                      Eegeo::Traffic::TrafficSimulation& trafficSimulation,
+                                      Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
+                                      Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService)
 	{
 		switch(example)
 		{
@@ -137,7 +149,8 @@ public:
 					cameraModel,
 					renderCamera,
 					fileIO,
-					textureLoader);
+					textureLoader,
+					fogging);
 
 		case ExampleTypes::ScreenUnproject:
 		case ExampleTypes::TerrainHeightQuery:
@@ -182,6 +195,13 @@ public:
 
         case ExampleTypes::ToggleTraffic:
             return new Examples::ToggleTrafficExample(trafficSimulation);
+
+        case ExampleTypes::ResourceSpatialQuery:
+            return new Examples::ResourceSpatialQueryExample(resourceSpatialQueryService,
+                                                             globeCamera);
+
+        case ExampleTypes::EnvironmentFlattening:
+            return new Examples::EnvironmentFlatteningExample(environmentFlatteningService);
 		}
 	}
 

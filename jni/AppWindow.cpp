@@ -10,6 +10,7 @@
 #include "CameraModel.h"
 #include "NewGlobeCamera.h"
 #include "GlobalLighting.h"
+#include "GlobalFogging.h"
 #include "DefaultMaterialFactory.h"
 #include "AppInterface.h"
 #include "Blitter.h"
@@ -307,6 +308,7 @@ void AppWindow::InitWorld()
     pGlobeCamera = new Eegeo::Camera::NewGlobeCamera(pCameraModel, pCamera);
 
 	pLighting = new Eegeo::Lighting::GlobalLighting();
+	pFogging = new Eegeo::Lighting::GlobalFogging();
 
 	pFileIO = new AndroidFileIO(pState);
 	pHttpCache = new AndroidHttpCache(pFileIO, "http://d2xvsc8j92rfya.cloudfront.net/");
@@ -317,7 +319,7 @@ void AppWindow::InitWorld()
 	pBlitter->Initialise();
 
 	pMaterialFactory = new Eegeo::Rendering::DefaultMaterialFactory;
-	pMaterialFactory->Initialise(pRenderContext, pLighting, pBlitter, pFileIO, pTextureLoader);
+	pMaterialFactory->Initialise(pRenderContext, pLighting, pFogging, pBlitter, pFileIO, pTextureLoader);
 
 	pTaskQueue = new AndroidTaskQueue(10, resourceBuildShareContext, shareSurface, display);
 
@@ -330,7 +332,8 @@ void AppWindow::InitWorld()
 																									 *pTextureLoader,
 																									 *pFileIO);
 	std::vector<Eegeo::Traffic::VehicleModel*> vehicleModels;
-	pVehicleModelLoader->LoadModels(vehicleModels);
+    std::string root = "Vehicles";
+    pVehicleModelLoader->LoadModels("SanFrancisco_Vehicles.pod", &root, vehicleModels);
 	for(std::vector<Eegeo::Traffic::VehicleModel*>::iterator it = vehicleModels.begin(); it != vehicleModels.end(); ++ it)
 	{
 		Eegeo::Traffic::IVehicleModel* pVehicle = (Eegeo::Traffic::IVehicleModel*)(*it);
@@ -349,6 +352,7 @@ void AppWindow::InitWorld()
 		pCameraModel,
 		pGlobeCamera,
 		pLighting,
+		pFogging,
 		pMaterialFactory,
 		pAndroidLocationService,
 		pBlitter);
