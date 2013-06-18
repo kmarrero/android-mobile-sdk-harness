@@ -11,6 +11,7 @@
 #include "AndroidWebLoadRequestFactory.h"
 #include "AndroidInputProcessor.h"
 #include "AndroidLocationService.h"
+#include "AndroidUrlEncoder.h"
 
 namespace Eegeo
 {
@@ -51,6 +52,7 @@ private:
 	Eegeo::v3 lastGlobeCameraHeading;
 	float lastGlobeCameraDistanceToInterest;
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
+	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
 
 	bool active;
 	bool firstTime;
