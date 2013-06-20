@@ -241,6 +241,7 @@ void AppWindow::TerminateDisplay()
     delete pWorld;
     pWorld = NULL;
 
+    delete pAndroidUrlEncoder;
     delete pAndroidLocationService;
     delete pRenderContext;
     delete pCamera;
@@ -296,6 +297,7 @@ void AppWindow::TerminateDisplay()
 
 void AppWindow::InitWorld()
 {
+	pAndroidUrlEncoder = new AndroidUrlEncoder(pState);
 	pAndroidLocationService = new AndroidLocationService(pState);
 
 	pRenderContext = new Eegeo::Rendering::RenderContext();
@@ -355,7 +357,8 @@ void AppWindow::InitWorld()
 		pFogging,
 		pMaterialFactory,
 		pAndroidLocationService,
-		pBlitter);
+		pBlitter,
+		pAndroidUrlEncoder);
 
 	if(!firstTime)
 	{

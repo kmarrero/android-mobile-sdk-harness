@@ -21,6 +21,7 @@ LOCAL_SRC_FILES += ./Examples/ModifiedRenderingExample.cpp
 LOCAL_SRC_FILES += ./Examples/NavigationGraphExample.cpp
 LOCAL_SRC_FILES += ./Examples/ResourceSpatialQueryExample.cpp
 LOCAL_SRC_FILES += ./Examples/ScreenUnprojectExample.cpp
+LOCAL_SRC_FILES += ./Examples/SearchExample.cpp
 LOCAL_SRC_FILES += ./Examples/ToggleTrafficExample.cpp
 LOCAL_SRC_FILES += ./Examples/WebRequestExample.cpp
 
@@ -64,6 +65,8 @@ LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Heights
 LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Lcm
 LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Placeholder
 LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Raster
+LOCAL_C_INCLUDES += ./libs/platform/Search
+LOCAL_C_INCLUDES += ./libs/platform/Search/Service
 LOCAL_C_INCLUDES += ./libs/platform/Space
 LOCAL_C_INCLUDES += ./libs/platform/Streaming
 LOCAL_C_INCLUDES += ./libs/platform/Streaming/CoverageTrees

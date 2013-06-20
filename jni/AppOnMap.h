@@ -23,6 +23,7 @@
 #include "ToggleTrafficExample.h"
 #include "ResourceSpatialQueryExample.h"
 #include "EnvironmentFlatteningExample.h"
+#include "SearchExample.h"
 
 namespace ExampleTypes
 {
@@ -39,7 +40,8 @@ namespace ExampleTypes
         ModifiedRendering,
         ToggleTraffic,
         ResourceSpatialQuery,
-        EnvironmentFlattening
+        EnvironmentFlattening,
+        Search
 	};
 }
 
@@ -58,7 +60,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::EnvironmentFlattening;
+		ExampleTypes::Examples selectedExample = ExampleTypes::Search;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -100,7 +102,8 @@ public:
                                  World().GetGlobalFogging(),
                                  World().GetTrafficSimulation(),
                                  World().GetResourceSpatialQueryService(),
-                                 World().GetEnvironmentFlatteningService());
+                                 World().GetEnvironmentFlatteningService(),
+                                 World().GetSearchService());
 
 		pExample->Start();
 	}
@@ -138,7 +141,8 @@ public:
                                       Eegeo::Lighting::GlobalFogging& fogging,
                                       Eegeo::Traffic::TrafficSimulation& trafficSimulation,
                                       Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
-                                      Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService)
+                                      Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
+                                      Eegeo::Search::Service::SearchService& searchService)
 	{
 		switch(example)
 		{
@@ -202,6 +206,9 @@ public:
 
         case ExampleTypes::EnvironmentFlattening:
             return new Examples::EnvironmentFlatteningExample(environmentFlatteningService);
+
+        case ExampleTypes::Search:
+        	return new Examples::SearchExample(searchService, globeCamera);
 		}
 	}
 
