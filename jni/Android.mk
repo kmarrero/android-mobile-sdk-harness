@@ -9,7 +9,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := native-activity
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv2 -L./libs/ -lpng -lz -lm -L./libs/ -lcrypto -L./libs/ -lssl -L./libs/ -lcurl -L./libs/ -lcares -L./libs/ -lsimd -L./libs/ -lmyjpeg
 LOCAL_STATIC_LIBRARIES := android_native_app_glue native-activity-lib
-
+ 
 LOCAL_SRC_FILES += ./main.cpp
 LOCAL_SRC_FILES += ./AppWindow.cpp
 LOCAL_SRC_FILES += ./Examples/DebugSphereExample.cpp

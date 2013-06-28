@@ -60,7 +60,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::Search;
+		ExampleTypes::Examples selectedExample = ExampleTypes::DebugSphere;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -83,6 +83,12 @@ public:
 				cameraControllerOrientationDegrees,
 				cameraControllerDistanceFromInterestPointMeters);
 
+
+		Eegeo::Search::Service::SearchService* searchService = NULL;
+		if (World().IsSearchServiceAvailable())
+		{
+		    searchService = &World().GetSearchService();
+		}
         pExample = CreateExample(selectedExample,
                                  World().GetRenderContext(),
                                  location,
@@ -103,7 +109,7 @@ public:
                                  World().GetTrafficSimulation(),
                                  World().GetResourceSpatialQueryService(),
                                  World().GetEnvironmentFlatteningService(),
-                                 World().GetSearchService());
+                                 searchService);
 
 		pExample->Start();
 	}
@@ -142,7 +148,7 @@ public:
                                       Eegeo::Traffic::TrafficSimulation& trafficSimulation,
                                       Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
                                       Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
-                                      Eegeo::Search::Service::SearchService& searchService)
+                                      Eegeo::Search::Service::SearchService* searchService)
 	{
 		switch(example)
 		{
@@ -208,7 +214,8 @@ public:
             return new Examples::EnvironmentFlatteningExample(environmentFlatteningService);
 
         case ExampleTypes::Search:
-        	return new Examples::SearchExample(searchService, globeCamera);
+        	Eegeo_ASSERT(searchService != NULL, "Cannot run Search example, you must set up here.com Credentials in ViewController.mm");
+        	return new Examples::SearchExample(*searchService, globeCamera);
 		}
 	}
 
