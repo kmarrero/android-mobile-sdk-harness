@@ -12,6 +12,7 @@
 #include "AndroidInputProcessor.h"
 #include "AndroidLocationService.h"
 #include "AndroidUrlEncoder.h"
+#include "GlobeCameraInterestPointProvider.h"
 
 namespace Eegeo
 {
@@ -53,6 +54,7 @@ private:
 	float lastGlobeCameraDistanceToInterest;
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
+	Eegeo::Location::GlobeCameraInterestPointProvider* m_pGlobeCameraInterestPointProvider;
 
 	bool active;
 	bool firstTime;

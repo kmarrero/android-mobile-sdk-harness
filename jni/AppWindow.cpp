@@ -235,6 +235,8 @@ void AppWindow::TerminateDisplay()
 
     delete pTaskQueue;
 
+    delete m_pGlobeCameraInterestPointProvider;
+
 	lastGlobeCameraDistanceToInterest = pGlobeCamera->GetDistanceToInterest();
 	lastGlobeCameraHeading = pGlobeCamera->GetHeading();
 	lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(pGlobeCamera->GetInterestPointECEF());
@@ -310,7 +312,9 @@ void AppWindow::InitWorld()
     pCameraModel = new Eegeo::Camera::CameraModel(pCamera);
     pGlobeCamera = new Eegeo::Camera::NewGlobeCamera(pCameraModel, pCamera);
 
-	pLighting = new Eegeo::Lighting::GlobalLighting();
+    m_pGlobeCameraInterestPointProvider = new Eegeo::Location::GlobeCameraInterestPointProvider(*pGlobeCamera);
+
+    pLighting = new Eegeo::Lighting::GlobalLighting();
 	pFogging = new Eegeo::Lighting::GlobalFogging();
 
 	pFileIO = new AndroidFileIO(pState);
@@ -369,6 +373,7 @@ void AppWindow::InitWorld()
 		pAndroidLocationService,
 		pBlitter,
 		pAndroidUrlEncoder,
+		*m_pGlobeCameraInterestPointProvider,
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
 	if(!firstTime)
