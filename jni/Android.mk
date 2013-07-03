@@ -81,7 +81,13 @@ LOCAL_C_INCLUDES += ./libs/platform/Streaming/Volume
 LOCAL_C_INCLUDES += ./libs/platform/Traffic
 LOCAL_C_INCLUDES += ./libs/platform/Web
 LOCAL_C_INCLUDES += ./libs/platform/Weather
-include $(BUILD_SHARED_LIBRARY)
 
+LOCAL_C_INCLUDES += ./libs/platform/UI
+LOCAL_C_INCLUDES += ./libs/platform/UI/NativeInput
+LOCAL_C_INCLUDES += ./libs/platform/UI/NativeInput/Android
+LOCAL_C_INCLUDES += ./libs/platform/UI/NativeAlerts
+LOCAL_C_INCLUDES += ./libs/platform/UI/NativeAlerts/Android
+
+include $(BUILD_SHARED_LIBRARY)
 
 $(call import-module,android/native_app_glue)

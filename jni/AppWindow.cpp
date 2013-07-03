@@ -31,6 +31,9 @@ AppWindow::AppWindow(struct android_app* pState)
 , pWorld(NULL)
 , active(false)
 , firstTime(true)
+, m_androidInputBoxFactory(pState)
+, m_androidAlertBoxFactory(pState)
+, m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory)
 , lastGlobeCameraLatLong(0,0,0)
 {
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
@@ -374,6 +377,7 @@ void AppWindow::InitWorld()
 		pBlitter,
 		pAndroidUrlEncoder,
 		*m_pGlobeCameraInterestPointProvider,
+		m_androidNativeUIFactories,
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
 	if(!firstTime)
