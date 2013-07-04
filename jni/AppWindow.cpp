@@ -322,7 +322,7 @@ void AppWindow::InitWorld()
 
 	pFileIO = new AndroidFileIO(pState);
 	pHttpCache = new AndroidHttpCache(pFileIO, "http://d2xvsc8j92rfya.cloudfront.net/");
-	pTextureLoader = new AndroidTextureFileLoader(pFileIO);
+	pTextureLoader = new AndroidTextureFileLoader(pFileIO, pRenderContext->GetGLState());
 
 	Eegeo::EffectHandler::Initialise();
 	pBlitter = new Eegeo::Blitter(1024 * 128, 1024 * 64, 1024 * 32, *pRenderContext);
