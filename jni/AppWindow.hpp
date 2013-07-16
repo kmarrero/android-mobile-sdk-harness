@@ -12,6 +12,11 @@
 #include "AndroidInputProcessor.h"
 #include "AndroidLocationService.h"
 #include "AndroidUrlEncoder.h"
+#include "GlobeCameraInterestPointProvider.h"
+
+#include "AndroidInputBoxFactory.h"
+#include "AndroidAlertBoxFactory.h"
+#include "NativeUIFactories.h"
 
 namespace Eegeo
 {
@@ -53,6 +58,11 @@ private:
 	float lastGlobeCameraDistanceToInterest;
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
+	Eegeo::Location::GlobeCameraInterestPointProvider* m_pGlobeCameraInterestPointProvider;
+
+	Eegeo::UI::NativeInput::Android::AndroidInputBoxFactory m_androidInputBoxFactory;
+	Eegeo::UI::NativeAlerts::Android::AndroidAlertBoxFactory m_androidAlertBoxFactory;
+	Eegeo::UI::NativeUIFactories m_androidNativeUIFactories;
 
 	bool active;
 	bool firstTime;

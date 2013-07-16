@@ -31,6 +31,9 @@ AppWindow::AppWindow(struct android_app* pState)
 , pWorld(NULL)
 , active(false)
 , firstTime(true)
+, m_androidInputBoxFactory(pState)
+, m_androidAlertBoxFactory(pState)
+, m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory)
 , lastGlobeCameraLatLong(0,0,0)
 {
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
@@ -235,6 +238,8 @@ void AppWindow::TerminateDisplay()
 
     delete pTaskQueue;
 
+    delete m_pGlobeCameraInterestPointProvider;
+
 	lastGlobeCameraDistanceToInterest = pGlobeCamera->GetDistanceToInterest();
 	lastGlobeCameraHeading = pGlobeCamera->GetHeading();
 	lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(pGlobeCamera->GetInterestPointECEF());
@@ -310,12 +315,14 @@ void AppWindow::InitWorld()
     pCameraModel = new Eegeo::Camera::CameraModel(pCamera);
     pGlobeCamera = new Eegeo::Camera::NewGlobeCamera(pCameraModel, pCamera);
 
-	pLighting = new Eegeo::Lighting::GlobalLighting();
+    m_pGlobeCameraInterestPointProvider = new Eegeo::Location::GlobeCameraInterestPointProvider(*pGlobeCamera);
+
+    pLighting = new Eegeo::Lighting::GlobalLighting();
 	pFogging = new Eegeo::Lighting::GlobalFogging();
 
 	pFileIO = new AndroidFileIO(pState);
 	pHttpCache = new AndroidHttpCache(pFileIO, "http://d2xvsc8j92rfya.cloudfront.net/");
-	pTextureLoader = new AndroidTextureFileLoader(pFileIO);
+	pTextureLoader = new AndroidTextureFileLoader(pFileIO, pRenderContext->GetGLState());
 
 	Eegeo::EffectHandler::Initialise();
 	pBlitter = new Eegeo::Blitter(1024 * 128, 1024 * 64, 1024 * 32, *pRenderContext);
@@ -334,23 +341,7 @@ void AppWindow::InitWorld()
 	pVehicleModelLoader = new Eegeo::Traffic::VehicleModelLoader(pRenderContext->GetGLState(),
 																									 *pTextureLoader,
 																									 *pFileIO);
-	std::vector<Eegeo::Traffic::VehicleModel*> carModels;
-	std::string carRoot = "Vehicles";
-	pVehicleModelLoader->LoadModels("SanFrancisco_Vehicles.pod", &carRoot, carModels);
-	for(std::vector<Eegeo::Traffic::VehicleModel*>::iterator it = carModels.begin(); it != carModels.end(); ++ it)
-	{
-		Eegeo::Traffic::IVehicleModel* pVehicle = (Eegeo::Traffic::IVehicleModel*)(*it);
-		pVehicleModelRepository->AddCar(pVehicle);
-	}
-
-	std::vector<Eegeo::Traffic::VehicleModel*> trainModels;
-	std::string trainRoot = "train_group";
-	pVehicleModelLoader->LoadModels("ldn_trains_01.pod", &trainRoot, trainModels);
-	for(std::vector<Eegeo::Traffic::VehicleModel*>::iterator it = trainModels.begin(); it != trainModels.end(); ++ it)
-	{
-		Eegeo::Traffic::IVehicleModel* pVehicle = (Eegeo::Traffic::IVehicleModel*)(*it);
-		pVehicleModelRepository->AddTrain(pVehicle);
-	}
+	Eegeo::Traffic::VehicleModelLoaderHelper::LoadAllVehicleResourcesIntoRepository(*pVehicleModelLoader, *pVehicleModelRepository);
 
 	pWorld = new Eegeo::EegeoWorld(
 		API_KEY,
@@ -369,6 +360,8 @@ void AppWindow::InitWorld()
 		pAndroidLocationService,
 		pBlitter,
 		pAndroidUrlEncoder,
+		*m_pGlobeCameraInterestPointProvider,
+		m_androidNativeUIFactories,
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
 	if(!firstTime)
