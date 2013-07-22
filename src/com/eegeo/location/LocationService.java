@@ -39,6 +39,42 @@ class LocationService
 		return bestLocation.getLongitude();
 	}
 	
+	public static double alt()
+	{
+		if(bestLocation == null)
+		{
+			return 0.0;
+		}
+		return bestLocation.getAltitude();
+	}
+	
+	public static boolean hasAlt()
+	{
+		if(bestLocation == null)
+		{
+			return false;
+		}
+		return bestLocation.hasAltitude();
+	}
+	
+	public static double accuracy()
+	{
+		if(bestLocation == null)
+		{
+			return 0.0;
+		}
+		return bestLocation.getAccuracy();
+	}
+	
+	public static boolean hasAccuracy()
+	{
+		if(bestLocation == null)
+		{
+			return false;
+		}
+		return bestLocation.hasAccuracy();
+	}
+	
 	static LocationListener locationListener;
 	static LocationManager locationManager;
 	
