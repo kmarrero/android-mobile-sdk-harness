@@ -32,8 +32,9 @@ AppWindow::AppWindow(struct android_app* pState)
 , active(false)
 , firstTime(true)
 , m_androidInputBoxFactory(pState)
+, m_androidKeyboardInputFactory(pState)
 , m_androidAlertBoxFactory(pState)
-, m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory)
+, m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory, m_androidKeyboardInputFactory)
 , lastGlobeCameraLatLong(0,0,0)
 {
 	//Eegeo_TTY("CONSTRUCTING AppWindow");

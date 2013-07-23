@@ -15,6 +15,7 @@
 #include "GlobeCameraInterestPointProvider.h"
 
 #include "AndroidInputBoxFactory.h"
+#include "AndroidKeyboardInputFactory.h"
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
 
@@ -61,6 +62,7 @@ private:
 	Eegeo::Location::GlobeCameraInterestPointProvider* m_pGlobeCameraInterestPointProvider;
 
 	Eegeo::UI::NativeInput::Android::AndroidInputBoxFactory m_androidInputBoxFactory;
+	Eegeo::UI::NativeInput::Android::AndroidKeyboardInputFactory m_androidKeyboardInputFactory;
 	Eegeo::UI::NativeAlerts::Android::AndroidAlertBoxFactory m_androidAlertBoxFactory;
 	Eegeo::UI::NativeUIFactories m_androidNativeUIFactories;
 
