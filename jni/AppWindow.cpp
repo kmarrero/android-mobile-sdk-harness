@@ -35,6 +35,8 @@ AppWindow::AppWindow(struct android_app* pState)
 , m_androidAlertBoxFactory(pState)
 , m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory)
 , lastGlobeCameraLatLong(0,0,0)
+, m_terrainHeightRepository()
+, m_terrainHeightProvider(&m_terrainHeightRepository)
 {
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
 }
@@ -313,7 +315,7 @@ void AppWindow::InitWorld()
     pCamera->SetViewport(0.f, 0.f, width, height);
 
     pCameraModel = new Eegeo::Camera::CameraModel(pCamera);
-    pGlobeCamera = new Eegeo::Camera::NewGlobeCamera(pCameraModel, pCamera);
+    pGlobeCamera = new Eegeo::Camera::NewGlobeCamera(pCameraModel, pCamera, m_terrainHeightProvider);
 
     m_pGlobeCameraInterestPointProvider = new Eegeo::Location::GlobeCameraInterestPointProvider(*pGlobeCamera);
 
@@ -362,6 +364,8 @@ void AppWindow::InitWorld()
 		pAndroidUrlEncoder,
 		*m_pGlobeCameraInterestPointProvider,
 		m_androidNativeUIFactories,
+		&m_terrainHeightRepository,
+		&m_terrainHeightProvider,
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
 	if(!firstTime)

@@ -13,7 +13,7 @@
 #include "AndroidLocationService.h"
 #include "AndroidUrlEncoder.h"
 #include "GlobeCameraInterestPointProvider.h"
-
+#include "TerrainHeightProvider.h"
 #include "AndroidInputBoxFactory.h"
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
@@ -59,6 +59,9 @@ private:
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
 	Eegeo::Location::GlobeCameraInterestPointProvider* m_pGlobeCameraInterestPointProvider;
+
+    Eegeo::Resources::Terrain::Heights::TerrainHeightRepository m_terrainHeightRepository;
+    Eegeo::Resources::Terrain::Heights::TerrainHeightProvider m_terrainHeightProvider;
 
 	Eegeo::UI::NativeInput::Android::AndroidInputBoxFactory m_androidInputBoxFactory;
 	Eegeo::UI::NativeAlerts::Android::AndroidAlertBoxFactory m_androidAlertBoxFactory;
