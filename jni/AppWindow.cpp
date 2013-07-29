@@ -32,7 +32,7 @@ AppWindow::AppWindow(struct android_app* pState)
 , active(false)
 , firstTime(true)
 , m_androidInputBoxFactory(pState)
-, m_androidKeyboardInputFactory(pState)
+, m_androidKeyboardInputFactory(pState, pInputHandler)
 , m_androidAlertBoxFactory(pState)
 , m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory, m_androidKeyboardInputFactory)
 , lastGlobeCameraLatLong(0,0,0)
@@ -371,8 +371,8 @@ void AppWindow::InitWorld()
 	}
 	else
 	{
-		pAppOnMap = new MyApp();
-		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(pAppOnMap, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
+		pAppOnMap = new MyApp(&pInputHandler);
+		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(&pInputHandler, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
 
 		pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),
 														351.0f,

@@ -14,6 +14,7 @@
 #include "AndroidUrlEncoder.h"
 #include "GlobeCameraInterestPointProvider.h"
 
+#include "AndroidInputHandler.h"
 #include "AndroidInputBoxFactory.h"
 #include "AndroidKeyboardInputFactory.h"
 #include "AndroidAlertBoxFactory.h"
@@ -29,6 +30,7 @@ class AppWindow
 private:
 	MyApp* pAppOnMap;
 	Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor;
+	Eegeo::Android::Input::AndroidInputHandler pInputHandler;
 	Eegeo::EegeoWorld* pWorld;
 	struct android_app* pState;
 	int width;

@@ -18,8 +18,8 @@ keyboardInputFactory(keyboardInputFactory)
 
 void KeyboardInputExample::Start()
 {
-	//Eegeo_TTY("Example Address: %d, Factory Address: %d, Keyboard Type: %d, Return Key Type: %d", this, &keyboardInputFactory, KeyboardTypeDefault, ReturnKeySearch);
-    //m_pKeyboardInput = keyboardInputFactory.CreateKeyboardInput(*this, *this, KeyboardTypeDefault, ReturnKeySearch);
+	Eegeo_TTY("Creating keyboard with Input Type: %d and Return Key type: %d", this, &keyboardInputFactory, KeyboardTypeDefault, ReturnKeySearch);
+	m_pKeyboardInput = keyboardInputFactory.CreateKeyboardInput(*this, *this, KeyboardTypeDefault, ReturnKeySearch);
 }
 
 void KeyboardInputExample::HandleKeyboardInputDismissed(const std::string& input)
