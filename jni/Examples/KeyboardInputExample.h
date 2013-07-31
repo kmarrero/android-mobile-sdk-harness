@@ -31,8 +31,8 @@ namespace Examples
         void Draw() {}
         void Suspend() {}
 
-        void HandleKeyboardInputDismissed(const std::string& input);
-        void HandleKeyboardInputKeyPressed(const std::string& input);
+        void HandleKeyboardInputDismissed();
+        void HandleKeyboardInputKeyPressed(const AppInterface::KeyboardData& data);
     };
 }
 
