@@ -24,6 +24,7 @@ LOCAL_SRC_FILES += ./Examples/ScreenUnprojectExample.cpp
 LOCAL_SRC_FILES += ./Examples/SearchExample.cpp
 LOCAL_SRC_FILES += ./Examples/ToggleTrafficExample.cpp
 LOCAL_SRC_FILES += ./Examples/WebRequestExample.cpp
+LOCAL_SRC_FILES += ./Examples/KeyboardInputExample.cpp
 
 LOCAL_C_INCLUDES += ./jni/Examples 
 

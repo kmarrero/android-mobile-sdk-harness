@@ -14,7 +14,9 @@
 #include "AndroidUrlEncoder.h"
 #include "GlobeCameraInterestPointProvider.h"
 #include "TerrainHeightProvider.h"
+#include "AndroidInputHandler.h"
 #include "AndroidInputBoxFactory.h"
+#include "AndroidKeyboardInputFactory.h"
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
 
@@ -28,6 +30,7 @@ class AppWindow
 private:
 	MyApp* pAppOnMap;
 	Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor;
+	Eegeo::Android::Input::AndroidInputHandler pInputHandler;
 	Eegeo::EegeoWorld* pWorld;
 	struct android_app* pState;
 	int width;
@@ -64,6 +67,7 @@ private:
     Eegeo::Resources::Terrain::Heights::TerrainHeightProvider m_terrainHeightProvider;
 
 	Eegeo::UI::NativeInput::Android::AndroidInputBoxFactory m_androidInputBoxFactory;
+	Eegeo::UI::NativeInput::Android::AndroidKeyboardInputFactory m_androidKeyboardInputFactory;
 	Eegeo::UI::NativeAlerts::Android::AndroidAlertBoxFactory m_androidAlertBoxFactory;
 	Eegeo::UI::NativeUIFactories m_androidNativeUIFactories;
 

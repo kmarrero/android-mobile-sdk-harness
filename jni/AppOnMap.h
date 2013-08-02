@@ -11,6 +11,8 @@
 #include "IStreamingVolume.h"
 #include "GlobalLighting.h"
 #include "WeatherController.h"
+#include "NativeUIFactories.h"
+#include "AndroidInputHandler.h"
 
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
@@ -24,6 +26,7 @@
 #include "ResourceSpatialQueryExample.h"
 #include "EnvironmentFlatteningExample.h"
 #include "SearchExample.h"
+#include "KeyboardInputExample.h"
 
 namespace ExampleTypes
 {
@@ -41,19 +44,28 @@ namespace ExampleTypes
         ToggleTraffic,
         ResourceSpatialQuery,
         EnvironmentFlattening,
-        Search
+        Search,
+        KeyboardInput
 	};
 }
 
-class MyApp : public Eegeo::IAppOnMap, public Eegeo::Android::Input::AndroidInputHandler
+class MyApp : public Eegeo::IAppOnMap, public Eegeo::Android::Input::IAndroidInputHandler
 {
 private:
 	Examples::IExample *pExample;
 	Eegeo::Camera::NewGlobeCamera* globeCamera;
+	Eegeo::Android::Input::AndroidInputHandler& pInputHandler;
 
 public:
+	MyApp(Eegeo::Android::Input::AndroidInputHandler* inputHandler) :
+	pInputHandler(*inputHandler)
+	{
+		pInputHandler.AddDelegateInputHandler(this);
+	}
+
 	~MyApp()
 	{
+		pInputHandler.RemoveDelegateInputHandler(this);
 		pExample->Suspend();
 		delete pExample;
 	}
@@ -109,7 +121,8 @@ public:
                                  World().GetTrafficSimulation(),
                                  World().GetResourceSpatialQueryService(),
                                  World().GetEnvironmentFlatteningService(),
-                                 searchService);
+                                 searchService,
+                                 World().GetNativeUIFactories());
 
 		pExample->Start();
 	}
@@ -148,7 +161,8 @@ public:
                                       Eegeo::Traffic::TrafficSimulation& trafficSimulation,
                                       Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
                                       Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
-                                      Eegeo::Search::Service::SearchService* searchService)
+                                      Eegeo::Search::Service::SearchService* searchService,
+                                      Eegeo::UI::NativeUIFactories& nativeInputFactories)
 	{
 		switch(example)
 		{
@@ -216,6 +230,9 @@ public:
         case ExampleTypes::Search:
         	Eegeo_ASSERT(searchService != NULL, "Cannot run Search example, you must set up here.com Credentials in ViewController.mm");
         	return new Examples::SearchExample(*searchService, globeCamera);
+
+        case ExampleTypes::KeyboardInput:
+            return new Examples::KeyboardInputExample(nativeInputFactories.IKeyboardInputFactory());
 		}
 	}
 
@@ -231,12 +248,16 @@ public:
 	void Event_TouchPan_Start   (const AppInterface::PanData& data) { globeCamera->Event_TouchPan_Start(data); }
 	void Event_TouchPan_End     (const AppInterface::PanData& data) { globeCamera->Event_TouchPan_End(data); }
 
-	void Event_TouchTap       (const AppInterface::TapData& data) {globeCamera->Event_TouchTap(data); }
+	void Event_TouchTap       (const AppInterface::TapData& data) { globeCamera->Event_TouchTap(data); }
 	void Event_TouchDoubleTap   (const AppInterface::TapData& data) { globeCamera->Event_TouchDoubleTap(data); }
 
 	void Event_TouchDown      (const AppInterface::TouchData& data) { globeCamera->Event_TouchDown(data); }
 	void Event_TouchMove      (const AppInterface::TouchData& data) { globeCamera->Event_TouchMove(data); }
 	void Event_TouchUp        (const AppInterface::TouchData& data) { globeCamera->Event_TouchUp(data); }
+
+	void Event_KeyPress(const AppInterface::KeyboardData& data) { }
+	void AddKeyPressListener(Eegeo::UI::NativeInput::IKeyboardInputKeyPressedHandler* handler) { }
+	bool RemoveKeyPressListener(Eegeo::UI::NativeInput::IKeyboardInputKeyPressedHandler* handler) { return false; }
 };
 
 #endif /* defined(__ExampleApp__AppOnMap__) */
