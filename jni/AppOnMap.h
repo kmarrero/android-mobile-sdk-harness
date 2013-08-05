@@ -27,6 +27,7 @@
 #include "EnvironmentFlatteningExample.h"
 #include "SearchExample.h"
 #include "KeyboardInputExample.h"
+#include "PODAnimationExample.h"
 
 namespace ExampleTypes
 {
@@ -45,7 +46,8 @@ namespace ExampleTypes
         ResourceSpatialQuery,
         EnvironmentFlattening,
         Search,
-        KeyboardInput
+        KeyboardInput,
+        PODAnimation
 	};
 }
 
@@ -72,7 +74,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::DebugSphere;
+		ExampleTypes::Examples selectedExample = ExampleTypes::PODAnimation;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -233,6 +235,13 @@ public:
 
         case ExampleTypes::KeyboardInput:
             return new Examples::KeyboardInputExample(nativeInputFactories.IKeyboardInputFactory());
+
+		case ExampleTypes::PODAnimation:
+			return new Examples::PODAnimationExample(renderContext,
+					cameraModel,
+					fileIO,
+					textureLoader,
+					fogging);
 		}
 	}
 
