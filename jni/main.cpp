@@ -16,7 +16,9 @@ static void process_input( struct android_app* state, struct android_poll_source
         }
 
         int32_t handled = 0;
-        if (state) handled = state->onInputEvent(state, event);
+        if (state->onInputEvent) {
+        	handled = state->onInputEvent(state, event);
+        }
         AInputQueue_finishEvent(state->inputQueue, event, handled);
     }
 }

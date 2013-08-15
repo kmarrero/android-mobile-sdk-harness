@@ -264,7 +264,7 @@ public:
 	void Event_TouchMove      (const AppInterface::TouchData& data) { globeCamera->Event_TouchMove(data); }
 	void Event_TouchUp        (const AppInterface::TouchData& data) { globeCamera->Event_TouchUp(data); }
 
-	void Event_KeyPress(const AppInterface::KeyboardData& data) { }
+	bool Event_KeyPress(const AppInterface::KeyboardData& data) { return false; }
 	void AddKeyPressListener(Eegeo::UI::NativeInput::IKeyboardInputKeyPressedHandler* handler) { }
 	bool RemoveKeyPressListener(Eegeo::UI::NativeInput::IKeyboardInputKeyPressedHandler* handler) { return false; }
 };

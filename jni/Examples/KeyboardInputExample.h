@@ -22,17 +22,19 @@ namespace Examples
     private:
         Eegeo::UI::NativeInput::IKeyboardInput* m_pKeyboardInput;
         Eegeo::UI::NativeInput::IKeyboardInputFactory& keyboardInputFactory;
+        bool dismissed;
 
+        void Dismiss();
     public:
         KeyboardInputExample(Eegeo::UI::NativeInput::IKeyboardInputFactory& keyboardInputFactory);
 
         void Start();
         void Update() {}
         void Draw() {}
-        void Suspend() {}
+        void Suspend();
 
         void HandleKeyboardInputDismissed();
-        void HandleKeyboardInputKeyPressed(const AppInterface::KeyboardData& data);
+        bool HandleKeyboardInputKeyPressed(const AppInterface::KeyboardData& data);
     };
 }
 

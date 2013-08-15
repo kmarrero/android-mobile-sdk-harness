@@ -59,19 +59,20 @@ void AppWindow::Run()
         while ((ident=ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0) {
 
             // Process this event.
-            if (source != NULL)
-            {
+            if (source != NULL) {
                 source->process(pState, source);
+            }
+
+            if (pState->destroyRequested != 0) {
+            	exit(0);
             }
         }
 
-        if(active)
-        {
+        if(active) {
         	UpdateWorld();
         }
-        else
-        {
-        	sleep(1);
+        else {
+        	usleep(100000);
         }
     }
 }
@@ -237,6 +238,7 @@ void AppWindow::InitDisplay()
 
 void AppWindow::TerminateDisplay()
 {
+	delete pAppOnMap;
 	pHttpCache->FlushInMemoryCacheRepresentation();
 
     delete pTaskQueue;
