@@ -88,6 +88,7 @@ void AppWindow::UpdateWorld()
 		pAndroidWebRequestService->Update();
 		pAppOnMap->Update(fps);
 		pAppOnMap->Draw(fps);
+		currentWeatherModel.SetWeatherType(pAppOnMap->World().GetWeatherController().GetWeatherType());
 
 		Eegeo_GL(glFinish());
 		Eegeo_GL(eglSwapBuffers(display, surface));
@@ -334,7 +335,7 @@ void AppWindow::InitWorld()
 	pBlitter->Initialise();
 
 	pMaterialFactory = new Eegeo::Rendering::DefaultMaterialFactory;
-	pMaterialFactory->Initialise(pRenderContext, pLighting, pFogging, pBlitter, pFileIO, pTextureLoader);
+	pMaterialFactory->Initialise(&currentWeatherModel, pRenderContext, pLighting, pFogging, pBlitter, pFileIO, pTextureLoader);
 
 	pTaskQueue = new AndroidTaskQueue(10, resourceBuildShareContext, shareSurface, display);
 

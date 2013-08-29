@@ -19,6 +19,7 @@
 #include "AndroidKeyboardInputFactory.h"
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
+#include "WeatherUpdateModel.h"
 
 namespace Eegeo
 {
@@ -62,7 +63,7 @@ private:
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
 	Eegeo::Location::GlobeCameraInterestPointProvider* m_pGlobeCameraInterestPointProvider;
-
+	Eegeo::Weather::CurrentWeatherModel currentWeatherModel;
     Eegeo::Resources::Terrain::Heights::TerrainHeightRepository m_terrainHeightRepository;
     Eegeo::Resources::Terrain::Heights::TerrainHeightProvider m_terrainHeightProvider;
 
