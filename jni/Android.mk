@@ -39,6 +39,7 @@ LOCAL_C_INCLUDES += ./libs/platform/Android/Input/
 LOCAL_C_INCLUDES += ./libs/platform/Android/WebRequestCacheTasks/
 LOCAL_C_INCLUDES += ./libs/platform/Android/KtxTextures/
 LOCAL_C_INCLUDES += ./libs/platform/Base
+LOCAL_C_INCLUDES += ./libs/platform/Base/Font
 LOCAL_C_INCLUDES += ./libs/platform/Base/Model
 LOCAL_C_INCLUDES += ./libs/platform/Camera
 LOCAL_C_INCLUDES += ./libs/platform/Culling
