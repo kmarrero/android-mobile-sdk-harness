@@ -20,6 +20,7 @@
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
 #include "WeatherUpdateModel.h"
+#include "MyAndroidInputHandler.h"
 
 namespace Eegeo
 {
@@ -29,10 +30,10 @@ namespace Eegeo
 class AppWindow 
 {
 private:
-	MyApp* pAppOnMap;
+	AppOnMap* pAppOnMap;
 	Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor;
 	Eegeo::Android::Input::AndroidInputHandler pInputHandler;
-	Eegeo::EegeoWorld* pWorld;
+	MyAndroidInputHandler* pAppInputHandler;
 	struct android_app* pState;
 	int width;
 	int height;
@@ -42,21 +43,6 @@ private:
     EGLContext context;
     EGLContext resourceBuildShareContext;
     Eegeo::Android::AndroidWebRequestService* pAndroidWebRequestService;
-    Eegeo::Android::AndroidFileIO* pFileIO;
-    Eegeo::Android::AndroidHttpCache* pHttpCache;
-    Eegeo::Android::AndroidTextureFileLoader* pTextureLoader;
-	Eegeo::Camera::CameraModel* pCameraModel;
-	Eegeo::Camera::NewGlobeCamera* pGlobeCamera;
-	Eegeo::Android::AndroidTaskQueue* pTaskQueue;
-	Eegeo::Rendering::RenderContext* pRenderContext;
-	Eegeo::Lighting::GlobalLighting *pLighting;
-	Eegeo::Lighting::GlobalFogging *pFogging;
-	Eegeo::Blitter* pBlitter;
-	Eegeo::Rendering::DefaultMaterialFactory* pMaterialFactory ;
-	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
-	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
-	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
-	Eegeo::RenderCamera* pCamera;
 	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
 	Eegeo::v3 lastGlobeCameraHeading;
 	float lastGlobeCameraDistanceToInterest;

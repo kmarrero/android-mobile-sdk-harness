@@ -4,7 +4,7 @@
 #include "AndroidWebRequestService.hpp"
 #include "AndroidTaskQueue.h"
 #include "LatLongAltitude.h"
-#include "EegeoWorld.h"
+#include "AppOnMap.h"
 #include "RenderContext.h"
 #include "Camera.h"
 #include "CameraModel.h"
@@ -22,13 +22,13 @@
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
 
-#define API_KEY "OBTAIN API_KEY FROM https://appstore.eegeo.com AND INSERT IT HERE"
+#define API_KEY "39a41330b20a251258f1906f0175ee39"
 
 AppWindow::AppWindow(struct android_app* pState)
 : pState(pState)
 , pAppOnMap(NULL)
 , pInputProcessor(NULL)
-, pWorld(NULL)
+, pAppInputHandler(NULL)
 , active(false)
 , firstTime(true)
 , m_androidInputBoxFactory(pState)
@@ -79,7 +79,7 @@ void AppWindow::Run()
 
 void AppWindow::UpdateWorld()
 {
-	if(pWorld!= NULL)
+	if(pAppOnMap!= NULL)
 	{
 		//Eegeo_TTY("UPDATING WORLD");
 	    Eegeo_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
@@ -88,7 +88,7 @@ void AppWindow::UpdateWorld()
 		pAndroidWebRequestService->Update();
 		pAppOnMap->Update(fps);
 		pAppOnMap->Draw(fps);
-		currentWeatherModel.SetWeatherType(pAppOnMap->World().GetWeatherController().GetWeatherType());
+		currentWeatherModel.SetWeatherType(pAppOnMap->GetWeatherController().GetWeatherType());
 
 		Eegeo_GL(glFinish());
 		Eegeo_GL(eglSwapBuffers(display, surface));
@@ -98,7 +98,7 @@ void AppWindow::UpdateWorld()
 
 int32_t AppWindow::HandleInput(AInputEvent* event)
 {
-	if(pWorld==NULL)
+	if(pAppOnMap==NULL)
 	{
 		return 0;
 	}
@@ -239,39 +239,19 @@ void AppWindow::InitDisplay()
 
 void AppWindow::TerminateDisplay()
 {
-	delete pAppOnMap;
-	pHttpCache->FlushInMemoryCacheRepresentation();
+	while(pAppOnMap->GetTaskQueue().Update());
+	((Eegeo::Android::AndroidHttpCache*)&pAppOnMap->GetHttpCache())->FlushInMemoryCacheRepresentation();
 
-    delete pTaskQueue;
-
-    delete m_pGlobeCameraInterestPointProvider;
+	Eegeo::Camera::NewGlobeCamera* pGlobeCamera = ((Eegeo::Camera::NewGlobeCamera*)&pAppOnMap->GetCameraController());
 
 	lastGlobeCameraDistanceToInterest = pGlobeCamera->GetDistanceToInterest();
 	lastGlobeCameraHeading = pGlobeCamera->GetHeading();
 	lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(pGlobeCamera->GetInterestPointECEF());
 
-    delete pWorld;
-    pWorld = NULL;
+    delete pAppOnMap;
+    pAppOnMap = NULL;
 
-    delete pAndroidUrlEncoder;
-    delete pAndroidLocationService;
-    delete pRenderContext;
-    delete pCamera;
-    delete pCameraModel ;
-	delete pGlobeCamera;
-    delete pLighting;
-    delete pFileIO;
-    delete pHttpCache;
-    delete pTextureLoader;
-    Eegeo::EffectHandler::Reset();
-    Eegeo::EffectHandler::Shutdown();
-    pBlitter->Shutdown();
-    delete pBlitter;
-    delete pMaterialFactory;
     delete pAndroidWebRequestService;
-    delete pAndroidWebLoadRequestFactory;
-    delete pVehicleModelRepository;
-    delete pVehicleModelLoader;
 
     if (this->display != EGL_NO_DISPLAY)
     {
@@ -309,68 +289,18 @@ void AppWindow::TerminateDisplay()
 
 void AppWindow::InitWorld()
 {
-	pAndroidUrlEncoder = new AndroidUrlEncoder(pState);
-	pAndroidLocationService = new AndroidLocationService(pState);
+	AppConfiguration config = AppConfiguration::CreateDefaultAppConfiguration(width, height, 1.0f, true, API_KEY);
+	config.pSearchCredentials = new Eegeo::Search::Service::SearchServiceCredentials("", "");
+	config.pState = pState;
+	config.shareSurface = shareSurface;
+	config.display = display;
+	config.resourceBuildShareContext = resourceBuildShareContext;
+	config.pInputHandler = &pInputHandler;
+	pAppOnMap = new AppOnMap(config);
 
-	pRenderContext = new Eegeo::Rendering::RenderContext();
-	pRenderContext->SetScreenDimensions(width, height, 1.0f);
+	pAndroidWebRequestService = config.pAndroidWebRequestService;
 
-    pCamera = new Eegeo::RenderCamera;
-    pCamera->SetViewport(0.f, 0.f, width, height);
-
-    pCameraModel = new Eegeo::Camera::CameraModel(pCamera);
-    pGlobeCamera = new Eegeo::Camera::NewGlobeCamera(pCameraModel, pCamera, m_terrainHeightProvider);
-
-    m_pGlobeCameraInterestPointProvider = new Eegeo::Location::GlobeCameraInterestPointProvider(*pGlobeCamera);
-
-    pLighting = new Eegeo::Lighting::GlobalLighting();
-	pFogging = new Eegeo::Lighting::GlobalFogging();
-
-	pFileIO = new AndroidFileIO(pState);
-	pHttpCache = new AndroidHttpCache(pFileIO, "http://d2xvsc8j92rfya.cloudfront.net/");
-	pTextureLoader = new AndroidTextureFileLoader(pFileIO, pRenderContext->GetGLState());
-
-	Eegeo::EffectHandler::Initialise();
-	pBlitter = new Eegeo::Blitter(1024 * 128, 1024 * 64, 1024 * 32, *pRenderContext);
-	pBlitter->Initialise();
-
-	pMaterialFactory = new Eegeo::Rendering::DefaultMaterialFactory;
-	pMaterialFactory->Initialise(&currentWeatherModel, pRenderContext, pLighting, pFogging, pBlitter, pFileIO, pTextureLoader);
-
-	pTaskQueue = new AndroidTaskQueue(10, resourceBuildShareContext, shareSurface, display);
-
-	pAndroidWebRequestService = new AndroidWebRequestService(*pFileIO, pHttpCache, pTaskQueue, 50);
-
-	pAndroidWebLoadRequestFactory = new AndroidWebLoadRequestFactory(pAndroidWebRequestService, pHttpCache);
-
-	pVehicleModelRepository = new Eegeo::Traffic::VehicleModelRepository;
-	pVehicleModelLoader = new Eegeo::Traffic::VehicleModelLoader(pRenderContext->GetGLState(),
-																									 *pTextureLoader,
-																									 *pFileIO);
-	Eegeo::Traffic::VehicleModelLoaderHelper::LoadAllVehicleResourcesIntoRepository(*pVehicleModelLoader, *pVehicleModelRepository);
-
-	pWorld = new Eegeo::EegeoWorld(
-		API_KEY,
-		pHttpCache,
-		pFileIO,
-		pTextureLoader,
-		pAndroidWebLoadRequestFactory,
-		pTaskQueue,
-		pVehicleModelRepository,
-		*pRenderContext,
-		pCameraModel,
-		pGlobeCamera,
-		pLighting,
-		pFogging,
-		pMaterialFactory,
-		pAndroidLocationService,
-		pBlitter,
-		pAndroidUrlEncoder,
-		*m_pGlobeCameraInterestPointProvider,
-		m_androidNativeUIFactories,
-		&m_terrainHeightRepository,
-		&m_terrainHeightProvider,
-		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
+	Eegeo::Camera::NewGlobeCamera* pGlobeCamera = (Eegeo::Camera::NewGlobeCamera*)&pAppOnMap->GetCameraController();
 
 	if(!firstTime)
 	{
@@ -378,15 +308,10 @@ void AppWindow::InitWorld()
 	}
 	else
 	{
-		pAppOnMap = new MyApp(&pInputHandler);
-		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(&pInputHandler, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
-
-		pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),
-														351.0f,
-													   2731.0f);
+		pAppInputHandler = new MyAndroidInputHandler(&pInputHandler, *pGlobeCamera);
+		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(
+						&pInputHandler, pAppOnMap->GetRenderContext().GetScreenWidth(), pAppOnMap->GetRenderContext().GetScreenHeight());
 	}
-
-	pAppOnMap->Start(pWorld);
 
 	firstTime = false;
 }

@@ -12,6 +12,7 @@ LOCAL_STATIC_LIBRARIES := android_native_app_glue native-activity-lib
  
 LOCAL_SRC_FILES += ./main.cpp
 LOCAL_SRC_FILES += ./AppWindow.cpp
+LOCAL_SRC_FILES += ./AppOnMap.cpp
 LOCAL_SRC_FILES += ./Examples/DebugSphereExample.cpp
 LOCAL_SRC_FILES += ./Examples/EnvironmentFlatteningExample.cpp
 LOCAL_SRC_FILES += ./Examples/EnvironmentNotifierExample.cpp
@@ -28,6 +29,7 @@ LOCAL_SRC_FILES += ./Examples/KeyboardInputExample.cpp
 LOCAL_SRC_FILES += ./Examples/PODAnimationExample.cpp
 
 LOCAL_C_INCLUDES += ./jni/Examples 
+LOCAL_C_INCLUDES += ./jni 
 
 LOCAL_C_INCLUDES += ./libs/png
 LOCAL_C_INCLUDES += ./libs/curl 
@@ -50,6 +52,7 @@ LOCAL_C_INCLUDES += ./libs/platform/Helpers
 LOCAL_C_INCLUDES += ./libs/platform/Io
 LOCAL_C_INCLUDES += ./libs/platform/Io/ChunkedFileFormat
 LOCAL_C_INCLUDES += ./libs/platform/Io/POD
+LOCAL_C_INCLUDES += ./libs/platform/Infrastructure
 LOCAL_C_INCLUDES += ./libs/platform/Lighting
 LOCAL_C_INCLUDES += ./libs/platform/Location
 LOCAL_C_INCLUDES += ./libs/platform/Rendering
