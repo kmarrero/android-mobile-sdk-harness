@@ -63,8 +63,8 @@ namespace Examples
         //loaded model faces are ccw
         renderContext.GetGLState().FrontFace(GL_CCW);
         
-        //renderContext.GetGLState().DepthTest.Enable();
-        //renderContext.GetGLState().DepthFunc(GL_LEQUAL);
+        renderContext.GetGLState().DepthTest.Enable();
+        renderContext.GetGLState().DepthFunc(GL_LEQUAL);
 
         pModel->GetRootNode()->SetVisible(true);
         pModel->GetRootNode()->SetLocalMatrix(transform);
