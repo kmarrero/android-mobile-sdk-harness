@@ -339,7 +339,10 @@ void AppWindow::InitWorld()
 
 	pTaskQueue = new AndroidTaskQueue(10, resourceBuildShareContext, shareSurface, display);
 
-	pAndroidWebRequestService = new AndroidWebRequestService(*pFileIO, pHttpCache, pTaskQueue, 50);
+	const int webLoadPoolSize = 10;
+	const int cacheLoadPoolSize = 40;
+	const int cacheStorePoolSize = 20;
+	pAndroidWebRequestService = new AndroidWebRequestService(*pFileIO, pHttpCache, pTaskQueue, webLoadPoolSize, cacheLoadPoolSize, cacheStorePoolSize);
 
 	pAndroidWebLoadRequestFactory = new AndroidWebLoadRequestFactory(pAndroidWebRequestService, pHttpCache);
 
