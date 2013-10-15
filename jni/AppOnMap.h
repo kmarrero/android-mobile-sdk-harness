@@ -28,6 +28,7 @@
 #include "SearchExample.h"
 #include "KeyboardInputExample.h"
 #include "PODAnimationExample.h"
+#include "Pick3DObjectExample.h"
 
 namespace ExampleTypes
 {
@@ -47,7 +48,8 @@ namespace ExampleTypes
         EnvironmentFlattening,
         Search,
         KeyboardInput,
-        PODAnimation
+        PODAnimation,
+        Pick3DObject
 	};
 }
 
@@ -74,7 +76,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::PODAnimation;
+		ExampleTypes::Examples selectedExample = ExampleTypes::Pick3DObject;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -242,27 +244,34 @@ public:
 					fileIO,
 					textureLoader,
 					fogging);
+
+		case ExampleTypes::Pick3DObject:
+			return new Examples::Pick3DObjectExample(
+					renderContext,
+					interestLocation,
+					cameraModel,
+					renderCamera);
 		}
 	}
 
-	void Event_TouchRotate      (const AppInterface::RotateData& data) { globeCamera->Event_TouchRotate(data); }
-	void Event_TouchRotate_Start  (const AppInterface::RotateData& data) { globeCamera->Event_TouchRotate_Start(data); }
-	void Event_TouchRotate_End    (const AppInterface::RotateData& data) { globeCamera->Event_TouchRotate_End(data); }
+    void Event_TouchRotate 			(const AppInterface::RotateData& data) { if(!pExample->Event_TouchRotate(data)) globeCamera->Event_TouchRotate(data); }
+    void Event_TouchRotate_Start	(const AppInterface::RotateData& data) { if(!pExample->Event_TouchRotate_Start(data)) globeCamera->Event_TouchRotate_Start(data); }
+    void Event_TouchRotate_End 		(const AppInterface::RotateData& data) { if(!pExample->Event_TouchRotate_End(data)) globeCamera->Event_TouchRotate_End(data); }
 
-	void Event_TouchPinch       (const AppInterface::PinchData& data) { globeCamera->Event_TouchPinch(data); }
-	void Event_TouchPinch_Start   (const AppInterface::PinchData& data) { globeCamera->Event_TouchPinch_Start(data); }
-	void Event_TouchPinch_End     (const AppInterface::PinchData& data) { globeCamera->Event_TouchPinch_End(data); }
+    void Event_TouchPinch 			(const AppInterface::PinchData& data) { if(!pExample->Event_TouchPinch(data)) globeCamera->Event_TouchPinch(data); }
+    void Event_TouchPinch_Start 	(const AppInterface::PinchData& data) { if(!pExample->Event_TouchPinch_Start(data)) globeCamera->Event_TouchPinch_Start(data); }
+    void Event_TouchPinch_End 		(const AppInterface::PinchData& data) { if(!pExample->Event_TouchPinch_End(data)) globeCamera->Event_TouchPinch_End(data); }
 
-	void Event_TouchPan       (const AppInterface::PanData& data) { globeCamera->Event_TouchPan(data); }
-	void Event_TouchPan_Start   (const AppInterface::PanData& data) { globeCamera->Event_TouchPan_Start(data); }
-	void Event_TouchPan_End     (const AppInterface::PanData& data) { globeCamera->Event_TouchPan_End(data); }
+    void Event_TouchPan				(const AppInterface::PanData& data) { if(!pExample->Event_TouchPan(data)) globeCamera->Event_TouchPan(data); }
+    void Event_TouchPan_Start		(const AppInterface::PanData& data) { if(!pExample->Event_TouchPan_Start(data)) globeCamera->Event_TouchPan_Start(data); }
+    void Event_TouchPan_End 		(const AppInterface::PanData& data) { if(!pExample->Event_TouchPan_End(data)) globeCamera->Event_TouchPan_End(data); }
 
-	void Event_TouchTap       (const AppInterface::TapData& data) { globeCamera->Event_TouchTap(data); }
-	void Event_TouchDoubleTap   (const AppInterface::TapData& data) { globeCamera->Event_TouchDoubleTap(data); }
+    void Event_TouchTap 			(const AppInterface::TapData& data) { if(!pExample->Event_TouchTap(data)) globeCamera->Event_TouchTap(data); }
+    void Event_TouchDoubleTap		(const AppInterface::TapData& data) { if(!pExample->Event_TouchDoubleTap(data)) globeCamera->Event_TouchDoubleTap(data); }
 
-	void Event_TouchDown      (const AppInterface::TouchData& data) { globeCamera->Event_TouchDown(data); }
-	void Event_TouchMove      (const AppInterface::TouchData& data) { globeCamera->Event_TouchMove(data); }
-	void Event_TouchUp        (const AppInterface::TouchData& data) { globeCamera->Event_TouchUp(data); }
+    void Event_TouchDown 			(const AppInterface::TouchData& data) { if(!pExample->Event_TouchDown(data)) globeCamera->Event_TouchDown(data); }
+    void Event_TouchMove 			(const AppInterface::TouchData& data) { if(!pExample->Event_TouchMove(data)) globeCamera->Event_TouchMove(data); }
+    void Event_TouchUp 				(const AppInterface::TouchData& data) { if(!pExample->Event_TouchUp(data)) globeCamera->Event_TouchUp(data); }
 
 	bool Event_KeyPress(const AppInterface::KeyboardData& data) { return false; }
 	void AddKeyPressListener(Eegeo::UI::NativeInput::IKeyboardInputKeyPressedHandler* handler) { }
