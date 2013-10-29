@@ -18,69 +18,155 @@
 #include "VehicleModelLoader.h"
 #include "VehicleModelRepository.h"
 #include "SearchServiceCredentials.h"
+#include "AndroidThreadHelper.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
 
 #define API_KEY "OBTAIN API_KEY FROM https://appstore.eegeo.com AND INSERT IT HERE"
 
-AppWindow::AppWindow(struct android_app* pState)
+void AppWindow::EnqueuePointerDown(TouchInputEvent& e)
+{
+	pthread_mutex_lock(&m_inputMutex);
+	touchBuffer.push_back(e);
+	pthread_mutex_unlock(&m_inputMutex);
+}
+
+void AppWindow::EnqueuePointerUp(TouchInputEvent& e)
+{
+	pthread_mutex_lock(&m_inputMutex);
+	touchBuffer.push_back(e);
+	pthread_mutex_unlock(&m_inputMutex);
+}
+
+void AppWindow::EnqueuePointerMove(TouchInputEvent& e)
+{
+	pthread_mutex_lock(&m_inputMutex);
+	touchBuffer.push_back(e);
+	pthread_mutex_unlock(&m_inputMutex);
+}
+
+AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState)
 : pState(pState)
+, pPersistentState(pPersistentState)
 , pAppOnMap(NULL)
 , pInputProcessor(NULL)
 , pWorld(NULL)
-, active(false)
-, firstTime(true)
+, pAndroidLocationService(NULL)
+, appRunning(false)
+, displayAvailable(false)
+, worldInitialised(false)
 , m_androidInputBoxFactory(pState)
 , m_androidKeyboardInputFactory(pState, pInputHandler)
 , m_androidAlertBoxFactory(pState)
 , m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory, m_androidKeyboardInputFactory)
-, lastGlobeCameraLatLong(0,0,0)
 , m_terrainHeightRepository()
 , m_terrainHeightProvider(&m_terrainHeightRepository)
 {
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
+    pthread_mutex_init(&m_mutex, 0);
+    pthread_mutex_init(&m_inputMutex, 0);
 }
 
-void AppWindow::Run()
+AppWindow::~AppWindow()
 {
+	pthread_mutex_destroy(&m_mutex);
+	pthread_mutex_destroy(&m_inputMutex);
+}
+
+void AppWindow::Pause(PersistentAppState* pPersistentState)
+{
+	pthread_mutex_lock(&m_mutex);
+	appRunning = false;
+	pthread_mutex_unlock(&m_mutex);
+
+	if(pPersistentState != NULL)
+	{
+		pPersistentState->lastGlobeCameraDistanceToInterest = pGlobeCamera->GetDistanceToInterest();
+		pPersistentState->lastGlobeCameraHeading = pGlobeCamera->GetHeading();
+		pPersistentState->lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(pGlobeCamera->GetInterestPointECEF());
+		pPersistentState->gpsActive = false;
+	}
+
+    pthread_join(m_mainNativeThread, 0);
+}
+
+void AppWindow::Resume()
+{
+	pthread_mutex_lock(&m_mutex);
+	appRunning = true;
+	displayAvailable = false;
+	worldInitialised = false;
+	pthread_mutex_unlock(&m_mutex);
+
+    pthread_create(&m_mainNativeThread, 0, Run, this);
+}
+
+void AppWindow::ActivateSurface()
+{
+	pthread_mutex_lock(&m_mutex);
+	displayAvailable = true;
+	pthread_mutex_unlock(&m_mutex);
+}
+
+void* AppWindow::Run(void* self)
+{
+	Eegeo::Helpers::ThreadHelpers::SetThisThreadAsMainThread();
+
+	AppWindow* pSelf = (AppWindow*)self;
 	//Eegeo_TTY("STARTING RUN");
 
     while (1)
     {
-    	// Read all pending events.
-        int ident;
-        int events;
-        struct android_poll_source* source;
+    	pthread_mutex_lock(&pSelf->m_mutex);
+    	bool running = pSelf->appRunning;
+    	bool displayAvailable = pSelf->displayAvailable;
+    	bool worldInitialised = pSelf->worldInitialised;
+    	pthread_mutex_unlock(&pSelf->m_mutex);
 
-        // If not animating, we will block forever waiting for events.
-        // If animating, we loop until all events are read, then continue
-        // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0) {
+        if(running)
+        {
+        	if(displayAvailable)
+        	{
+        		if(!worldInitialised)
+        		{
+        			pSelf->InitDisplay();
+        		}
 
-            // Process this event.
-            if (source != NULL) {
-                source->process(pState, source);
-            }
-
-            if (pState->destroyRequested != 0) {
-            	exit(0);
-            }
+            	pSelf->UpdateWorld();
+        	}
         }
-
-        if(active) {
-        	UpdateWorld();
-        }
-        else {
-        	usleep(100000);
+        else
+        {
+        	break;
         }
     }
+
+    pSelf->TerminateDisplay();
+
+    pthread_exit(0);
+    return NULL;
 }
 
 void AppWindow::UpdateWorld()
 {
 	if(pWorld!= NULL)
 	{
+		//get latest input buffer
+		std::vector<TouchInputEvent> inputs;
+		pthread_mutex_lock(&m_inputMutex);
+		inputs = touchBuffer;
+		touchBuffer.clear();
+		pthread_mutex_unlock(&m_inputMutex);
+
+		//process input events
+		size_t events = inputs.size();
+		for(size_t i = 0; i < events; ++ i)
+		{
+			this->pInputProcessor->HandleInput(inputs[i]);
+		}
+
+		//update and render world
 		//Eegeo_TTY("UPDATING WORLD");
 	    Eegeo_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
@@ -93,34 +179,6 @@ void AppWindow::UpdateWorld()
 		Eegeo_GL(glFinish());
 		Eegeo_GL(eglSwapBuffers(display, surface));
 	}
-}
-
-
-int32_t AppWindow::HandleInput(AInputEvent* event)
-{
-	if(pWorld==NULL)
-	{
-		return 0;
-	}
-
-	return pInputProcessor->HandleInput(event);
-}
-
-void AppWindow::HandleCommand(int32_t cmd)
-{
-    switch (cmd)
-    {
-        case APP_CMD_INIT_WINDOW:
-        	//Eegeo_TTY("APP_CMD_INIT_WINDOW");
-        	InitDisplay();
-        	active = true;
-            break;
-        case APP_CMD_TERM_WINDOW:
-        	//Eegeo_TTY("APP_CMD_TERM_WINDOW");
-        	TerminateDisplay();
-        	active = false;
-            break;
-    }
 }
 
 void AppWindow::InitDisplay()
@@ -245,10 +303,6 @@ void AppWindow::TerminateDisplay()
     delete pTaskQueue;
 
     delete m_pGlobeCameraInterestPointProvider;
-
-	lastGlobeCameraDistanceToInterest = pGlobeCamera->GetDistanceToInterest();
-	lastGlobeCameraHeading = pGlobeCamera->GetHeading();
-	lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(pGlobeCamera->GetInterestPointECEF());
 
     delete pWorld;
     pWorld = NULL;
@@ -375,21 +429,25 @@ void AppWindow::InitWorld()
 		&m_terrainHeightProvider,
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
-	if(!firstTime)
-	{
-		pGlobeCamera->SetInterestHeadingDistance(lastGlobeCameraLatLong, lastGlobeCameraHeading, lastGlobeCameraDistanceToInterest);
-	}
-	else
-	{
-		pAppOnMap = new MyApp(&pInputHandler);
-		pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(&pInputHandler, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
 
-		pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),
-														351.0f,
-													   2731.0f);
+	pAppOnMap = new MyApp(&pInputHandler);
+	pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(&pInputHandler, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
+
+	pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),
+													351.0f,
+												   2731.0f);
+
+	if(pPersistentState != NULL)
+	{
+		pGlobeCamera->SetInterestHeadingDistance(
+				pPersistentState->lastGlobeCameraLatLong,
+				pPersistentState->lastGlobeCameraHeading,
+				pPersistentState->lastGlobeCameraDistanceToInterest);
 	}
 
 	pAppOnMap->Start(pWorld);
 
-	firstTime = false;
+    pthread_mutex_lock(&m_mutex);
+    worldInitialised = true;
+    pthread_mutex_unlock(&m_mutex);
 }

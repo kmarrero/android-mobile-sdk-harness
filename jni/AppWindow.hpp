@@ -1,4 +1,3 @@
-#include <android_native_app_glue.h>
 #include "Graphics.h"
 #include "AndroidFileIO.h"
 #include "AndroidHttpCache.h"
@@ -20,20 +19,33 @@
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
 #include "WeatherUpdateModel.h"
+#include "AndroidNativeState.h"
+#include "TouchEventWrapper.h"
 
 namespace Eegeo
 {
 	class EegeoWorld;
 }
 
+struct PersistentAppState
+{
+	PersistentAppState():lastGlobeCameraLatLong(0,0,0){}
+
+	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
+	Eegeo::v3 lastGlobeCameraHeading;
+	float lastGlobeCameraDistanceToInterest;
+	bool gpsActive;
+};
+
 class AppWindow 
 {
 private:
 	MyApp* pAppOnMap;
+	PersistentAppState* pPersistentState;
 	Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor;
 	Eegeo::Android::Input::AndroidInputHandler pInputHandler;
 	Eegeo::EegeoWorld* pWorld;
-	struct android_app* pState;
+	AndroidNativeState* pState;
 	int width;
 	int height;
     EGLDisplay display;
@@ -57,9 +69,6 @@ private:
 	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
 	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
 	Eegeo::RenderCamera* pCamera;
-	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
-	Eegeo::v3 lastGlobeCameraHeading;
-	float lastGlobeCameraDistanceToInterest;
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
 	Eegeo::Location::GlobeCameraInterestPointProvider* m_pGlobeCameraInterestPointProvider;
@@ -72,18 +81,42 @@ private:
 	Eegeo::UI::NativeAlerts::Android::AndroidAlertBoxFactory m_androidAlertBoxFactory;
 	Eegeo::UI::NativeUIFactories m_androidNativeUIFactories;
 
-	bool active;
-	bool firstTime;
+	bool appRunning;
+	bool displayAvailable;
+	bool worldInitialised;
+
+	pthread_t m_mainNativeThread;
+	pthread_mutex_t m_mutex;
+
+	double m_timeOfLastUpdateCall;
+
+	std::deque<double> m_frameDeltas;
+
+	double CalcSmoothedDelta() const;
 
 	void InitDisplay();
 	void TerminateDisplay();
 	void InitWorld();
 	void UpdateWorld();
+	double GetTimeNowSeconds();
+
+	pthread_mutex_t m_inputMutex;
+	std::vector<Eegeo::Android::Input::TouchInputEvent> touchBuffer;
+
+	static void* Run(void* self);
 
 public:
 
-	AppWindow(struct android_app* pState);
-	void Run();
-	int32_t HandleInput(AInputEvent* event);
-	void HandleCommand(int32_t cmd);
+	AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState);
+	~AppWindow();
+
+	void Pause(PersistentAppState* pPersistentState);
+	void Resume();
+	void ActivateSurface();
+
+	void EnqueuePointerDown(Eegeo::Android::Input::TouchInputEvent& e);
+	void EnqueuePointerUp(Eegeo::Android::Input::TouchInputEvent& e);
+	void EnqueuePointerMove(Eegeo::Android::Input::TouchInputEvent& e);
+
+	Eegeo::EegeoWorld& GetWorld() { return *pWorld; }
 };

@@ -1,47 +1,152 @@
 #include <jni.h>
-#include <android_native_app_glue.h>
 #include "AppWindow.hpp"
+#include "main.h"
+#include "TouchEventWrapper.h"
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 
-static void process_input( struct android_app* state, struct android_poll_source* source)
+using namespace Eegeo::Android;
+using namespace Eegeo::Android::Input;
+
+AppWindow* g_pAppWindow;
+AndroidNativeState g_nativeState;
+PersistentAppState g_persistentAppState;
+bool firstTime = true;
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* pvt)
 {
-    AInputEvent* event = NULL;
-    if (AInputQueue_getEvent(state->inputQueue, &event) >= 0) {
-        int type = AInputEvent_getType(event);
-        bool skip_predispatch
-              =  AInputEvent_getType(event)  == AINPUT_EVENT_TYPE_KEY
-              && AKeyEvent_getKeyCode(event) == AKEYCODE_BACK;
+	g_nativeState.vm = vm;
+    return JNI_VERSION_1_2;
+}
 
-        if (!skip_predispatch && AInputQueue_preDispatchEvent(state->inputQueue, event)) {
-            return;
-        }
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv, jobject obj, jobject activity, jobject assetManager)
+{
+	g_nativeState.env = jenv;
+	g_nativeState.activity = activity;
+	g_nativeState.assetManager = AAssetManager_fromJava(jenv, assetManager);
+	PersistentAppState* pPersistentAppState = firstTime ? NULL : &g_persistentAppState;
+	g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState);
+	firstTime = false;
+}
 
-        int32_t handled = 0;
-        if (state->onInputEvent) {
-        	handled = state->onInputEvent(state, event);
-        }
-        AInputQueue_finishEvent(state->inputQueue, event, handled);
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_stopNativeCode(JNIEnv* jenv, jobject obj)
+{
+	delete g_pAppWindow;
+	g_pAppWindow = NULL;
+}
+
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_pauseNativeCode(JNIEnv* jenv, jobject obj)
+{
+	g_pAppWindow->Pause(&g_persistentAppState);
+}
+
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_resumeNativeCode(JNIEnv* jenv, jobject obj)
+{
+	g_pAppWindow->Resume();
+}
+
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_setNativeSurface(JNIEnv* jenv, jobject obj, jobject surface)
+{
+    if (surface != NULL)
+    {
+    	g_nativeState.window = ANativeWindow_fromSurface(jenv, surface);
+    	g_pAppWindow->ActivateSurface();
+    }
+    else
+    {
+        ANativeWindow_release(g_nativeState.window);
+        g_nativeState.window = NULL;
     }
 }
 
-static int32_t engine_handle_input(struct android_app* state, AInputEvent* event)
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerDown(JNIEnv* jenv, jobject obj,
+		jint primaryActionIndex,
+		jint primaryActionIdentifier,
+		jint numPointers,
+		jfloatArray x,
+		jfloatArray y,
+		jintArray pointerIdentity,
+		jintArray pointerIndex)
 {
-	AppWindow* app = (AppWindow*)state->userData;
-	return app->HandleInput(event);
+	TouchInputEvent e(false, true, primaryActionIndex, primaryActionIdentifier);
+
+	jfloat* xBuffer = jenv->GetFloatArrayElements(x, 0);
+	jfloat* yBuffer = jenv->GetFloatArrayElements(y, 0);
+	jint* identityBuffer = jenv->GetIntArrayElements(pointerIdentity, 0);
+	jint* indexBuffer = jenv->GetIntArrayElements(pointerIndex, 0);
+
+	for(int i = 0; i < numPointers; ++ i)
+	{
+		TouchInputPointerEvent p(xBuffer[i], yBuffer[i], identityBuffer[i], indexBuffer[i]);
+		e.pointerEvents.push_back(p);
+	}
+
+	jenv->ReleaseFloatArrayElements(x, xBuffer, 0);
+	jenv->ReleaseFloatArrayElements(y, yBuffer, 0);
+	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, 0);
+	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, 0);
+
+	g_pAppWindow->EnqueuePointerDown(e);
 }
 
-static void engine_handle_cmd(struct android_app* state, int32_t cmd)
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerUp(JNIEnv* jenv, jobject obj,
+		jint primaryActionIndex,
+		jint primaryActionIdentifier,
+		jint numPointers,
+		jfloatArray x,
+		jfloatArray y,
+		jintArray pointerIdentity,
+		jintArray pointerIndex)
 {
-	AppWindow* app = (AppWindow*)state->userData;
-	return app->HandleCommand(cmd);
+	TouchInputEvent e(true, false, primaryActionIndex, primaryActionIdentifier);
+
+	jfloat* xBuffer = jenv->GetFloatArrayElements(x, 0);
+	jfloat* yBuffer = jenv->GetFloatArrayElements(y, 0);
+	jint* identityBuffer = jenv->GetIntArrayElements(pointerIdentity, 0);
+	jint* indexBuffer = jenv->GetIntArrayElements(pointerIndex, 0);
+
+	for(int i = 0; i < numPointers; ++ i)
+	{
+		TouchInputPointerEvent p(xBuffer[i], yBuffer[i], identityBuffer[i], indexBuffer[i]);
+		e.pointerEvents.push_back(p);
+	}
+
+	jenv->ReleaseFloatArrayElements(x, xBuffer, 0);
+	jenv->ReleaseFloatArrayElements(y, yBuffer, 0);
+	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, 0);
+	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, 0);
+
+	g_pAppWindow->EnqueuePointerUp(e);
 }
 
-void android_main(struct android_app* state)
+JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerMove(JNIEnv* jenv, jobject obj,
+		jint primaryActionIndex,
+		jint primaryActionIdentifier,
+		jint numPointers,
+		jfloatArray x,
+		jfloatArray y,
+		jintArray pointerIdentity,
+		jintArray pointerIndex)
 {
-    app_dummy();
-	AppWindow window(state);
-    state->inputPollSource.process = process_input;
-    state->onAppCmd = engine_handle_cmd;
-    state->onInputEvent = engine_handle_input;
-    state->userData = &window;
-    window.Run();
+	TouchInputEvent e(false, false, primaryActionIndex, primaryActionIdentifier);
+
+	jfloat* xBuffer = jenv->GetFloatArrayElements(x, 0);
+	jfloat* yBuffer = jenv->GetFloatArrayElements(y, 0);
+	jint* identityBuffer = jenv->GetIntArrayElements(pointerIdentity, 0);
+	jint* indexBuffer = jenv->GetIntArrayElements(pointerIndex, 0);
+
+	for(int i = 0; i < numPointers; ++ i)
+	{
+		TouchInputPointerEvent p(xBuffer[i], yBuffer[i], identityBuffer[i], indexBuffer[i]);
+		e.pointerEvents.push_back(p);
+	}
+
+	jenv->ReleaseFloatArrayElements(x, xBuffer, 0);
+	jenv->ReleaseFloatArrayElements(y, yBuffer, 0);
+	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, 0);
+	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, 0);
+
+	g_pAppWindow->EnqueuePointerMove(e);
 }
