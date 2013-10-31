@@ -13,6 +13,7 @@
 #include "WeatherController.h"
 #include "NativeUIFactories.h"
 #include "AndroidInputHandler.h"
+#include "AndroidNativeState.h"
 
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
@@ -29,6 +30,7 @@
 #include "KeyboardInputExample.h"
 #include "PODAnimationExample.h"
 #include "Pick3DObjectExample.h"
+#include "ShowJavaPlaceJumpUIExample.h"
 
 namespace ExampleTypes
 {
@@ -49,7 +51,8 @@ namespace ExampleTypes
         Search,
         KeyboardInput,
         PODAnimation,
-        Pick3DObject
+        Pick3DObject,
+        ShowJavaPlaceJumpUI
 	};
 }
 
@@ -59,10 +62,12 @@ private:
 	Examples::IExample *pExample;
 	Eegeo::Camera::NewGlobeCamera* globeCamera;
 	Eegeo::Android::Input::AndroidInputHandler& pInputHandler;
+	AndroidNativeState& m_nativeState;
 
 public:
-	MyApp(Eegeo::Android::Input::AndroidInputHandler* inputHandler) :
-	pInputHandler(*inputHandler)
+	MyApp(Eegeo::Android::Input::AndroidInputHandler* inputHandler, AndroidNativeState& nativeState)
+	: pInputHandler(*inputHandler)
+	, m_nativeState(nativeState)
 	{
 		pInputHandler.AddDelegateInputHandler(this);
 	}
@@ -76,7 +81,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::Pick3DObject;
+		ExampleTypes::Examples selectedExample = ExampleTypes::ShowJavaPlaceJumpUI;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -251,6 +256,10 @@ public:
 					interestLocation,
 					cameraModel,
 					renderCamera);
+
+		case ExampleTypes::ShowJavaPlaceJumpUI:
+			return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState);
+
 		}
 	}
 

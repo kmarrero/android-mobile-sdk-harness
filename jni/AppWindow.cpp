@@ -114,7 +114,7 @@ void* AppWindow::Run(void* self)
 	Eegeo::Helpers::ThreadHelpers::SetThisThreadAsMainThread();
 
 	AppWindow* pSelf = (AppWindow*)self;
-	//Eegeo_TTY("STARTING RUN");
+	Eegeo_TTY("STARTING RUN");
 
     while (1)
     {
@@ -430,7 +430,7 @@ void AppWindow::InitWorld()
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
 
-	pAppOnMap = new MyApp(&pInputHandler);
+	pAppOnMap = new MyApp(&pInputHandler, *pState);
 	pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(&pInputHandler, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
 
 	pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),

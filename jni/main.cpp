@@ -18,17 +18,37 @@ bool firstTime = true;
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* pvt)
 {
 	g_nativeState.vm = vm;
-    return JNI_VERSION_1_2;
+    return JNI_VERSION_1_6;
 }
 
-JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv, jobject obj, jobject activity, jobject assetManager)
+//lifecycle
+JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv, jobject obj, jobject activity, jobject assetManager)
 {
-	g_nativeState.env = jenv;
+    g_nativeState.env = jenv;
 	g_nativeState.activity = activity;
+	g_nativeState.activityClass = jenv->FindClass("com/eegeo/MainActivity");
+
+    jmethodID getClassLoader = jenv->GetMethodID(g_nativeState.activityClass,"getClassLoader", "()Ljava/lang/ClassLoader;");
+    g_nativeState.classLoader = jenv->CallObjectMethod(activity, getClassLoader);
+    g_nativeState.classLoaderClass  = jenv->FindClass("java/lang/ClassLoader");
+    g_nativeState.classLoaderLoadClassMethod = jenv->GetMethodID(g_nativeState.classLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+
+	jthrowable exc;
+	exc = jenv->ExceptionOccurred();
+
+	if (exc)
+	{
+		jenv->ExceptionDescribe();
+		jenv->ExceptionClear();
+		return 0;
+	}
+
 	g_nativeState.assetManager = AAssetManager_fromJava(jenv, assetManager);
 	PersistentAppState* pPersistentAppState = firstTime ? NULL : &g_persistentAppState;
 	g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState);
 	firstTime = false;
+
+	return ((long)g_pAppWindow);
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_stopNativeCode(JNIEnv* jenv, jobject obj)
@@ -61,6 +81,7 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_setNativeSurface(JNIEnv* jenv
     }
 }
 
+//input
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerDown(JNIEnv* jenv, jobject obj,
 		jint primaryActionIndex,
 		jint primaryActionIdentifier,
@@ -83,10 +104,10 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerDown(JNIE
 		e.pointerEvents.push_back(p);
 	}
 
-	jenv->ReleaseFloatArrayElements(x, xBuffer, 0);
-	jenv->ReleaseFloatArrayElements(y, yBuffer, 0);
-	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, 0);
-	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, 0);
+	jenv->ReleaseFloatArrayElements(x, xBuffer, JNI_ABORT);
+	jenv->ReleaseFloatArrayElements(y, yBuffer, JNI_ABORT);
+	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, JNI_ABORT);
+	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, JNI_ABORT);
 
 	g_pAppWindow->EnqueuePointerDown(e);
 }
@@ -113,10 +134,10 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerUp(JNIEnv
 		e.pointerEvents.push_back(p);
 	}
 
-	jenv->ReleaseFloatArrayElements(x, xBuffer, 0);
-	jenv->ReleaseFloatArrayElements(y, yBuffer, 0);
-	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, 0);
-	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, 0);
+	jenv->ReleaseFloatArrayElements(x, xBuffer, JNI_ABORT);
+	jenv->ReleaseFloatArrayElements(y, yBuffer, JNI_ABORT);
+	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, JNI_ABORT);
+	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, JNI_ABORT);
 
 	g_pAppWindow->EnqueuePointerUp(e);
 }
@@ -143,10 +164,10 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerMove(JNIE
 		e.pointerEvents.push_back(p);
 	}
 
-	jenv->ReleaseFloatArrayElements(x, xBuffer, 0);
-	jenv->ReleaseFloatArrayElements(y, yBuffer, 0);
-	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, 0);
-	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, 0);
+	jenv->ReleaseFloatArrayElements(x, xBuffer, JNI_ABORT);
+	jenv->ReleaseFloatArrayElements(y, yBuffer, JNI_ABORT);
+	jenv->ReleaseIntArrayElements(pointerIdentity, identityBuffer, JNI_ABORT);
+	jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, JNI_ABORT);
 
 	g_pAppWindow->EnqueuePointerMove(e);
 }
