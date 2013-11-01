@@ -24,7 +24,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* pvt)
 //lifecycle
 JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv, jobject obj, jobject activity, jobject assetManager)
 {
-    g_nativeState.env = jenv;
+    g_nativeState.mainThreadEnv = jenv;
 	g_nativeState.activity = activity;
 	g_nativeState.activityClass = jenv->FindClass("com/eegeo/MainActivity");
 

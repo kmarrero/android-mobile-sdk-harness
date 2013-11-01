@@ -1,5 +1,8 @@
 package com.eegeo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -19,6 +22,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     private AssetManager m_assetManager;
     private MainActivity m_self;
     private long m_nativeAppWindowPtr;
+    private List<Button> m_buttons = new ArrayList<Button>();
     
     //lifecycle
     public static native long startNativeCode(MainActivity activity, AssetManager assetManager);
@@ -102,6 +106,40 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 	            {
 	                //Log.v("InputBox", e.getMessage() == null ? "Error, but no message?!" : e.getMessage());
 	            }                            
+	        }
+	    });
+    }
+    
+    public int addJavaPinButton()
+    {
+    	int id = m_buttons.size();
+    	final Button pin = new Button(this);
+    	m_buttons.add(pin);
+    	
+    	runOnUiThread(new Runnable()
+	    {
+	        public void run()
+	        {
+			   	final RelativeLayout uiRoot = (RelativeLayout)findViewById(R.id.ui_container);
+			   	uiRoot.addView(pin);
+	        }
+	    });
+    	
+    	return id;
+    }
+    
+    public void updatePinButtonScreenLocation(final int pinID, final float x, final float y)
+    {
+    	runOnUiThread(new Runnable()
+	    {
+	        public void run()
+	        {
+		    	Button pin = m_buttons.get(pinID);
+		    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80, 80);
+		    	params.leftMargin = (int)x;
+		    	params.topMargin = (int)y;
+		    	pin.setLayoutParams(params);
+		    	
 	        }
 	    });
     }

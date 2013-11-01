@@ -31,6 +31,7 @@
 #include "PODAnimationExample.h"
 #include "Pick3DObjectExample.h"
 #include "ShowJavaPlaceJumpUIExample.h"
+#include "PositionJavaPinButtonExample.h"
 
 namespace ExampleTypes
 {
@@ -52,7 +53,8 @@ namespace ExampleTypes
         KeyboardInput,
         PODAnimation,
         Pick3DObject,
-        ShowJavaPlaceJumpUI
+        ShowJavaPlaceJumpUI,
+        PositionJavaPinButton
 	};
 }
 
@@ -81,7 +83,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::ShowJavaPlaceJumpUI;
+		ExampleTypes::Examples selectedExample = ExampleTypes::PositionJavaPinButton;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -260,6 +262,8 @@ public:
 		case ExampleTypes::ShowJavaPlaceJumpUI:
 			return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState);
 
+		case ExampleTypes::PositionJavaPinButton:
+			return new Examples::PositionJavaPinButtonExample(m_nativeState, renderContext, cameraModel);
 		}
 	}
 

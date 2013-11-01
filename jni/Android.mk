@@ -30,6 +30,7 @@ LOCAL_SRC_FILES += ./Examples/KeyboardInputExample.cpp
 LOCAL_SRC_FILES += ./Examples/PODAnimationExample.cpp
 LOCAL_SRC_FILES += ./Examples/Pick3DObjectExample.cpp
 LOCAL_SRC_FILES += ./Examples/ShowJavaPlaceJumpUIExample.cpp
+LOCAL_SRC_FILES += ./Examples/PositionJavaPinButtonExample.cpp
 
 LOCAL_C_INCLUDES += ./jni/Examples 
 
