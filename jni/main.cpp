@@ -6,6 +6,7 @@
 #include <android/native_window_jni.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
+#include <pthread.h>
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
@@ -24,14 +25,15 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* pvt)
 //lifecycle
 JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv, jobject obj, jobject activity, jobject assetManager)
 {
-    g_nativeState.mainThreadEnv = jenv;
-	g_nativeState.activity = activity;
-	g_nativeState.activityClass = jenv->FindClass("com/eegeo/MainActivity");
+	g_nativeState.javaMainThread = pthread_self();
+	g_nativeState.mainThreadEnv = jenv;
+	g_nativeState.activity = jenv->NewGlobalRef(activity);
+	g_nativeState.activityClass = (jclass)jenv->NewGlobalRef(jenv->FindClass("com/eegeo/MainActivity"));
 
-    jmethodID getClassLoader = jenv->GetMethodID(g_nativeState.activityClass,"getClassLoader", "()Ljava/lang/ClassLoader;");
-    g_nativeState.classLoader = jenv->CallObjectMethod(activity, getClassLoader);
-    g_nativeState.classLoaderClass  = jenv->FindClass("java/lang/ClassLoader");
-    g_nativeState.classLoaderLoadClassMethod = jenv->GetMethodID(g_nativeState.classLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+	jmethodID getClassLoader = jenv->GetMethodID(g_nativeState.activityClass,"getClassLoader", "()Ljava/lang/ClassLoader;");
+	g_nativeState.classLoader = jenv->NewGlobalRef(jenv->CallObjectMethod(activity, getClassLoader));
+	g_nativeState.classLoaderClass  = (jclass)jenv->NewGlobalRef(jenv->FindClass("java/lang/ClassLoader"));
+	g_nativeState.classLoaderLoadClassMethod = jenv->GetMethodID(g_nativeState.classLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
 
 	jthrowable exc;
 	exc = jenv->ExceptionOccurred();
@@ -43,7 +45,8 @@ JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv,
 		return 0;
 	}
 
-	g_nativeState.assetManager = AAssetManager_fromJava(jenv, assetManager);
+	g_nativeState.assetManagerGlobalRef = jenv->NewGlobalRef(assetManager);
+	g_nativeState.assetManager = AAssetManager_fromJava(jenv, g_nativeState.assetManagerGlobalRef);
 	PersistentAppState* pPersistentAppState = firstTime ? NULL : &g_persistentAppState;
 	g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState);
 	firstTime = false;
@@ -53,6 +56,11 @@ JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv,
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_stopNativeCode(JNIEnv* jenv, jobject obj)
 {
+	jenv->DeleteGlobalRef(g_nativeState.assetManagerGlobalRef);
+	jenv->DeleteGlobalRef(g_nativeState.activity);
+	jenv->DeleteGlobalRef(g_nativeState.activityClass);
+	jenv->DeleteGlobalRef(g_nativeState.classLoaderClass);
+	jenv->DeleteGlobalRef(g_nativeState.classLoader);
 	delete g_pAppWindow;
 	g_pAppWindow = NULL;
 }
