@@ -37,7 +37,7 @@ namespace Examples
 		}
     }
 
-    void PositionJavaPinButtonExample::Update()
+    void PositionJavaPinButtonExample::Draw()
     {
     	JNIEnv* env = NULL;
     	JavaVM& vm = *m_nativeState.vm;

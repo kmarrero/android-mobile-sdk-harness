@@ -32,8 +32,8 @@ namespace Examples
     			Eegeo::Camera::CameraModel& cameraModel);
 
         void Start();
-        void Update();
-        void Draw() {}
+        void Update() {}
+        void Draw();
         void Suspend() {}
 
     private:
