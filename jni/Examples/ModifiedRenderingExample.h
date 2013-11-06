@@ -19,6 +19,7 @@
 #include "NewGlobeCamera.h"
 #include "ShaderCompiler.h"
 #include "GlobalLighting.h"
+#include "Logger.h"
 
 namespace Examples
 {
@@ -71,7 +72,7 @@ namespace Examples
             {
                 GLchar messages[256];
                 glGetProgramInfoLog(ProgramHandle, sizeof(messages), 0, &messages[0]);
-                Eegeo_TTY("ERROR COMPILING SHADER :: %s", &messages[0]);
+                EXAMPLE_LOG("ERROR COMPILING SHADER :: %s", &messages[0]);
             }
 
             Eegeo_GL(glUseProgram(ProgramHandle));

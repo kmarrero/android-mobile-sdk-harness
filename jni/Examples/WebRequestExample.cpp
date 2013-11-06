@@ -9,6 +9,7 @@
 #include "WebRequestExample.h"
 #include <map>
 #include <string>
+#include "Logger.h"
 
 using namespace Eegeo::Web;
 
@@ -21,7 +22,7 @@ namespace {
             const std::string& url = webLoadRequest.GetUrl();
             size_t responseBodySize = webLoadRequest.GetResourceData().size();
             
-            Eegeo_TTY("Finished Https POST of %s in a non member function of calling type, with user data %d - resource size of %ld\n",
+            EXAMPLE_LOG("Finished Https POST of %s in a non member function of calling type, with user data %d - resource size of %ld\n",
                       url.c_str(), *userData, responseBodySize);
             
             delete userData;
@@ -29,7 +30,7 @@ namespace {
             char* string = new char[responseBodySize+1];
             string[responseBodySize]=0;
             memcpy(string, &webLoadRequest.GetResourceData()[0], responseBodySize);
-            Eegeo_TTY("\nIs our fake token a valid key? Response was: %s\n", string);
+            EXAMPLE_LOG("\nIs our fake token a valid key? Response was: %s\n", string);
             delete[] string;
         }
     };
@@ -46,7 +47,7 @@ namespace Examples
     
     void WebRequestExample::Start()
     {
-        Eegeo_TTY("Making 3 Http GETs with integer labels as user data using a member as the handler...\n");
+    	EXAMPLE_LOG("Making 3 Http GETs with integer labels as user data using a member as the handler...\n");
         webRequestFactory.CreateGet("http://appstore.eegeo.com", *this, new int(1))->Load();
         webRequestFactory.CreateGet("http://non-existent-example-host-1234.com", *this, new int(2))->Load();
         webRequestFactory.CreateGet("http://wikipedia.org", *this, new int(3))->Load();
@@ -54,7 +55,7 @@ namespace Examples
         
         std::map<std::string, std::string> postData;
         postData["token"] = "123456789";
-        Eegeo_TTY("Making Https POST to Eegeo appstore with invalid key (123456789), with integer labels as user data using a non-member as the handler...\n");
+        EXAMPLE_LOG("Making Https POST to Eegeo appstore with invalid key (123456789), with integer labels as user data using a non-member as the handler...\n");
         webRequestFactory.CreatePost("https://appstore.eegeo.com/validate", externalHandler, new int(5678), postData)->Load();
 
         std::map<std::string, std::string> httpHeaders;
@@ -69,7 +70,7 @@ namespace Examples
         size_t responseBodySize = webLoadRequest.GetResourceData().size();
         int result = webLoadRequest.HttpStatusCode();
         
-        Eegeo_TTY("\nFinished Http GET of %s in a member function of calling type, result was %d, with user data %d - resource size of %ld\n",
+        EXAMPLE_LOG("\nFinished Http GET of %s in a member function of calling type, result was %d, with user data %d - resource size of %ld\n",
                   url.c_str(), result, *userData, responseBodySize);
         
         delete userData;
