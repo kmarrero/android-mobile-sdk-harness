@@ -12,7 +12,7 @@
 #include "IExample.h"
 #include "AndroidNativeState.h"
 #include "RenderContext.h"
-#include "CameraModel.h"
+
 
 namespace Examples
 {
@@ -20,7 +20,6 @@ namespace Examples
     {
     	AndroidNativeState& m_nativeState;
     	Eegeo::Rendering::RenderContext& m_renderContext;
-		Eegeo::Camera::CameraModel& m_cameraModel;
 
     	int m_buttonID;
     	jmethodID m_updateLocationMethodId;
@@ -28,8 +27,7 @@ namespace Examples
     public:
     	PositionJavaPinButtonExample(
     			AndroidNativeState& pNativeState,
-    			Eegeo::Rendering::RenderContext& renderContext,
-    			Eegeo::Camera::CameraModel& cameraModel);
+    			Eegeo::Rendering::RenderContext& renderContext);
 
         void Start();
         void Update() {}

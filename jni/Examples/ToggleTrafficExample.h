@@ -1,12 +1,13 @@
-/*
- * ToggleTrafficExample.h
- *
- *  Created on: May 14, 2013
- *      Author: eegeo
- */
+//
+//  ToggleTrafficExample.h
+//  ExampleApp
+//
+//  Created by eeGeo on 14/05/2013.
+//  Copyright (c) 2013 eeGeo. All rights reserved.
+//
 
-#ifndef TOGGLETRAFFICEXAMPLE_H_
-#define TOGGLETRAFFICEXAMPLE_H_
+#ifndef __ExampleApp__ToggleTrafficExample__
+#define __ExampleApp__ToggleTrafficExample__
 
 #include "IExample.h"
 #include "TrafficSimulation.h"
@@ -18,10 +19,10 @@ namespace Examples
     private:
         long long lastToggle;
         Eegeo::Traffic::TrafficSimulation& trafficSimulation;
-
+        
     public:
         ToggleTrafficExample(Eegeo::Traffic::TrafficSimulation& trafficSimulation);
-
+        
         void Start() {}
         void Update();
         void Draw() {}
@@ -29,4 +30,4 @@ namespace Examples
     };
 }
 
-#endif /* TOGGLETRAFFICEXAMPLE_H_ */
+#endif /* defined(__ExampleApp__ToggleTrafficExample__) */

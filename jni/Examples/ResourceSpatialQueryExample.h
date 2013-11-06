@@ -1,16 +1,17 @@
-/*
- * ResourceSpatialQueryExample.h
- *
- *  Created on: May 15, 2013
- *      Author: eegeo
- */
+//
+//  SpatialResourceQueryExample.h
+//  ExampleApp
+//
+//  Created by eeGeo on 14/05/2013.
+//  Copyright (c) 2013 eeGeo. All rights reserved.
+//
 
-#ifndef RESOURCESPATIALQUERYEXAMPLE_H_
-#define RESOURCESPATIALQUERYEXAMPLE_H_
+#ifndef __ExampleApp__SpatialResourceQueryExample__
+#define __ExampleApp__SpatialResourceQueryExample__
 
 #include "IExample.h"
 #include "ResourceSpatialQueryService.h"
-#include "NewGlobeCamera.h"
+#include "Location.h"
 
 namespace Examples
 {
@@ -18,15 +19,15 @@ namespace Examples
     {
     private:
         Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService;
-        Eegeo::Camera::NewGlobeCamera& globeCamera;
-
+        Eegeo::Location::IInterestPointProvider& interestPointProvider;
+        
         Eegeo::Streaming::MortonKeyLong key;
         int numBuildings;
-
+        
     public:
         ResourceSpatialQueryExample(Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
-                                    Eegeo::Camera::NewGlobeCamera& globeCamera);
-
+                                    Eegeo::Location::IInterestPointProvider& interestPointProvider);
+        
         void Start() {}
         void Update();
         void Draw() {}
@@ -34,4 +35,4 @@ namespace Examples
     };
 }
 
-#endif /* RESOURCESPATIALQUERYEXAMPLE_H_ */
+#endif /* defined(__ExampleApp__SpatialResourceQueryExample__) */

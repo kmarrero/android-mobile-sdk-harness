@@ -1,9 +1,10 @@
-/*
- * ToggleTrafficExample.cpp
- *
- *  Created on: May 14, 2013
- *      Author: eegeo
- */
+//
+//  ToggleTrafficExample.cpp
+//  ExampleApp
+//
+//  Created by eeGeo on 14/05/2013.
+//  Copyright (c) 2013 eeGeo. All rights reserved.
+//
 
 #include "ToggleTrafficExample.h"
 #include "TimeHelpers.h"
@@ -23,13 +24,12 @@ ToggleTrafficExample::ToggleTrafficExample(Eegeo::Traffic::TrafficSimulation& tr
 void ToggleTrafficExample::Update()
 {
     long long ms = MillisecondsSinceEpoch();
-
+    
     if(ms - lastToggle > TRAFFIC_ENABLED_SWITCH_DELAY_MILLISECONDS)
     {
         lastToggle = ms;
-
+        
         Eegeo_TTY("Toggling Traffic - Setting enabled = %s\n", trafficSimulation.Enabled() ? "false!" : "true!");
         trafficSimulation.SetEnabled(!trafficSimulation.Enabled());
     }
 }
-

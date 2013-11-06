@@ -2,36 +2,23 @@
 #define __ExampleApp__AppOnMap__
 
 #include "IAppOnMap.h"
-#include "EegeoWorld.h"
-#include "RenderContext.h"
-#include "NewGlobeCamera.h"
-#include "AndroidInputHandler.h"
-#include "TerrainHeightProvider.h"
-#include "NavigationGraphRepository.h"
-#include "IStreamingVolume.h"
-#include "GlobalLighting.h"
-#include "WeatherController.h"
-#include "NativeUIFactories.h"
+#include "IExample.h"
+#include "Rendering.h"
+#include "Space.h"
+#include "Terrain.h"
+#include "Roads.h"
+#include "Navigation.h"
+#include "Streaming.h"
+#include "Traffic.h"
+#include "Lighting.h"
+#include "Helpers.h"
+#include "Web.h"
+#include "Location.h"
 #include "AndroidInputHandler.h"
 #include "AndroidNativeState.h"
+#include "GlobeCamera.h"
 
-#include "DebugSphereExample.h"
-#include "ScreenUnprojectExample.h"
-#include "LoadModelExample.h"
-#include "EnvironmentNotifierExample.h"
-#include "FileIOExample.h"
-#include "WebRequestExample.h"
-#include "NavigationGraphExample.h"
-#include "ModifiedRenderingExample.h"
-#include "ToggleTrafficExample.h"
-#include "ResourceSpatialQueryExample.h"
-#include "EnvironmentFlatteningExample.h"
-#include "SearchExample.h"
-#include "KeyboardInputExample.h"
-#include "PODAnimationExample.h"
-#include "Pick3DObjectExample.h"
-#include "ShowJavaPlaceJumpUIExample.h"
-#include "PositionJavaPinButtonExample.h"
+
 
 namespace ExampleTypes
 {
@@ -39,6 +26,7 @@ namespace ExampleTypes
 	{
 		DebugSphere=0,
 		ScreenUnproject,
+		ScreenPick,
 		TerrainHeightQuery,
 		LoadModel,
 		EnvironmentNotifier,
@@ -58,106 +46,63 @@ namespace ExampleTypes
 	};
 }
 
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pick3DObject;
+
+namespace Eegeo
+{
+    class ITouchController;
+    class Blitter;
+
+    namespace Search
+    {
+        namespace Service
+        {
+            class SearchService;
+        }
+    }
+
+    namespace UI
+    {
+        class NativeUIFactories;
+    }
+}
+
 class MyApp : public Eegeo::IAppOnMap, public Eegeo::Android::Input::IAndroidInputHandler
 {
 private:
 	Examples::IExample *pExample;
-	Eegeo::Camera::NewGlobeCamera* globeCamera;
 	Eegeo::Android::Input::AndroidInputHandler& pInputHandler;
 	AndroidNativeState& m_nativeState;
+    ExampleTypes::Examples m_selectedExampleType;
+    Eegeo::Camera::GlobeCamera::GlobeCameraController* m_globeCameraController;
+    Eegeo::Camera::GlobeCamera::GlobeCameraTouchController* m_cameraTouchController;
+    Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider& m_globeCameraInterestPointProvider;
 
 public:
-	MyApp(Eegeo::Android::Input::AndroidInputHandler* inputHandler, AndroidNativeState& nativeState)
-	: pInputHandler(*inputHandler)
-	, m_nativeState(nativeState)
-	{
-		pInputHandler.AddDelegateInputHandler(this);
-	}
+	MyApp(
+			Eegeo::Android::Input::AndroidInputHandler* inputHandler,
+			AndroidNativeState& nativeState,
+			Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider& globeCameraInterestPointProvider,
+			ExampleTypes::Examples selectedExample = g_defaultSelectedExample);
 
-	~MyApp()
-	{
-		pInputHandler.RemoveDelegateInputHandler(this);
-		pExample->Suspend();
-		delete pExample;
-	}
+	virtual ~MyApp();
 
-	void OnStart ()
-	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::PositionJavaPinButton;
+    void OnStart ();
 
-		float interestPointLatitudeDegrees = 37.7858f;
-		float interestPointLongitudeDegrees = -122.401f;
-		float interestPointAltitudeMeters = 2.7;
+    void Update (float dt);
 
-		Eegeo::Space::LatLongAltitude location = Eegeo::Space::LatLongAltitude(interestPointLatitudeDegrees,
-				interestPointLongitudeDegrees,
-				interestPointAltitudeMeters,
-				Eegeo::Space::LatLongUnits::Degrees);
+    void Draw (float dt);
 
-		World().GetCameraModel().SetWorldPosition(location.ToECEF());
-		World().GetWeatherController().SetWeather(Eegeo::Weather::Sunny, 1.0f);
+    void JumpTo(double latitudeDegrees, double longitudeDegrees, double altitudeMetres, double headingDegrees, double distanceToInterestMetres);
 
-		float cameraControllerOrientationDegrees = 0.0f;
-		float cameraControllerDistanceFromInterestPointMeters = 1781.0f;
-
-		globeCamera = &((Eegeo::Camera::NewGlobeCamera&)World().GetCameraController());
-
-		globeCamera->SetInterestHeadingDistance(location,
-				cameraControllerOrientationDegrees,
-				cameraControllerDistanceFromInterestPointMeters);
-
-
-		Eegeo::Search::Service::SearchService* searchService = NULL;
-		if (World().IsSearchServiceAvailable())
-		{
-		    searchService = &World().GetSearchService();
-		}
-        pExample = CreateExample(selectedExample,
-                                 World().GetRenderContext(),
-                                 location,
-                                 World().GetCameraModel(),
-                                 *globeCamera,
-                                 *globeCamera->GetCamera(),
-                                 World().GetTerrainHeightProvider(),
-                                 World().GetTextureLoader(),
-                                 World().GetFileIO(),
-                                 World().GetTerrainStreaming(),
-                                 World().GetWebRequestFactory(),
-                                 World().GetNavigationGraphRepository(),
-                                 World().GetBuildingMeshPool(),
-                                 World().GetShadowMeshPool(),
-                                 World().GetStreamingVolume(),
-                                 World().GetGlobalLighting(),
-                                 World().GetGlobalFogging(),
-                                 World().GetTrafficSimulation(),
-                                 World().GetResourceSpatialQueryService(),
-                                 World().GetEnvironmentFlatteningService(),
-                                 searchService,
-                                 World().GetNativeUIFactories());
-
-		pExample->Start();
-	}
-
-	void Update (float dt)
-	{
-		World().Update(dt);
-		pExample->Update();
-	}
-
-	void Draw (float dt)
-	{
-		Eegeo::Rendering::GLState& glState = World().GetRenderContext().GetGLState();
-		glState.ClearColor(0.8f, 0.8f, 0.8f, 1.f);
-		World().Draw(dt);
-		pExample->Draw();
-	}
+    Eegeo::Camera::GlobeCamera::GlobeCameraController& GetCameraController() { return *m_globeCameraController; }
 
     Examples::IExample* CreateExample(ExampleTypes::Examples example,
                                       Eegeo::Rendering::RenderContext& renderContext,
                                       Eegeo::Space::LatLongAltitude interestLocation,
-                                      Eegeo::Camera::CameraModel& cameraModel,
-                                      Eegeo::Camera::NewGlobeCamera& globeCamera,
-                                      Eegeo::RenderCamera& renderCamera,
+                                      Eegeo::Camera::ICameraProvider& cameraProvider,
+                                      Eegeo::Camera::GlobeCamera::GlobeCameraController& globeCameraController,
+                                      Eegeo::ITouchController& cameraTouchController,
                                       Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
                                       Eegeo::Helpers::ITextureFileLoader& textureLoader,
                                       Eegeo::Helpers::IFileIO& fileIO,
@@ -173,118 +118,28 @@ public:
                                       Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
                                       Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
                                       Eegeo::Search::Service::SearchService* searchService,
-                                      Eegeo::UI::NativeUIFactories& nativeInputFactories)
-	{
-		switch(example)
-		{
+                                      Eegeo::UI::NativeUIFactories& nativeInputFactories,
+                                      Eegeo::Location::IInterestPointProvider& interestPointProvider);
 
-		case ExampleTypes::LoadModel:
-			return new Examples::LoadModelExample(renderContext,
-					interestLocation,
-					cameraModel,
-					renderCamera,
-					fileIO,
-					textureLoader,
-					fogging);
 
-		case ExampleTypes::ScreenUnproject:
-		case ExampleTypes::TerrainHeightQuery:
-			return new Examples::ScreenUnprojectExample(renderContext,
-					cameraModel,
-					renderCamera,
-					terrainHeightProvider);
+    void Event_TouchRotate 			(const AppInterface::RotateData& data);
+    void Event_TouchRotate_Start	(const AppInterface::RotateData& data);
+    void Event_TouchRotate_End 		(const AppInterface::RotateData& data);
 
-		case ExampleTypes::DebugSphere:
-			return new Examples::DebugSphereExample(renderContext,
-					interestLocation,
-					cameraModel,
-					renderCamera);
+    void Event_TouchPinch 			(const AppInterface::PinchData& data);
+    void Event_TouchPinch_Start 	(const AppInterface::PinchData& data);
+    void Event_TouchPinch_End 		(const AppInterface::PinchData& data);
 
-		case ExampleTypes::EnvironmentNotifier:
-			return new Examples::EnvironmentNotifierExample(renderContext,
-					cameraModel,
-					renderCamera,
-					terrainStreaming);
+    void Event_TouchPan				(const AppInterface::PanData& data);
+    void Event_TouchPan_Start		(const AppInterface::PanData& data);
+    void Event_TouchPan_End 		(const AppInterface::PanData& data);
 
-		case ExampleTypes::FileIO:
-			return new Examples::FileIOExample(fileIO);
+    void Event_TouchTap 			(const AppInterface::TapData& data);
+    void Event_TouchDoubleTap		(const AppInterface::TapData& data);
 
-		case ExampleTypes::WebRequest:
-			return new Examples::WebRequestExample(webRequestFactory);
-
-		case ExampleTypes::NavigationGraph:
-			return new Examples::NavigationGraphExample(renderContext,
-					renderCamera,
-					cameraModel,
-					navigationGraphs);
-
-        case ExampleTypes::ModifiedRendering:
-            return new Examples::ModifiedRenderingExample(renderContext,
-                                                          renderCamera,
-                                                          cameraModel,
-                                                          globeCamera,
-                                                          visibleVolume,
-                                                          lighting,
-                                                          buildingPool,
-                                                          shadowPool);
-
-        case ExampleTypes::ToggleTraffic:
-            return new Examples::ToggleTrafficExample(trafficSimulation);
-
-        case ExampleTypes::ResourceSpatialQuery:
-            return new Examples::ResourceSpatialQueryExample(resourceSpatialQueryService,
-                                                             globeCamera);
-
-        case ExampleTypes::EnvironmentFlattening:
-            return new Examples::EnvironmentFlatteningExample(environmentFlatteningService);
-
-        case ExampleTypes::Search:
-        	Eegeo_ASSERT(searchService != NULL, "Cannot run Search example, you must set up here.com Credentials in ViewController.mm");
-        	return new Examples::SearchExample(*searchService, globeCamera);
-
-        case ExampleTypes::KeyboardInput:
-            return new Examples::KeyboardInputExample(nativeInputFactories.IKeyboardInputFactory());
-
-		case ExampleTypes::PODAnimation:
-			return new Examples::PODAnimationExample(renderContext,
-					cameraModel,
-					fileIO,
-					textureLoader,
-					fogging);
-
-		case ExampleTypes::Pick3DObject:
-			return new Examples::Pick3DObjectExample(
-					renderContext,
-					interestLocation,
-					cameraModel,
-					renderCamera);
-
-		case ExampleTypes::ShowJavaPlaceJumpUI:
-			return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState);
-
-		case ExampleTypes::PositionJavaPinButton:
-			return new Examples::PositionJavaPinButtonExample(m_nativeState, renderContext, cameraModel);
-		}
-	}
-
-    void Event_TouchRotate 			(const AppInterface::RotateData& data) { if(!pExample->Event_TouchRotate(data)) globeCamera->Event_TouchRotate(data); }
-    void Event_TouchRotate_Start	(const AppInterface::RotateData& data) { if(!pExample->Event_TouchRotate_Start(data)) globeCamera->Event_TouchRotate_Start(data); }
-    void Event_TouchRotate_End 		(const AppInterface::RotateData& data) { if(!pExample->Event_TouchRotate_End(data)) globeCamera->Event_TouchRotate_End(data); }
-
-    void Event_TouchPinch 			(const AppInterface::PinchData& data) { if(!pExample->Event_TouchPinch(data)) globeCamera->Event_TouchPinch(data); }
-    void Event_TouchPinch_Start 	(const AppInterface::PinchData& data) { if(!pExample->Event_TouchPinch_Start(data)) globeCamera->Event_TouchPinch_Start(data); }
-    void Event_TouchPinch_End 		(const AppInterface::PinchData& data) { if(!pExample->Event_TouchPinch_End(data)) globeCamera->Event_TouchPinch_End(data); }
-
-    void Event_TouchPan				(const AppInterface::PanData& data) { if(!pExample->Event_TouchPan(data)) globeCamera->Event_TouchPan(data); }
-    void Event_TouchPan_Start		(const AppInterface::PanData& data) { if(!pExample->Event_TouchPan_Start(data)) globeCamera->Event_TouchPan_Start(data); }
-    void Event_TouchPan_End 		(const AppInterface::PanData& data) { if(!pExample->Event_TouchPan_End(data)) globeCamera->Event_TouchPan_End(data); }
-
-    void Event_TouchTap 			(const AppInterface::TapData& data) { if(!pExample->Event_TouchTap(data)) globeCamera->Event_TouchTap(data); }
-    void Event_TouchDoubleTap		(const AppInterface::TapData& data) { if(!pExample->Event_TouchDoubleTap(data)) globeCamera->Event_TouchDoubleTap(data); }
-
-    void Event_TouchDown 			(const AppInterface::TouchData& data) { if(!pExample->Event_TouchDown(data)) globeCamera->Event_TouchDown(data); }
-    void Event_TouchMove 			(const AppInterface::TouchData& data) { if(!pExample->Event_TouchMove(data)) globeCamera->Event_TouchMove(data); }
-    void Event_TouchUp 				(const AppInterface::TouchData& data) { if(!pExample->Event_TouchUp(data)) globeCamera->Event_TouchUp(data); }
+    void Event_TouchDown 			(const AppInterface::TouchData& data);
+    void Event_TouchMove 			(const AppInterface::TouchData& data);
+    void Event_TouchUp 				(const AppInterface::TouchData& data);
 
 	bool Event_KeyPress(const AppInterface::KeyboardData& data) { return false; }
 	void AddKeyPressListener(Eegeo::UI::NativeInput::IKeyboardInputKeyPressedHandler* handler) { }

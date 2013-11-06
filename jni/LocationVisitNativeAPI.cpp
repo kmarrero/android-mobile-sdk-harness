@@ -7,7 +7,7 @@
 
 #include "LocationVisitNativeAPI.h"
 #include "AppWindow.hpp"
-#include "NewGlobeCamera.h"
+#include "AppOnMap.h"
 #include "LatLongAltitude.h"
 #include <map>
 #include <string>
@@ -44,7 +44,7 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_visitLocation(JNIEnv* jenv, j
 	}
 
 	AppWindow* appWindow = (AppWindow*)nativeAppWindowPtr;
-	Eegeo::Camera::NewGlobeCamera& cam = ((Eegeo::Camera::NewGlobeCamera&)appWindow->GetWorld().GetCameraController());
+	MyApp& myApp = appWindow->GetAppOnMap();
 
 	//just assume the string from the Java is correct... in reality would have error handling etc
 	const char* chars = jenv->GetStringUTFChars(location, 0);
@@ -52,5 +52,10 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_visitLocation(JNIEnv* jenv, j
 	jenv->ReleaseStringUTFChars(location, chars);
 
 	//go to the location
-	cam.SetInterestHeadingDistance(result.location, result.heading, result.distance);
+	myApp.JumpTo(
+			result.location.GetLatitudeInDegrees(),
+			result.location.GetLongitudeInDegrees(),
+			result.location.GetAltitude(),
+			result.heading,
+			result.distance);
 }

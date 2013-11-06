@@ -14,11 +14,9 @@ namespace Examples
 {
 	PositionJavaPinButtonExample::PositionJavaPinButtonExample(
 			AndroidNativeState& nativeState,
-			Eegeo::Rendering::RenderContext& renderContext,
-			Eegeo::Camera::CameraModel& cameraModel)
+			Eegeo::Rendering::RenderContext& renderContext)
 	:m_nativeState(nativeState)
 	,m_renderContext(renderContext)
-	,m_cameraModel(cameraModel)
     {
     }
 
@@ -67,7 +65,7 @@ namespace Examples
 				m_renderContext.GetProjectionMatrix(),
 				m_renderContext.GetViewMatrix());
 
-		Eegeo::v3 local = (location.ToECEF() - m_cameraModel.GetWorldPosition()).ToSingle();
+		Eegeo::v3 local = (location.ToECEF() - m_renderContext.GetCameraOriginEcef()).ToSingle();
 		Eegeo::v4 inVector(local, 1.0f);
 
 		Eegeo::v4 outVector = Eegeo::v4::Mul(inVector, finalMatrix);

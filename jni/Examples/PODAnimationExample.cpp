@@ -7,16 +7,16 @@
 //
 
 #include "PODAnimationExample.h"
+#include "ShaderCompiler.h"
+#include <sys/time.h>
 
 namespace Examples
 {
     PODAnimationExample::PODAnimationExample(Eegeo::Rendering::RenderContext& renderContext,
-                                       Eegeo::Camera::CameraModel& cameraModel,
                                              Eegeo::Helpers::IFileIO& fileIO,
-                                       Eegeo::Helpers::ITextureFileLoader& textureLoader,
-                                       Eegeo::Lighting::GlobalFogging& fogging)
+                                             Eegeo::Helpers::ITextureFileLoader& textureLoader,
+                                             Eegeo::Lighting::GlobalFogging& fogging)
     :renderContext(renderContext)
-    ,cameraModel(cameraModel)
     ,fileIO(fileIO)
     ,textureLoader(textureLoader)
     ,pModel(NULL)
@@ -30,6 +30,7 @@ namespace Examples
         pModel = new Eegeo::Model(renderContext.GetGLState(), textureLoader, fileIO);
         pModel->Load("Test_ROBOT_ARM.pod");
         Eegeo_ASSERT(pModel->GetRootNode());
+
     }
     
     void PODAnimationExample::Suspend()
@@ -52,7 +53,7 @@ namespace Examples
         Eegeo::v3 forward = (location  - Eegeo::v3(0.f, 1.f, 0.f)).Norm().ToSingle();
         Eegeo::v3 right(Eegeo::v3::Cross(up, forward).Norm());
         forward = Eegeo::v3::Cross(up, right);
-        Eegeo::v3 cameraRelativePos = (location - cameraModel.GetWorldPosition()).ToSingle();
+        Eegeo::v3 cameraRelativePos = (location - renderContext.GetCameraOriginEcef()).ToSingle();
         Eegeo::m44 scaleMatrix;
         scaleMatrix.Scale(1.f);
         Eegeo::m44 cameraRelativeTransform;
@@ -60,12 +61,12 @@ namespace Examples
         Eegeo::m44::Mul(transform, cameraRelativeTransform, scaleMatrix);
         transform.SetRow(3, Eegeo::v4(cameraRelativePos, 1.f));
         
+        renderContext.GetGLState().DepthTest.Enable();
+        renderContext.GetGLState().DepthFunc(GL_LEQUAL);
+        
         //loaded model faces are ccw
         renderContext.GetGLState().FrontFace(GL_CCW);
         
-        renderContext.GetGLState().DepthTest.Enable();
-        renderContext.GetGLState().DepthFunc(GL_LEQUAL);
-
         pModel->GetRootNode()->SetVisible(true);
         pModel->GetRootNode()->SetLocalMatrix(transform);
         pModel->GetRootNode()->UpdateRecursive();

@@ -13,7 +13,6 @@
 
 #include "IExample.h"
 #include "RenderContext.h"
-#include "NewGlobeCamera.h"
 #include "SphereMesh.h"
 #include "LatLongAltitude.h"
 #include "VectorMath.h"
@@ -28,31 +27,29 @@ namespace Examples
             Eegeo::dv3 origin;
             Eegeo::v3 direction;
         };
-
+        
         bool m_movingObject;
         Eegeo::DebugRendering::SphereMesh* m_object;
         Eegeo::dv3 m_objectLocationEcef;
-
+        
         Eegeo::Rendering::RenderContext& m_renderContext;
         Eegeo::Space::LatLongAltitude m_interestLocation;
-        Eegeo::Camera::CameraModel& m_cameraModel;
-        Eegeo::RenderCamera& m_renderCamera;
-
+        Eegeo::Camera::ICameraProvider& m_cameraProvider;
+        
     public:
         Pick3DObjectExample(Eegeo::Rendering::RenderContext& renderContext,
                             Eegeo::Space::LatLongAltitude interestLocation,
-                            Eegeo::Camera::CameraModel& cameraModel,
-                            Eegeo::RenderCamera& renderCamera);
-
+                            Eegeo::Camera::ICameraProvider& cameraProvider);
+        
         void Start();
         void Update();
         void Draw();
         void Suspend();
-
+        
         bool Event_TouchPan				(const AppInterface::PanData& data);
         bool Event_TouchDown            (const AppInterface::TouchData& data);
         bool Event_TouchUp              (const AppInterface::TouchData& data);
-
+        
     private:
         void CreateSphereAtLocation(const Eegeo::dv3& location, const Eegeo::v3& colour);
         bool IsScreenPointInsideModel(const Eegeo::v2& screenPoint);

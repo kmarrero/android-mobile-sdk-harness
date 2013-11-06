@@ -6,9 +6,6 @@
 #include "LatLongAltitude.h"
 #include "EegeoWorld.h"
 #include "RenderContext.h"
-#include "Camera.h"
-#include "CameraModel.h"
-#include "NewGlobeCamera.h"
 #include "GlobalLighting.h"
 #include "GlobalFogging.h"
 #include "DefaultMaterialFactory.h"
@@ -19,6 +16,9 @@
 #include "VehicleModelRepository.h"
 #include "SearchServiceCredentials.h"
 #include "AndroidThreadHelper.h"
+#include "GlobeCameraController.h"
+#include "RenderCamera.h"
+#include "CameraHelpers.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
@@ -82,10 +82,15 @@ void AppWindow::Pause(PersistentAppState* pPersistentState)
 
 	if(pPersistentState != NULL)
 	{
-		pPersistentState->lastGlobeCameraDistanceToInterest = pGlobeCamera->GetDistanceToInterest();
-		pPersistentState->lastGlobeCameraHeading = pGlobeCamera->GetHeading();
-		pPersistentState->lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(pGlobeCamera->GetInterestPointECEF());
-		pPersistentState->gpsActive = false;
+		Eegeo::Camera::GlobeCamera::GlobeCameraController& cameraController = GetAppOnMap().GetCameraController();
+	    const Eegeo::Space::EcefTangentBasis& cameraInterest = cameraController.GetInterestBasis();
+
+	    pPersistentState->lastGlobeCameraDistanceToInterest = cameraController.GetDistanceToInterest();
+		float cameraHeadingRadians = Eegeo::Camera::CameraHelpers::GetAbsoluteBearingRadians(cameraInterest.GetPointEcef(), cameraInterest.GetForward());
+
+		pPersistentState->lastGlobeCameraHeadingDegrees = Eegeo::Math::Rad2Deg(cameraHeadingRadians);
+
+		pPersistentState->lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(cameraInterest.GetPointEcef());
 	}
 
     pthread_join(m_mainNativeThread, 0);
@@ -302,7 +307,7 @@ void AppWindow::TerminateDisplay()
 
     delete pTaskQueue;
 
-    delete m_pGlobeCameraInterestPointProvider;
+    delete m_pInterestPointProvider;
 
     delete pWorld;
     pWorld = NULL;
@@ -310,9 +315,6 @@ void AppWindow::TerminateDisplay()
     delete pAndroidUrlEncoder;
     delete pAndroidLocationService;
     delete pRenderContext;
-    delete pCamera;
-    delete pCameraModel ;
-	delete pGlobeCamera;
     delete pLighting;
     delete pFileIO;
     delete pHttpCache;
@@ -369,15 +371,7 @@ void AppWindow::InitWorld()
 	pRenderContext = new Eegeo::Rendering::RenderContext();
 	pRenderContext->SetScreenDimensions(width, height, 1.0f);
 
-    pCamera = new Eegeo::RenderCamera;
-    pCamera->SetViewport(0.f, 0.f, width, height);
-
-    pCameraModel = new Eegeo::Camera::CameraModel(pCamera);
-    pGlobeCamera = new Eegeo::Camera::NewGlobeCamera(pCameraModel, pCamera, m_terrainHeightProvider);
-
-    m_pGlobeCameraInterestPointProvider = new Eegeo::Location::GlobeCameraInterestPointProvider(*pGlobeCamera);
-
-    pLighting = new Eegeo::Lighting::GlobalLighting();
+	pLighting = new Eegeo::Lighting::GlobalLighting();
 	pFogging = new Eegeo::Lighting::GlobalFogging();
 
 	pFileIO = new AndroidFileIO(pState);
@@ -406,6 +400,8 @@ void AppWindow::InitWorld()
 																									 *pFileIO);
 	Eegeo::Traffic::VehicleModelLoaderHelper::LoadAllVehicleResourcesIntoRepository(*pVehicleModelLoader, *pVehicleModelRepository);
 
+	m_pInterestPointProvider = new Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider();
+
 	pWorld = new Eegeo::EegeoWorld(
 		API_KEY,
 		pHttpCache,
@@ -415,37 +411,33 @@ void AppWindow::InitWorld()
 		pTaskQueue,
 		pVehicleModelRepository,
 		*pRenderContext,
-		pCameraModel,
-		pGlobeCamera,
 		pLighting,
 		pFogging,
 		pMaterialFactory,
 		pAndroidLocationService,
 		pBlitter,
 		pAndroidUrlEncoder,
-		*m_pGlobeCameraInterestPointProvider,
+		*m_pInterestPointProvider,
 		m_androidNativeUIFactories,
 		&m_terrainHeightRepository,
 		&m_terrainHeightProvider,
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
 
-	pAppOnMap = new MyApp(&pInputHandler, *pState);
+	pAppOnMap = new MyApp(&pInputHandler, *pState, *m_pInterestPointProvider);
 	pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(&pInputHandler, pRenderContext->GetScreenWidth(), pRenderContext->GetScreenHeight());
 
-	pGlobeCamera->SetInterestHeadingDistance(Eegeo::Space::LatLongAltitude(51.506172,-0.118915, 0, Eegeo::Space::LatLongUnits::Degrees),
-													351.0f,
-												   2731.0f);
-
-	if(pPersistentState != NULL)
-	{
-		pGlobeCamera->SetInterestHeadingDistance(
-				pPersistentState->lastGlobeCameraLatLong,
-				pPersistentState->lastGlobeCameraHeading,
-				pPersistentState->lastGlobeCameraDistanceToInterest);
-	}
-
 	pAppOnMap->Start(pWorld);
+
+	if (pPersistentState != NULL)
+    {
+		pAppOnMap->JumpTo(
+    			pPersistentState->lastGlobeCameraLatLong.GetLatitudeInDegrees(),
+    			pPersistentState->lastGlobeCameraLatLong.GetLongitudeInDegrees(),
+    			pPersistentState->lastGlobeCameraLatLong.GetAltitude(),
+    			pPersistentState->lastGlobeCameraHeadingDegrees,
+    			pPersistentState->lastGlobeCameraDistanceToInterest);
+    }
 
     pthread_mutex_lock(&m_mutex);
     worldInitialised = true;

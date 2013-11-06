@@ -56,7 +56,7 @@ namespace Examples
         }
         
         stream.close();
-
+    
         Eegeo_TTY("Trying to delete %s...\n", filename.c_str());
         bool deleted = fileIO.DeleteFile(filename);
         Eegeo_TTY("Deleting %s %s!\n", filename.c_str(), deleted ? "succeeded" : "failed");

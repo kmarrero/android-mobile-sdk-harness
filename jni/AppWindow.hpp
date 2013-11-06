@@ -3,7 +3,6 @@
 #include "AndroidHttpCache.h"
 #include "AndroidTextureFileLoader.h"
 #include "AndroidWebRequestService.hpp"
-#include "NewGlobeCamera.h"
 #include "AppOnMap.h"
 #include "AndroidTaskQueue.h"
 #include "DefaultMaterialFactory.h"
@@ -19,8 +18,6 @@
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
 #include "WeatherUpdateModel.h"
-#include "AndroidNativeState.h"
-#include "TouchEventWrapper.h"
 
 namespace Eegeo
 {
@@ -32,9 +29,8 @@ struct PersistentAppState
 	PersistentAppState():lastGlobeCameraLatLong(0,0,0){}
 
 	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
-	Eegeo::v3 lastGlobeCameraHeading;
+	float lastGlobeCameraHeadingDegrees;
 	float lastGlobeCameraDistanceToInterest;
-	bool gpsActive;
 };
 
 class AppWindow 
@@ -57,8 +53,7 @@ private:
     Eegeo::Android::AndroidFileIO* pFileIO;
     Eegeo::Android::AndroidHttpCache* pHttpCache;
     Eegeo::Android::AndroidTextureFileLoader* pTextureLoader;
-	Eegeo::Camera::CameraModel* pCameraModel;
-	Eegeo::Camera::NewGlobeCamera* pGlobeCamera;
+    Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider* m_pInterestPointProvider;
 	Eegeo::Android::AndroidTaskQueue* pTaskQueue;
 	Eegeo::Rendering::RenderContext* pRenderContext;
 	Eegeo::Lighting::GlobalLighting *pLighting;
@@ -68,10 +63,8 @@ private:
 	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
 	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
 	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
-	Eegeo::RenderCamera* pCamera;
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
-	Eegeo::Location::GlobeCameraInterestPointProvider* m_pGlobeCameraInterestPointProvider;
 	Eegeo::Weather::CurrentWeatherModel currentWeatherModel;
     Eegeo::Resources::Terrain::Heights::TerrainHeightRepository m_terrainHeightRepository;
     Eegeo::Resources::Terrain::Heights::TerrainHeightProvider m_terrainHeightProvider;
@@ -119,4 +112,5 @@ public:
 	void EnqueuePointerMove(Eegeo::Android::Input::TouchInputEvent& e);
 
 	Eegeo::EegeoWorld& GetWorld() { return *pWorld; }
+	MyApp& GetAppOnMap() { return *pAppOnMap; }
 };
