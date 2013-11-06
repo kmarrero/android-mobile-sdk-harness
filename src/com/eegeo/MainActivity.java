@@ -24,9 +24,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     public static native void resumeNativeCode();
     public static native void setNativeSurface(Surface surface);
     
-    //application
-    public static native void visitLocation(long nativeAppWindowPtr, String location);
-    
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -37,60 +34,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 
         m_surfaceView = (EegeoSurfaceView)findViewById(R.id.surface);
         m_surfaceView.getHolder().addCallback(this);
-    }
-    
-    public void showVisitMenu()
-    {
-    	final MainActivity self = this;
-    	
-    	runOnUiThread(new Runnable()
-	    {
-	        public void run()
-	        {
-	            try
-	            {
-	            	final RelativeLayout uiRoot = (RelativeLayout)findViewById(R.id.ui_container);
-	            	final View view = getLayoutInflater().inflate(R.layout.ui_menu, uiRoot, false);
-	            	
-	            	final Spinner spinner = (Spinner)view.findViewById(R.id.places);
-	            
-	            	String items[] = new String[5];
-	            	items[0] = "NYC";
-	            	items[1] = "London";
-	            	items[2] = "SF";
-	            	items[3] = "Kyoto";
-	            	items[4] = "Melbourne";
-	                ArrayAdapter<String> adapter = new ArrayAdapter<String>(self, android.R.layout.simple_spinner_item, items);
-	            	spinner.setAdapter(adapter);
-	            	
-	            	final Button close = (Button)view.findViewById(R.id.close);
-	            	final Button visit = (Button)view.findViewById(R.id.visit);
-	            	
-	            	close.setOnClickListener(new OnClickListener() {
-	                    @Override
-	                    public void onClick(View v) {
-	                    	close.setOnClickListener(null);
-	                    	visit.setOnClickListener(null);
-	                    	uiRoot.removeView(view);
-	                    }
-	                });
-	            	
-	            	visit.setOnClickListener(new OnClickListener() {
-	                    @Override
-	                    public void onClick(View v) {
-	                    	String selection = (String)spinner.getSelectedItem();
-	                    	visitLocation(m_nativeAppWindowPtr, selection);
-	                    }
-	                });
-	            	
-	            	uiRoot.addView(view);
-	            }
-	            catch (Exception e)
-	            {
-	                //Log.v("InputBox", e.getMessage() == null ? "Error, but no message?!" : e.getMessage());
-	            }                            
-	        }
-	    });
     }
     
     @Override

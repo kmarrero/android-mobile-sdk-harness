@@ -83,7 +83,7 @@ public:
 
 	void OnStart ()
 	{
-		ExampleTypes::Examples selectedExample = ExampleTypes::PositionJavaPinButton;
+		ExampleTypes::Examples selectedExample = ExampleTypes::ShowJavaPlaceJumpUI;
 
 		float interestPointLatitudeDegrees = 37.7858f;
 		float interestPointLongitudeDegrees = -122.401f;
@@ -262,7 +262,7 @@ public:
 					renderCamera);
 
 		case ExampleTypes::ShowJavaPlaceJumpUI:
-			return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState);
+			return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState, globeCamera);
 
 		case ExampleTypes::PositionJavaPinButton:
 			return new Examples::PositionJavaPinButtonExample(world, m_nativeState, renderContext, cameraModel);

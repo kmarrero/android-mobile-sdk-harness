@@ -14,7 +14,7 @@ public class HudPinController
 	private MainActivity m_activity;
     private List<Button> m_buttons = new ArrayList<Button>();
     
-    HudPinController(MainActivity activity)
+    public HudPinController(MainActivity activity)
     {
     	m_activity = activity;
     }
