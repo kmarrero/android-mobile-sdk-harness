@@ -72,10 +72,9 @@ void AppWindow::Pause(PersistentAppState* pPersistentState)
 	    const Eegeo::Space::EcefTangentBasis& cameraInterest = cameraController.GetInterestBasis();
 
 	    pPersistentState->lastGlobeCameraDistanceToInterest = cameraController.GetDistanceToInterest();
-		float cameraHeadingRadians = -Eegeo::Camera::CameraHelpers::GetAbsoluteBearingRadians(cameraInterest.GetPointEcef(), cameraInterest.GetForward());
+		float cameraHeadingRadians = Eegeo::Camera::CameraHelpers::GetAbsoluteBearingRadians(cameraInterest.GetPointEcef(), cameraInterest.GetForward());
 
 		pPersistentState->lastGlobeCameraHeadingDegrees = Eegeo::Math::Rad2Deg(cameraHeadingRadians);
-		__android_log_print(ANDROID_LOG_INFO,"Eegeo", "lastGlobeCameraHeadingDegrees = %f\n", pPersistentState->lastGlobeCameraHeadingDegrees);
 		pPersistentState->lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(cameraInterest.GetPointEcef());
 	}
 
