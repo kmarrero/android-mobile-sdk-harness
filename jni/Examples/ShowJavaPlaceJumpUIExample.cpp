@@ -5,15 +5,14 @@
  *      Author: kimbleoperations
  */
 
-#define ENABLE_TTY
-#include "Types.h"
-
 #include <jni.h>
 #include "ShowJavaPlaceJumpUIExample.h"
 #include "NewGlobeCamera.h"
 
 namespace Examples
 {
+	//this is the native companion type to com.eegeo.examples.PlaceJumpMenu.java
+	//
 	ShowJavaPlaceJumpUIExample::ShowJavaPlaceJumpUIExample(
 			AndroidNativeState& nativeState,
             Eegeo::Camera::NewGlobeCamera& globeCamera)

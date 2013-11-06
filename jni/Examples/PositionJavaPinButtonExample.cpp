@@ -12,6 +12,8 @@
 
 namespace Examples
 {
+	//this is the native companion type to com.eegeo.examples.HudPinController.java
+	//
 	PositionJavaPinButtonExample::PositionJavaPinButtonExample(
 			Eegeo::EegeoWorld& world,
 			AndroidNativeState& nativeState,

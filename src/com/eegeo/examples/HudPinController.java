@@ -9,6 +9,9 @@ import android.widget.RelativeLayout;
 import com.eegeo.MainActivity;
 import com.eegeo.R;
 
+
+//this is the java companion type to native PositionJavaPinButtonExample
+//
 public class HudPinController
 {
 	private MainActivity m_activity;

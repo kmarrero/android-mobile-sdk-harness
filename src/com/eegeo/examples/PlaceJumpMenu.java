@@ -11,6 +11,8 @@ import android.widget.Spinner;
 import com.eegeo.MainActivity;
 import com.eegeo.R;
 
+//this is the java companion type to native ShowJavaPlaceJumpUIExample
+//
 public class PlaceJumpMenu 
 {
 	private MainActivity m_activity;

@@ -3,12 +3,6 @@ package com.eegeo;
 import android.os.Bundle;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.app.Activity;
 import android.content.res.AssetManager;
 
@@ -17,7 +11,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     private EegeoSurfaceView m_surfaceView;
     private long m_nativeAppWindowPtr;
     
-    //lifecycle
     public static native long startNativeCode(MainActivity activity, AssetManager assetManager);
     public static native void stopNativeCode();
     public static native void pauseNativeCode();
