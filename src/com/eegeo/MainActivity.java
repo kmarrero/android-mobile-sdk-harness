@@ -1,10 +1,6 @@
 package com.eegeo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -19,10 +15,7 @@ import android.content.res.AssetManager;
 public class MainActivity extends Activity implements SurfaceHolder.Callback
 {
     private EegeoSurfaceView m_surfaceView;
-    private AssetManager m_assetManager;
-    private MainActivity m_self;
     private long m_nativeAppWindowPtr;
-    private List<Button> m_buttons = new ArrayList<Button>();
     
     //lifecycle
     public static native long startNativeCode(MainActivity activity, AssetManager assetManager);
@@ -30,12 +23,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     public static native void pauseNativeCode();
     public static native void resumeNativeCode();
     public static native void setNativeSurface(Surface surface);
-
-    //touch input
-    public static native void processNativePointerDown(int primaryActionIndex, int primaryActionIdentifier, int pointerCount, float[] x, float y[], int[] pointerIdentity, int[] pointerIndex);
-    public static native void processNativePointerUp(int primaryActionIndex, int primaryActionIdentifier, int pointerCount, float[] x, float y[], int[] pointerIdentity, int[] pointerIndex);
-    public static native void processNativePointerMove(int primaryActionIndex, int primaryActionIdentifier, int pointerCount, float[] x, float y[], int[] pointerIdentity, int[] pointerIndex);
-
+    
     //application
     public static native void visitLocation(long nativeAppWindowPtr, String location);
     
@@ -48,12 +36,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
         setContentView(R.layout.activity_main);  
 
         m_surfaceView = (EegeoSurfaceView)findViewById(R.id.surface);
-        m_surfaceView.setMainActivity(this);
         m_surfaceView.getHolder().addCallback(this);
-
-        //store an object reference to keep lifetime bound to activity so reference passed via jni is not collected
-        m_assetManager = this.getAssets();
-        m_self = this;
     }
     
     public void showVisitMenu()
@@ -110,98 +93,15 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 	    });
     }
     
-    public int addJavaPinButton()
-    {
-    	int id = m_buttons.size();
-    	final Button pin = new Button(this);
-    	m_buttons.add(pin);
-    	
-    	runOnUiThread(new Runnable()
-	    {
-	        public void run()
-	        {
-			   	final RelativeLayout uiRoot = (RelativeLayout)findViewById(R.id.ui_container);
-			   	uiRoot.addView(pin);
-	        }
-	    });
-    	
-    	return id;
-    }
-    
-    public void updatePinButtonScreenLocation(final int pinID, final float x, final float y)
-    {
-    	runOnUiThread(new Runnable()
-	    {
-	        public void run()
-	        {
-		    	Button pin = m_buttons.get(pinID);
-		    	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80, 80);
-		    	params.leftMargin = (int)x;
-		    	params.topMargin = (int)y;
-		    	pin.setLayoutParams(params);
-		    	
-	        }
-	    });
-    }
-    
-    public void processTouchEvent(MotionEvent e)
-    {
-        //we need to convert multi-touch event handling into struct of arrays for many pointers to send over JNI
-    	
-    	//C++ event representation is like;
-    	/*
-			float x, y;
-			int pointerIdentity;
-			int pointerIndex;
-    	 */
-    	   
-    	int pointerCount = e.getPointerCount();
-    	int primaryActionIndex = e.getActionIndex();
-    	int primaryActionIdentifier = e.getPointerId(primaryActionIndex);
-    	
-    	float[] xArray = new float[pointerCount];
-    	float[] yArray = new float[pointerCount];
-    	int[] pointerIdentityArray = new int[pointerCount];
-    	int[] pointerIndexArray = new int[pointerCount];
-    	
-    	for(int pointerIndex = 0; pointerIndex < pointerCount; ++pointerIndex)
-    	{
-            xArray[pointerIndex] = e.getX(pointerIndex);
-            yArray[pointerIndex] = e.getY(pointerIndex);
-            pointerIdentityArray[pointerIndex] = e.getPointerId(pointerIndex);
-            pointerIndexArray[pointerIndex] = pointerIndex;
-        }
-    	
-	    switch (e.getActionMasked()) 
-	    {
-	        case MotionEvent.ACTION_DOWN:
-	        case MotionEvent.ACTION_POINTER_DOWN:
-	        {	
-	        	processNativePointerDown(primaryActionIndex, primaryActionIdentifier, pointerCount, xArray, yArray, pointerIdentityArray, pointerIndexArray);
-	        }break;
-
-	        case MotionEvent.ACTION_POINTER_UP:
-	        case MotionEvent.ACTION_UP:
-	        {      
-	        	processNativePointerUp(primaryActionIndex, primaryActionIdentifier, pointerCount, xArray, yArray, pointerIdentityArray, pointerIndexArray);
-	        }  break;
-	        
-	        case MotionEvent.ACTION_MOVE:
-	        {	 
-	        	processNativePointerMove(primaryActionIndex, primaryActionIdentifier, pointerCount, xArray, yArray, pointerIdentityArray, pointerIndexArray);
-	        }break;
-	    }
-    }
-    
     @Override
     protected void onStart() 
     {
         super.onStart();
-        m_nativeAppWindowPtr = startNativeCode(m_self, m_assetManager);
+        m_nativeAppWindowPtr = startNativeCode(this, getAssets());
         
         if(m_nativeAppWindowPtr == 0)
         {
-        	//Unable to start native app!
+        	throw new RuntimeException("Failed to start native code.");
         }
     }
 

@@ -133,7 +133,8 @@ public:
                                  World().GetResourceSpatialQueryService(),
                                  World().GetEnvironmentFlatteningService(),
                                  searchService,
-                                 World().GetNativeUIFactories());
+                                 World().GetNativeUIFactories(),
+                                 World());
 
 		pExample->Start();
 	}
@@ -173,7 +174,8 @@ public:
                                       Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
                                       Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
                                       Eegeo::Search::Service::SearchService* searchService,
-                                      Eegeo::UI::NativeUIFactories& nativeInputFactories)
+                                      Eegeo::UI::NativeUIFactories& nativeInputFactories,
+                                      Eegeo::EegeoWorld& world)
 	{
 		switch(example)
 		{
@@ -263,7 +265,7 @@ public:
 			return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState);
 
 		case ExampleTypes::PositionJavaPinButton:
-			return new Examples::PositionJavaPinButtonExample(m_nativeState, renderContext, cameraModel);
+			return new Examples::PositionJavaPinButtonExample(world, m_nativeState, renderContext, cameraModel);
 		}
 	}
 

@@ -114,9 +114,7 @@ public:
 	void Resume();
 	void ActivateSurface();
 
-	void EnqueuePointerDown(Eegeo::Android::Input::TouchInputEvent& e);
-	void EnqueuePointerUp(Eegeo::Android::Input::TouchInputEvent& e);
-	void EnqueuePointerMove(Eegeo::Android::Input::TouchInputEvent& e);
+	void EnqueuePointerEvent(Eegeo::Android::Input::TouchInputEvent& e);
 
 	Eegeo::EegeoWorld& GetWorld() { return *pWorld; }
 };

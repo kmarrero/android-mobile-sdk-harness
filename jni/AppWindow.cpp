@@ -25,21 +25,7 @@ using namespace Eegeo::Android::Input;
 
 #define API_KEY "OBTAIN API_KEY FROM https://appstore.eegeo.com AND INSERT IT HERE"
 
-void AppWindow::EnqueuePointerDown(TouchInputEvent& e)
-{
-	pthread_mutex_lock(&m_inputMutex);
-	touchBuffer.push_back(e);
-	pthread_mutex_unlock(&m_inputMutex);
-}
-
-void AppWindow::EnqueuePointerUp(TouchInputEvent& e)
-{
-	pthread_mutex_lock(&m_inputMutex);
-	touchBuffer.push_back(e);
-	pthread_mutex_unlock(&m_inputMutex);
-}
-
-void AppWindow::EnqueuePointerMove(TouchInputEvent& e)
+void AppWindow::EnqueuePointerEvent(TouchInputEvent& e)
 {
 	pthread_mutex_lock(&m_inputMutex);
 	touchBuffer.push_back(e);
