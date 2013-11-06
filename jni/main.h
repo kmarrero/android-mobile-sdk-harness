@@ -22,7 +22,7 @@ extern "C"
     JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_setNativeSurface(JNIEnv* jenv, jobject obj, jobject surface);
 
     //input
-    JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerDown(JNIEnv* jenv, jobject obj,
+    JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerDown(JNIEnv* jenv, jobject obj,
     		jint primaryActionIndex,
     		jint primaryActionIdentifier,
     		jint numPointers,
@@ -31,7 +31,7 @@ extern "C"
     		jintArray pointerIdentity,
     		jintArray pointerIndex);
 
-    JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerUp(JNIEnv* jenv, jobject obj,
+    JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerUp(JNIEnv* jenv, jobject obj,
     		jint primaryActionIndex,
     		jint primaryActionIdentifier,
     		jint numPointers,
@@ -40,7 +40,7 @@ extern "C"
     		jintArray pointerIdentity,
     		jintArray pointerIndex);
 
-    JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_processNativePointerMove(JNIEnv* jenv, jobject obj,
+    JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerMove(JNIEnv* jenv, jobject obj,
     		jint primaryActionIndex,
     		jint primaryActionIdentifier,
     		jint numPointers,

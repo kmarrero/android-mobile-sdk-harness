@@ -143,7 +143,8 @@ void MyApp::OnStart ()
                              eegeoWorld.GetEnvironmentFlatteningService(),
                              searchService,
                              eegeoWorld.GetNativeUIFactories(),
-                             eegeoWorld.GetInterestPointProvider());
+                             eegeoWorld.GetInterestPointProvider(),
+                             eegeoWorld);
 
     pExample->Start();
 }
@@ -202,7 +203,8 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                          Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
                                          Eegeo::Search::Service::SearchService* searchService,
                                          Eegeo::UI::NativeUIFactories& nativeInputFactories,
-                                         Eegeo::Location::IInterestPointProvider& interestPointProvider)
+                                         Eegeo::Location::IInterestPointProvider& interestPointProvider,
+                                         Eegeo::EegeoWorld& world)
 {
     switch(example)
     {
@@ -279,11 +281,13 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         	return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState);
 
         case ExampleTypes::PositionJavaPinButton:
-        	return new Examples::PositionJavaPinButtonExample(m_nativeState, renderContext);
+        	return new Examples::PositionJavaPinButtonExample(world, m_nativeState, renderContext);
 
         default:
         	Eegeo_ASSERT(false, "Unhandled ExampleType");
         	break;
+
+        return NULL;
     }
 }
 

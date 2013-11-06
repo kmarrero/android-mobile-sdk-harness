@@ -119,8 +119,8 @@ public:
                                       Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
                                       Eegeo::Search::Service::SearchService* searchService,
                                       Eegeo::UI::NativeUIFactories& nativeInputFactories,
-                                      Eegeo::Location::IInterestPointProvider& interestPointProvider);
-
+                                      Eegeo::Location::IInterestPointProvider& interestPointProvider,
+                                      Eegeo::EegeoWorld& world);
 
     void Event_TouchRotate 			(const AppInterface::RotateData& data);
     void Event_TouchRotate_Start	(const AppInterface::RotateData& data);
