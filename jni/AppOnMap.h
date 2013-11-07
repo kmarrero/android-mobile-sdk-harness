@@ -46,7 +46,7 @@ namespace ExampleTypes
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pick3DObject;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::DebugSphere;
 
 namespace Eegeo
 {
@@ -76,6 +76,7 @@ private:
     ExampleTypes::Examples m_selectedExampleType;
     Eegeo::Camera::GlobeCamera::GlobeCameraController* m_globeCameraController;
     Eegeo::Camera::GlobeCamera::GlobeCameraTouchController* m_cameraTouchController;
+    Eegeo::Camera::ICameraJumpController* m_cameraJumpController;
     Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider& m_globeCameraInterestPointProvider;
 
 public:
@@ -87,7 +88,7 @@ public:
 
 	virtual ~MyApp();
 
-    void OnStart ();
+	void OnStart ();
 
     void Update (float dt);
 
@@ -120,6 +121,7 @@ public:
                                       Eegeo::Search::Service::SearchService* searchService,
                                       Eegeo::UI::NativeUIFactories& nativeInputFactories,
                                       Eegeo::Location::IInterestPointProvider& interestPointProvider,
+                                      Eegeo::Camera::ICameraJumpController& cameraJumpController,
                                       Eegeo::EegeoWorld& world);
 
     void Event_TouchRotate 			(const AppInterface::RotateData& data);

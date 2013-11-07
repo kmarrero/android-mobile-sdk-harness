@@ -9,6 +9,7 @@
 #include "FileIOExample.h"
 #include <sstream>
 #include <vector>
+#include "Logger.h"
 
 using namespace Eegeo::Helpers;
 
@@ -30,37 +31,36 @@ namespace Examples
         
         bool exists = fileIO.Exists(filename);
         
-        Eegeo_TTY("%s %s\n", filename.c_str(), exists ? "exists" : "does not exist");
+        EXAMPLE_LOG("%s %s\n", filename.c_str(), exists ? "exists" : "does not exist");
         if(!fileIO.WriteFile(data, 5ul, filename))
         {
-            Eegeo_TTY("Failed to write to filesystem!\n");
+        	EXAMPLE_LOG("Failed to write to filesystem!\n");
             return;
         }
         
         exists = fileIO.Exists(filename);
-        Eegeo_TTY("%s now %s\n", filename.c_str(), exists ? "exists" : "does not exist");
+        EXAMPLE_LOG("%s now %s\n", filename.c_str(), exists ? "exists" : "does not exist");
         
         std::fstream stream;
         size_t size;
         if(fileIO.OpenFile(stream, size, filename))
         {
-            Eegeo_TTY("Opened File!\n");
+        	EXAMPLE_LOG("Opened File!\n");
             
             std::vector<Byte> readBackData;
             readBackData.resize(size);
             stream.read((char*)&readBackData[0], size);
             
             for(int i = 0; i < size; ++ i)  {
-                Eegeo_TTY("Read %d at position %d\n", readBackData[i], i);
+            	EXAMPLE_LOG("Read %d at position %d\n", readBackData[i], i);
             }
         }
         
         stream.close();
-    
-        Eegeo_TTY("Trying to delete %s...\n", filename.c_str());
+        EXAMPLE_LOG("Trying to delete %s...\n", filename.c_str());
         bool deleted = fileIO.DeleteFile(filename);
-        Eegeo_TTY("Deleting %s %s!\n", filename.c_str(), deleted ? "succeeded" : "failed");
+        EXAMPLE_LOG("Deleting %s %s!\n", filename.c_str(), deleted ? "succeeded" : "failed");
         
-        Eegeo_TTY("Done!\n");
+        EXAMPLE_LOG("Done!\n");
     }
 }

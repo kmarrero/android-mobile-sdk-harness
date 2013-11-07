@@ -8,6 +8,7 @@
 
 #include "ToggleTrafficExample.h"
 #include "TimeHelpers.h"
+#include "Logger.h"
 
 using namespace Examples;
 using namespace Eegeo::Traffic;
@@ -28,8 +29,8 @@ void ToggleTrafficExample::Update()
     if(ms - lastToggle > TRAFFIC_ENABLED_SWITCH_DELAY_MILLISECONDS)
     {
         lastToggle = ms;
-        
-        Eegeo_TTY("Toggling Traffic - Setting enabled = %s\n", trafficSimulation.Enabled() ? "false!" : "true!");
+
+        EXAMPLE_LOG("Toggling Traffic - Setting enabled = %s\n", trafficSimulation.Enabled() ? "false!" : "true!");
         trafficSimulation.SetEnabled(!trafficSimulation.Enabled());
     }
 }

@@ -34,6 +34,7 @@
 #include "Pick3DObjectExample.h"
 #include "ShowJavaPlaceJumpUIExample.h"
 #include "PositionJavaPinButtonExample.h"
+#include "ExampleCameraJumpController.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -46,6 +47,7 @@ MyApp::MyApp(
 , m_selectedExampleType(selectedExample)
 , m_globeCameraController(NULL)
 , m_cameraTouchController(NULL)
+, m_cameraJumpController(NULL)
 , pExample(NULL)
 {
 	Eegeo_ASSERT(&m_globeCameraInterestPointProvider != NULL);
@@ -59,6 +61,7 @@ MyApp::~MyApp()
 	delete pExample;
     delete m_globeCameraController;
     delete m_cameraTouchController;
+    delete m_cameraJumpController;
 }
 
 void MyApp::OnStart ()
@@ -84,7 +87,7 @@ void MyApp::OnStart ()
                                                                                     *m_cameraTouchController,
                                                                                     globeCameraControllerConfig);
 
-
+    m_cameraJumpController = new ExampleCameraJumpController(*m_globeCameraController, *m_cameraTouchController);
 
     Eegeo::Camera::RenderCamera* renderCamera = m_globeCameraController->GetCamera();
     const Eegeo::Rendering::RenderContext& renderContext = eegeoWorld.GetRenderContext();
@@ -144,6 +147,7 @@ void MyApp::OnStart ()
                              searchService,
                              eegeoWorld.GetNativeUIFactories(),
                              eegeoWorld.GetInterestPointProvider(),
+                             *m_cameraJumpController,
                              eegeoWorld);
 
     pExample->Start();
@@ -204,6 +208,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                          Eegeo::Search::Service::SearchService* searchService,
                                          Eegeo::UI::NativeUIFactories& nativeInputFactories,
                                          Eegeo::Location::IInterestPointProvider& interestPointProvider,
+                                         Eegeo::Camera::ICameraJumpController& cameraJumpController,
                                          Eegeo::EegeoWorld& world)
 {
     switch(example)
@@ -278,7 +283,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                                      cameraProvider);
 
         case ExampleTypes::ShowJavaPlaceJumpUI:
-        	return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState);
+        	return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState, *m_cameraJumpController);
 
         case ExampleTypes::PositionJavaPinButton:
         	return new Examples::PositionJavaPinButtonExample(world, m_nativeState, renderContext);

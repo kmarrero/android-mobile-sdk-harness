@@ -8,6 +8,7 @@
 #include "KeyboardInputExample.h"
 #include "IKeyboardInputFactory.h"
 #include <android_native_app_glue.h>
+#include "Logger.h"
 
 using namespace Examples;
 using namespace Eegeo::UI::NativeInput;
@@ -20,7 +21,7 @@ KeyboardInputExample::KeyboardInputExample(Eegeo::UI::NativeInput::IKeyboardInpu
 
 void KeyboardInputExample::Start()
 {
-	Eegeo_TTY("Creating keyboard with Input Type: %d and Return Key type: %d", this, &keyboardInputFactory, KeyboardTypeDefault, ReturnKeySearch);
+	EXAMPLE_LOG("Creating keyboard with Input Type: %d and Return Key type: %d", this, &keyboardInputFactory, KeyboardTypeDefault, ReturnKeySearch);
 	m_pKeyboardInput = keyboardInputFactory.CreateKeyboardInput(*this, *this, KeyboardTypeDefault, ReturnKeySearch);
 	dismissed = false;
 }
@@ -34,7 +35,7 @@ void KeyboardInputExample::Suspend()
 
 void KeyboardInputExample::HandleKeyboardInputDismissed()
 {
-    Eegeo_TTY("%s", "\nDismissed the keyboard.");
+	EXAMPLE_LOG("%s", "\nDismissed the keyboard.");
 }
 
 void KeyboardInputExample::Dismiss()
@@ -48,7 +49,7 @@ bool KeyboardInputExample::HandleKeyboardInputKeyPressed(const AppInterface::Key
 {
 	if (data.printable)
     {
-		Eegeo_TTY("%c", data.keyCode);
+		EXAMPLE_LOG("%c", data.keyCode);
     }
 
     //Optionally dismiss the keyboard on pressing Return key

@@ -1,5 +1,6 @@
 #include "EnvironmentNotifierExample.h"
 #include "CubeMapCellInfo.h"
+#include "Logger.h"
 
 #define SPHERE_HEIGHT_ABOVE_SEA 10.0
 
@@ -74,13 +75,13 @@ namespace Examples
     
     void EnvironmentNotifierExampleTerrainStreamObserver::AddedStreamingResourceToSceneGraph(const Eegeo::Streaming::MortonKeyLong& key)
     {
-        Eegeo_TTY("Adding Terrain Resource :: %s\n", key.ToString().c_str());
+    	EXAMPLE_LOG("Adding Terrain Resource :: %s\n", key.ToString().c_str());
         AddSphere(key);
     }
     
     void EnvironmentNotifierExampleTerrainStreamObserver::RemovedStreamingResourceFromSceneGraph(const Eegeo::Streaming::MortonKeyLong& key)
     {
-        Eegeo_TTY("Removing Terrain Resource :: %s\n", key.ToString().c_str());
+    	EXAMPLE_LOG("Removing Terrain Resource :: %s\n", key.ToString().c_str());
         renderables.erase(key);
     }
 }

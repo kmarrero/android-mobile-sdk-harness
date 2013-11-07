@@ -8,6 +8,7 @@
 
 #include "ResourceSpatialQueryExample.h"
 #include "IInterestPointProvider.h"
+#include "Logger.h"
 
 using namespace Examples;
 
@@ -37,11 +38,11 @@ void ResourceSpatialQueryExample::Update()
         
         if(numBuildings == 0)
         {
-            Eegeo_TTY("No resources detected\n");
+        	EXAMPLE_LOG("No resources detected\n");
         }
         else
         {
-            Eegeo_TTY("%d buildings detected at camera focus point --> %s! (LOD %d)\n",
+        	EXAMPLE_LOG("%d buildings detected at camera focus point --> %s! (LOD %d)\n",
                       numBuildings,
                       key.ToString().c_str(),
                       key.Depth());
