@@ -28,19 +28,22 @@ namespace Examples
     {
     	struct ViewLocation
     	{
-    		ViewLocation()
-    		:location(0, 0, 0, Eegeo::Space::LatLongUnits::Degrees)
-    		{ }
-
-    		ViewLocation(float lat, float lon, float alt, float heading, float distance)
-    		:location(lat, lon, alt, Eegeo::Space::LatLongUnits::Degrees)
-    		,heading(heading)
-    		,distance(distance) { }
-
-    		Eegeo::Space::LatLongAltitude location;
+            Eegeo::Space::LatLongAltitude location;
     		float heading;
     		float distance;
-    	};
+            
+    		ViewLocation(): location(0,0,0)
+    		{
+                location = Eegeo::Space::LatLongAltitude::FromDegrees(0, 0, 0);
+            }
+
+    		ViewLocation(float lat, float lon, float alt, float heading, float distance) : location(0,0,0)
+            {
+                location = Eegeo::Space::LatLongAltitude::FromDegrees(lat, lon, alt);
+                heading = heading;
+                distance = distance;
+            }
+        };
 
     	std::map<std::string, ViewLocation> m_locations;
     	AndroidNativeState& m_nativeState;

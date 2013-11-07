@@ -103,7 +103,7 @@ namespace Examples
     	JNIEnv* env = attached.envForThread;
 
     	//calculate a screen position for the pin based on an ECEF location (the location of the Tranamerica Pyramid near the start location)
-    	const Eegeo::Space::LatLongAltitude pinLocation(37.795118f,-122.402797f,0.f, Eegeo::Space::LatLongUnits::Degrees);
+    	const Eegeo::Space::LatLongAltitude pinLocation = Eegeo::Space::LatLongAltitude::FromDegrees(37.795118f, -122.402797f, 0.f);
     	Eegeo::v3 screenPosition;
     	Project(pinLocation, screenPosition);
 
