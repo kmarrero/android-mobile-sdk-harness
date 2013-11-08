@@ -9,6 +9,7 @@ import android.content.res.AssetManager;
 public class MainActivity extends Activity implements SurfaceHolder.Callback
 {
     private EegeoSurfaceView m_surfaceView;
+    private SurfaceHolder m_surfaceHolder;
     private long m_nativeAppWindowPtr;
     
     public static native long startNativeCode(MainActivity activity, AssetManager assetManager);
@@ -46,12 +47,18 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     {
         super.onResume();
         resumeNativeCode();
+        
+        if(m_surfaceHolder != null)
+        {
+        	setNativeSurface(m_surfaceHolder.getSurface());
+        }
     }
     
     @Override
     protected void onPause() 
     {
         super.onPause();
+		setNativeSurface(null);
         pauseNativeCode();
     }
 
@@ -72,12 +79,14 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) 
 	{
+		m_surfaceHolder = null;
 		setNativeSurface(null);
 	}
 	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) 
 	{
-		setNativeSurface(holder.getSurface());
+		m_surfaceHolder = holder;
+		setNativeSurface(m_surfaceHolder.getSurface());
 	}
 }
