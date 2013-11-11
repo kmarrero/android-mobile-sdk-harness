@@ -42,7 +42,8 @@ namespace ExampleTypes
         PODAnimation,
         Pick3DObject,
         ShowJavaPlaceJumpUI,
-        PositionJavaPinButton
+        PositionJavaPinButton,
+        DebugPrimitiveRendering,
 	};
 }
 

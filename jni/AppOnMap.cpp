@@ -35,6 +35,7 @@
 #include "ShowJavaPlaceJumpUIExample.h"
 #include "PositionJavaPinButtonExample.h"
 #include "ExampleCameraJumpController.h"
+#include "DebugPrimitiveRenderingExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -286,6 +287,9 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
 
         case ExampleTypes::PositionJavaPinButton:
         	return new Examples::PositionJavaPinButtonExample(world, m_nativeState, renderContext);
+
+        case ExampleTypes::DebugPrimitiveRendering:
+        	return new Examples::DebugPrimitiveRenderingExample(world.GetDebugPrimitiveRenderer());
 
         default:
         	Eegeo_ASSERT(false, "Unhandled ExampleType");
