@@ -44,6 +44,7 @@ namespace ExampleTypes
         ShowJavaPlaceJumpUI,
         PositionJavaPinButton,
         DebugPrimitiveRendering,
+        ControlCityThemes
 	};
 }
 

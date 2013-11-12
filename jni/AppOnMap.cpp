@@ -36,6 +36,7 @@
 #include "PositionJavaPinButtonExample.h"
 #include "ExampleCameraJumpController.h"
 #include "DebugPrimitiveRenderingExample.h"
+#include "ControlCityThemeExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -291,6 +292,11 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         case ExampleTypes::DebugPrimitiveRendering:
         	return new Examples::DebugPrimitiveRenderingExample(world.GetDebugPrimitiveRenderer());
 
+        case ExampleTypes::ControlCityThemes:
+            return new Examples::ControlCityThemeExample(World().GetCityThemesService(),
+                                                         World().GetCityThemesRepository(),
+                                                         World().GetCityThemesUpdater(),
+                                                         World());
         default:
         	Eegeo_ASSERT(false, "Unhandled ExampleType");
         	break;
