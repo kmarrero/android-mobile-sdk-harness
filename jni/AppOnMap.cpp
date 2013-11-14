@@ -37,6 +37,7 @@
 #include "ExampleCameraJumpController.h"
 #include "DebugPrimitiveRenderingExample.h"
 #include "ControlCityThemeExample.h"
+#include "RouteDrawingExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -149,6 +150,7 @@ void MyApp::OnStart ()
                              eegeoWorld.GetNativeUIFactories(),
                              eegeoWorld.GetInterestPointProvider(),
                              *m_cameraJumpController,
+                             eegeoWorld.GetRouteService(),
                              eegeoWorld);
 
     pExample->Start();
@@ -210,6 +212,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                          Eegeo::UI::NativeUIFactories& nativeInputFactories,
                                          Eegeo::Location::IInterestPointProvider& interestPointProvider,
                                          Eegeo::Camera::ICameraJumpController& cameraJumpController,
+                                         Eegeo::Routes::RouteService& routeService,
                                          Eegeo::EegeoWorld& world)
 {
     switch(example)
@@ -297,6 +300,10 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                                          World().GetCityThemesRepository(),
                                                          World().GetCityThemesUpdater(),
                                                          World());
+
+        case ExampleTypes::RouteDrawing:
+            return new Examples::RouteDrawingExample(routeService, World());
+
         default:
         	Eegeo_ASSERT(false, "Unhandled ExampleType");
         	break;

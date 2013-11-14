@@ -18,8 +18,6 @@
 #include "AndroidNativeState.h"
 #include "GlobeCamera.h"
 
-
-
 namespace ExampleTypes
 {
 	enum Examples
@@ -44,11 +42,12 @@ namespace ExampleTypes
         ShowJavaPlaceJumpUI,
         PositionJavaPinButton,
         DebugPrimitiveRendering,
-        ControlCityThemes
+        ControlCityThemes,
+        RouteDrawing
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::DebugSphere;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteDrawing;
 
 namespace Eegeo
 {
@@ -66,6 +65,11 @@ namespace Eegeo
     namespace UI
     {
         class NativeUIFactories;
+    }
+
+    namespace Routes
+    {
+        class RouteService;
     }
 }
 
@@ -124,6 +128,7 @@ public:
                                       Eegeo::UI::NativeUIFactories& nativeInputFactories,
                                       Eegeo::Location::IInterestPointProvider& interestPointProvider,
                                       Eegeo::Camera::ICameraJumpController& cameraJumpController,
+                                      Eegeo::Routes::RouteService& routeService,
                                       Eegeo::EegeoWorld& world);
 
     void Event_TouchRotate 			(const AppInterface::RotateData& data);
