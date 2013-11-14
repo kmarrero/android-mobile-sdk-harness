@@ -75,7 +75,7 @@ namespace Examples
         sphere = new Eegeo::DebugRendering::SphereMesh(
                                                        renderContext,
                                                        20.0f,
-                                                       16, 16,
+                                                       4, 4,
                                                        Eegeo::dv3(),
                                                        NULL,
                                                        Eegeo::v3(1.0f, 0.0f, 0.0f)
