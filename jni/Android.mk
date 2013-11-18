@@ -36,6 +36,7 @@ LOCAL_SRC_FILES += ./Examples/PositionJavaPinButtonExample.cpp
 LOCAL_SRC_FILES += ./Examples/ScreenPickExample.cpp
 LOCAL_SRC_FILES += ./Examples/DebugPrimitiveRenderingExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteDrawingExample.cpp
+LOCAL_SRC_FILES += ./Examples/PinsExample.cpp
 
 LOCAL_C_INCLUDES += ./jni/Examples 
 

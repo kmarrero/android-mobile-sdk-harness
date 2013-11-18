@@ -43,11 +43,12 @@ namespace ExampleTypes
         PositionJavaPinButton,
         DebugPrimitiveRendering,
         ControlCityThemes,
-        RouteDrawing
+        RouteDrawing,
+        Pins
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteDrawing;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pins;
 
 namespace Eegeo
 {

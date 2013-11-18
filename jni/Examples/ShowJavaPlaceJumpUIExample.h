@@ -40,8 +40,8 @@ namespace Examples
     		ViewLocation(float lat, float lon, float alt, float heading, float distance) : location(0,0,0)
             {
                 location = Eegeo::Space::LatLongAltitude::FromDegrees(lat, lon, alt);
-                heading = heading;
-                distance = distance;
+                this->heading = heading;
+                this->distance = distance;
             }
         };
 
@@ -59,7 +59,7 @@ namespace Examples
 
     	void JumpToLocation(const std::string& location);
         void Start();
-        void Update() {}
+        void Update(float dt) {}
         void Draw() {}
         void Suspend();
     };

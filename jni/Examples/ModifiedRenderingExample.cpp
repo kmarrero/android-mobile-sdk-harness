@@ -57,7 +57,7 @@ namespace Examples
         pCriteria = NULL;
     }
     
-    void ModifiedRenderingExample::Update()
+    void ModifiedRenderingExample::Update(float dt)
     {
         
     }

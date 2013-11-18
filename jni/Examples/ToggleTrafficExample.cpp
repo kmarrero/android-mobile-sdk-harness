@@ -22,7 +22,7 @@ ToggleTrafficExample::ToggleTrafficExample(Eegeo::Traffic::TrafficSimulation& tr
 {
 }
 
-void ToggleTrafficExample::Update()
+void ToggleTrafficExample::Update(float dt)
 {
     long long ms = MillisecondsSinceEpoch();
     

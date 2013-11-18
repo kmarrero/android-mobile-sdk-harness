@@ -35,7 +35,7 @@ namespace Examples
     			Eegeo::Rendering::RenderContext& renderContext);
 
         void Start() {}
-        void Update() {}
+        void Update(float dt) {}
         void Draw();
         void Suspend();
 

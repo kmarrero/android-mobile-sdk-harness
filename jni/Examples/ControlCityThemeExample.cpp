@@ -50,7 +50,7 @@ namespace Examples
         EXAMPLE_LOG("%s Theme will now be downloaded and applied asynchronsly. It will remain active until SetSpecificTheme is called again\n", themeToSelect.c_str());
     }
     
-    void ControlCityThemeExample::Update()
+    void ControlCityThemeExample::Update(float dt)
     {
         if (!themeChanged)
         {

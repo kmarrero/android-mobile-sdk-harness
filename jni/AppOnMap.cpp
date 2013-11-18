@@ -38,6 +38,7 @@
 #include "DebugPrimitiveRenderingExample.h"
 #include "ControlCityThemeExample.h"
 #include "RouteDrawingExample.h"
+#include "PinsExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -166,7 +167,7 @@ void MyApp::Update (float dt)
     m_globeCameraController->Update(dt);
 
     eegeoWorld.Update(dt);
-    pExample->Update();
+    pExample->Update(dt);
 }
 
 void MyApp::Draw (float dt)
@@ -303,6 +304,17 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
 
         case ExampleTypes::RouteDrawing:
             return new Examples::RouteDrawingExample(routeService, World());
+
+        case ExampleTypes::Pins:
+            return new Examples::PinsExample(
+                                             World().GetTextureLoader(),
+                                             World().GetRenderContext(),
+                                             World().GetGlobalLighting(),
+                                             World().GetGlBufferPool(),
+                                             World().GetItemRenderer(),
+                                             World().GetCameraProvider(),
+                                             World().GetTerrainHeightProvider()
+                                             );
 
         default:
         	Eegeo_ASSERT(false, "Unhandled ExampleType");

@@ -123,7 +123,7 @@ namespace Examples
                                  Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool);
         
         void Start();
-        void Update();
+        void Update(float dt);
         void Draw();
         void Suspend();
     };
