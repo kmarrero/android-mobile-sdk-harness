@@ -61,6 +61,30 @@ namespace Examples
         bool deleted = fileIO.DeleteFile(filename);
         EXAMPLE_LOG("Deleting %s %s!\n", filename.c_str(), deleted ? "succeeded" : "failed");
         
+        //load app data from nominated app data directories - these asset directories were
+        //nominated at construction of the fileIO object in AppWindow.cpp
+        std::vector<std::string> appAssets;
+        appAssets.push_back("MyAppDataDirectory/MySubDirectory/MyData1.txt");
+        appAssets.push_back("MyAppDataDirectory/MyData1.txt");
+        appAssets.push_back("MyAppDataDirectory/MyData2.txt");
+
+        for(std::vector<std::string>::const_iterator it = appAssets.begin(); it != appAssets.end(); ++ it)
+        {
+        	const std::string& appAsset = *it;
+
+            std::fstream customAppDataStream; size_t customAppDataSize;
+			if(fileIO.OpenFile(customAppDataStream, customAppDataSize, appAsset))
+			{
+				std::string fileContent((std::istreambuf_iterator<char>(customAppDataStream)), std::istreambuf_iterator<char>());
+				EXAMPLE_LOG("File %s content --> %s...\n", appAsset.c_str(), fileContent.c_str());
+			}
+			else
+			{
+				EXAMPLE_LOG("Failed to open file %s!\n", appAsset.c_str());
+			}
+			customAppDataStream.close();
+        }
+
         EXAMPLE_LOG("Done!\n");
     }
 }

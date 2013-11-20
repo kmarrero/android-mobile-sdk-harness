@@ -359,7 +359,11 @@ void AppWindow::InitWorld()
 	pLighting = new Eegeo::Lighting::GlobalLighting();
 	pFogging = new Eegeo::Lighting::GlobalFogging();
 
-	pFileIO = new AndroidFileIO(pState);
+	std::set<std::string> customApplicationAssetDirectories;
+	customApplicationAssetDirectories.insert("MyAppDataDirectory");
+	customApplicationAssetDirectories.insert("MyAppDataDirectory/MySubDirectory");
+	pFileIO = new AndroidFileIO(pState, customApplicationAssetDirectories);
+
 	pHttpCache = new AndroidHttpCache(pFileIO, "http://d2xvsc8j92rfya.cloudfront.net/");
 	pTextureLoader = new AndroidTextureFileLoader(pFileIO, pRenderContext->GetGLState());
 
