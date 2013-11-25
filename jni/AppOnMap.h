@@ -44,11 +44,12 @@ namespace ExampleTypes
         DebugPrimitiveRendering,
         ControlCityThemes,
         RouteDrawing,
-        Pins
+        Pins,
+        RouteSimulation
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pins;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteSimulation;
 
 namespace Eegeo
 {

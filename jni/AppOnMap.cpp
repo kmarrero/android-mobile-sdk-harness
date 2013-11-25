@@ -39,6 +39,7 @@
 #include "ControlCityThemeExample.h"
 #include "RouteDrawingExample.h"
 #include "PinsExample.h"
+#include "RouteSimulationExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -315,6 +316,27 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                              World().GetCameraProvider(),
                                              World().GetTerrainHeightProvider()
                                              );
+
+        case ExampleTypes::RouteSimulation:
+        {
+            Eegeo::Routes::Simulation::Camera::RouteSimulationGlobeCameraControllerFactory factory(World().GetTerrainHeightProvider(),
+                                                                                                   World().GetEnvironmentFlatteningService(),
+                                                                                                   World().GetResourceCeilingProvider());
+
+            return new Examples::RouteSimulationExample(World().GetRouteService(),
+                                                        World().GetRouteSimulationService(),
+                                                        World().GetRouteSimulationViewService(),
+                                                        World().GetRenderContext().GetGLState(),
+                                                        World().GetFileIO(),
+                                                        World().GetTextureLoader(),
+                                                        *m_globeCameraController,
+                                                        World().GetInterestPointProvider(),
+                                                        factory,
+                                                        m_nativeState,
+                                                        World()
+                                                        );
+        }
+
 
         default:
         	Eegeo_ASSERT(false, "Unhandled ExampleType");

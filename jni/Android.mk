@@ -37,6 +37,7 @@ LOCAL_SRC_FILES += ./Examples/ScreenPickExample.cpp
 LOCAL_SRC_FILES += ./Examples/DebugPrimitiveRenderingExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteDrawingExample.cpp
 LOCAL_SRC_FILES += ./Examples/PinsExample.cpp
+LOCAL_SRC_FILES += ./Examples/RouteSimulationExample.cpp
 
 LOCAL_C_INCLUDES += ./jni/Examples 
 
@@ -88,6 +89,9 @@ LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Placeholder
 LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Raster
 LOCAL_C_INCLUDES += ./libs/platform/Routes
 LOCAL_C_INCLUDES += ./libs/platform/Routes/View
+LOCAL_C_INCLUDES += ./libs/platform/Routes/Simulation
+LOCAL_C_INCLUDES += ./libs/platform/Routes/Simulation/Camera
+LOCAL_C_INCLUDES += ./libs/platform/Routes/Simulation/View
 LOCAL_C_INCLUDES += ./libs/platform/Search
 LOCAL_C_INCLUDES += ./libs/platform/Search/Service
 LOCAL_C_INCLUDES += ./libs/platform/Space
