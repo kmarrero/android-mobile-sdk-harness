@@ -390,8 +390,10 @@ bool RouteSimulationExample::Event_TouchPan_End(const AppInterface::PanData& dat
 }
 
 //Create some UI to let us toggle aspects of the simulation, such as camera follow, speed, etc.
-//The native iOS UI requires an objective-c object to bind to, so we create an objective-c object
-//to route our button click events though to call back the example.
+//
+//The native Android UI performs JNI interop; see the documentation and examples at 
+//http://sdk.eegeo.com/developers/mobiledocs/native_android_ui for more information on how this
+//works.
 void RouteSimulationExample::CreateAndBindUI()
 {
 	//get an env for the current thread
