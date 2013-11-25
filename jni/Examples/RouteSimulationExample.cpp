@@ -5,8 +5,6 @@
  *      Author: kimbleoperations
  */
 
-#define ENABLE_TTY
-
 #include "Types.h"
 #include "RouteSimulationExample.h"
 #include "RouteBuilder.h"
@@ -51,13 +49,6 @@ RouteSimulationExample::RouteSimulationExample(RouteService& routeService,
 
 void RouteSimulationExample::Initialise()
 {
-	int j = 0;
-	for(int i = 0; i < 10000000; ++ i)
-	{
-		j = (i * i) + i*4;
-	}
-	__android_log_print(ANDROID_LOG_ERROR,"Eegeo", "%d\n", j);
-
     //Load a model containing the nodes which will be bound to our route simulation sessions. For
     //a detailed explation see http://sdk.eegeo.com/developers/mobiledocs/loading_rendering_models
     //or see LoadModelExample.cpp.
