@@ -99,12 +99,15 @@ namespace Examples
         void ChangeFollowDirection();
         void IncreaseSpeedFollowed();
         void DecreaseSpeedFollowed();
+        void ToggleDirectFollow();
 
     private:
 
         void Initialise();
 
         void CreateAndBindUI();
+
+        void TeardownUI();
 
         Eegeo::Routes::Route* BuildRoute() const;
 
@@ -131,6 +134,11 @@ extern "C"
 			jlong nativeObjectPtr);
 
 	JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_DecreaseSpeedFollowed(
+			JNIEnv* jenv, jobject obj,
+			jlong nativeObjectPtr);
+
+
+	JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_ToggleDirectFollow(
 			JNIEnv* jenv, jobject obj,
 			jlong nativeObjectPtr);
 }

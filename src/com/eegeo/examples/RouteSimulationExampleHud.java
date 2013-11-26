@@ -18,6 +18,7 @@ public class RouteSimulationExampleHud
     public static native void ChangeFollowDirection(long nativeCallerPointer);
     public static native void IncreaseSpeedFollowed(long nativeCallerPointer);
     public static native void DecreaseSpeedFollowed(long nativeCallerPointer);
+    public static native void ToggleDirectFollow(long nativeCallerPointer);
     
 	public RouteSimulationExampleHud(MainActivity activity, long nativeCallerPointer, boolean followEnabled)
     {
@@ -42,11 +43,13 @@ public class RouteSimulationExampleHud
 	            	final Button increaseSpeed = (Button)m_view.findViewById(R.id.increase_speed);
 	            	final Button decreaseSpeed = (Button)m_view.findViewById(R.id.decrease_speed);
 	            	final Button changeDirection = (Button)m_view.findViewById(R.id.change_direction);
+	            	final Button toggleDirectFollow = (Button)m_view.findViewById(R.id.toggle_direct_follow);
 	            	
 	            	int visibility = followEnabled ? View.VISIBLE : View.INVISIBLE;
 	            	increaseSpeed.setVisibility(visibility);
 	            	decreaseSpeed.setVisibility(visibility);
 	            	changeDirection.setVisibility(visibility);
+	            	toggleDirectFollow.setVisibility(visibility);
 	            	
 	            	toggleFollow.setOnClickListener(new OnClickListener() {
 	                    @Override
@@ -57,6 +60,7 @@ public class RouteSimulationExampleHud
 	    	            	increaseSpeed.setVisibility(visibility);
 	    	            	decreaseSpeed.setVisibility(visibility);
 	    	            	changeDirection.setVisibility(visibility);
+	    	            	toggleDirectFollow.setVisibility(visibility);
 	                    }
 	                });
 	            	
@@ -78,6 +82,13 @@ public class RouteSimulationExampleHud
 	                    @Override
 	                    public void onClick(View v) {
 	                    	ChangeFollowDirection(nativeCallerPointer);
+	                    }
+	                });
+	            	
+	            	toggleDirectFollow.setOnClickListener(new OnClickListener() {
+	                    @Override
+	                    public void onClick(View v) {
+	                    	ToggleDirectFollow(nativeCallerPointer);
 	                    }
 	                });
 	            	
@@ -105,7 +116,7 @@ public class RouteSimulationExampleHud
 	            }
 	            catch (Exception e)
 	            {
-	                Log.v("RouteSimulationExampleHud", e.getMessage() == null ? "Error, but no message?!" : e.getMessage());
+	                //Log.v("RouteSimulationExampleHud", e.getMessage() == null ? "Error, but no message?!" : e.getMessage());
 	            }                            
 	        }
 	    });
