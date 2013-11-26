@@ -14,6 +14,39 @@
 #include "EegeoWorld.h"
 #include "Logger.h"
 
+namespace
+{
+    bool PointInPolygon(std::vector<Eegeo::v2>& polygon, Eegeo::v2& point)
+    {
+        int i = 0;
+        int j = 0;
+        bool result = false;
+        int numVerts = polygon.size();
+        for (i = 0, j = numVerts-1; i < numVerts; j = i++)
+        {
+            if (((polygon[i].GetY()>point.GetY()) != (polygon[j].GetY()>point.GetY())) &&
+                (point.GetX() < (polygon[j].GetX()-polygon[i].GetX()) *
+                 (point.GetY()-polygon[i].GetY()) / (polygon[j].GetY()-polygon[i].GetY()) + polygon[i].GetX()))
+            {
+                result = !result;
+            }
+        }
+        return result;
+    }
+
+    void VectorLatLonToV2(const std::vector<Eegeo::Space::LatLong>& input, std::vector<Eegeo::v2>& output)
+    {
+        output.reserve(input.size());
+        for (std::vector<Eegeo::Space::LatLong>::const_iterator iter = input.begin();
+             iter != input.end();
+             iter++)
+        {
+            const Eegeo::Space::LatLong& latLong = (*iter);
+            output.push_back(Eegeo::v2(latLong.GetLatitudeInDegrees(), latLong.GetLongitudeInDegrees()));
+        }
+    }
+}
+
 namespace Examples
 {
     ControlCityThemeExample::ControlCityThemeExample(Eegeo::Resources::CityThemes::ICityThemesService& themeService,
@@ -50,6 +83,33 @@ namespace Examples
         EXAMPLE_LOG("%s Theme will now be downloaded and applied asynchronsly. It will remain active until SetSpecificTheme is called again\n", themeToSelect.c_str());
     }
     
+    void ControlCityThemeExample::FindThemeByPointInPolygon()
+	{
+		// a lat,long for Osaka, for which a polygon bounds exists in theme manifest:
+		// http://eegeo-static.s3.amazonaws.com/mobile-themes/v1_zdc_polygon_test/manifest-v2.txt.gz
+		// you can set the manifest in AppWindow.cpp, EegeoWorld ctor.
+		Eegeo::Space::LatLong osaka = Eegeo::Space::LatLong::FromDegrees(34.700131,135.478884);
+		Eegeo::v2 osakav2(osaka.GetLatitudeInDegrees(), osaka.GetLongitudeInDegrees());
+
+		// enumerate all of the themes in the theme repository
+		int numberOfThemes = themeRepository.GetNumberOfThemes();
+		for (int i=0; i<numberOfThemes; ++i)
+		{
+			const Eegeo::Resources::CityThemes::CityThemeData& themeData = themeRepository.GetCityThemeAt(i);
+			if (themeData.PolygonBounds.size() > 0) // there are points in the bounding polygon
+			{
+				std::vector<Eegeo::v2> polygon;
+				VectorLatLonToV2(themeData.PolygonBounds, polygon);
+				if (PointInPolygon(polygon, osakav2))
+				{
+					EXAMPLE_LOG("This theme contains the Osaka point: %s\n", themeData.Name.c_str());
+					return;
+				}
+			}
+		}
+		EXAMPLE_LOG("No theme found that contains the Osaka point\n");
+	}
+
     void ControlCityThemeExample::Update(float dt)
     {
         if (!themeChanged)
@@ -58,6 +118,7 @@ namespace Examples
             if (!eegeoWorld.Initialising())
             {
                 ChangeTheme();
+                FindThemeByPointInPolygon();
                 themeChanged = true;
             }
         }
