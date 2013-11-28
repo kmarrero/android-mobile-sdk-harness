@@ -30,6 +30,7 @@
 #include "EegeoWorld.h"
 #include "IInterestPointProvider.h"
 #include "AndroidNativeState.h"
+#include "IdentityRouteThicknessPolicy.h"
 
 namespace Examples
 {
@@ -53,6 +54,7 @@ namespace Examples
         bool m_usingFollowCamera;
         Eegeo::Model* m_pModel;
         Eegeo::Routes::Route* m_route;
+        Eegeo::Routes::IdentityRouteThicknessPolicy m_routeThicknessPolicy;
 
         Eegeo::Routes::Simulation::RouteSimulationSession* m_pSessionCycle;
         Eegeo::Routes::Simulation::RouteSimulationSession* m_pSessionAlternatingSpeedChanger;

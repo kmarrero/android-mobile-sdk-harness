@@ -13,6 +13,7 @@
 #include "RouteService.h"
 #include "Route.h"
 #include "EegeoWorld.h"
+#include "IdentityRouteThicknessPolicy.h"
 
 namespace Examples
 {
@@ -24,6 +25,7 @@ namespace Examples
 
         bool m_createdRoutes;
         std::vector<Eegeo::Routes::Route*> m_routes;
+        Eegeo::Routes::IdentityRouteThicknessPolicy m_routeThicknessPolicy;
 
     public:
         RouteDrawingExample(Eegeo::Routes::RouteService& routeService,
