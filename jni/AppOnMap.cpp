@@ -40,6 +40,7 @@
 #include "RouteDrawingExample.h"
 #include "PinsExample.h"
 #include "RouteSimulationExample.h"
+#include "RouteThicknessPolicyExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -335,6 +336,14 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                                         m_nativeState,
                                                         World()
                                                         );
+        }
+
+        case ExampleTypes::RouteThicknessPolicy:
+        {
+        	return new Examples::RouteThicknessPolicyExample(\
+        			World().GetRouteService(),
+        			renderContext,
+        			World());
         }
 
 

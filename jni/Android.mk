@@ -38,6 +38,7 @@ LOCAL_SRC_FILES += ./Examples/DebugPrimitiveRenderingExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteDrawingExample.cpp
 LOCAL_SRC_FILES += ./Examples/PinsExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteSimulationExample.cpp
+LOCAL_SRC_FILES += ./Examples/RouteThicknessPolicyExample.cpp
 
 LOCAL_C_INCLUDES += ./jni/Examples 
 
