@@ -36,6 +36,12 @@
 	        android:layout_height="wrap_content"
 	        android:layout_above="@+id/decrease_speed"
 	        android:text="Change Direction" />
+	    <Button
+	        android:id="@+id/toggle_direct_follow"
+	        android:layout_width="96dp"
+	        android:layout_height="wrap_content"
+	        android:layout_above="@+id/change_direction"
+	        android:text="Rotate to Follow" />
 	</RelativeLayout>
 	
 </RelativeLayout>

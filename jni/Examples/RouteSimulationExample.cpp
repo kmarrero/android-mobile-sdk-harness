@@ -198,6 +198,8 @@ void RouteSimulationExample::Suspend()
     delete m_pRouteSessionFollowCameraController;
     m_pRouteSessionFollowCameraController = NULL;
 
+    TeardownUI();
+
     m_initialised = false;
 }
 
@@ -244,6 +246,20 @@ void RouteSimulationExample::DecreaseSpeedFollowed()
     if(newSpeed < 0.5f) { newSpeed = 0.5f; }
 
     m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(newSpeed);
+}
+
+void RouteSimulationExample::ToggleDirectFollow()
+{
+    Eegeo_ASSERT(m_usingFollowCamera);
+
+    if(m_pRouteSessionFollowCameraController->GetOrientationMode() == RouteSimulationGlobeCameraController::LockedToCurrentLinkDirection)
+    {
+    	m_pRouteSessionFollowCameraController->UnlockFollowHeading();
+    }
+    else
+    {
+    	m_pRouteSessionFollowCameraController->LockFollowHeadingToCurrentLinkDirection();
+    }
 }
 
 Route* RouteSimulationExample::BuildRoute() const
@@ -402,7 +418,7 @@ void RouteSimulationExample::CreateAndBindUI()
 	AndroidSafeNativeThreadAttachment attached(m_nativeState);
 	JNIEnv* env = attached.envForThread;
 
-	//get the java HudPinController class
+	//get the java RouteSimulationExampleHud class
 	jstring strClassName = env->NewStringUTF("com/eegeo/examples/RouteSimulationExampleHud");
 	jclass routeSimulationExampleHudClass = m_nativeState.LoadClass(env, strClassName);
 	env->DeleteLocalRef(strClassName);
@@ -410,11 +426,11 @@ void RouteSimulationExample::CreateAndBindUI()
 	//create a persistent reference to the class
 	m_routeSimulationExampleHudClass = static_cast<jclass>(env->NewGlobalRef(routeSimulationExampleHudClass));
 
-	//get the constructor for the HudPinController, which takes the activity, a pointer to 'this' as
+	//get the constructor for the RouteSimulationExampleHud, which takes the activity, a pointer to 'this' as
 	//a parameter, and a flag to indicate if currently in follow mode.
 	jmethodID routeSimulationExampleHudConstructor = env->GetMethodID(routeSimulationExampleHudClass, "<init>", "(Lcom/eegeo/MainActivity;JZ)V");
 
-	//construct an instance of the HudPinController, and create and cache a persistent reference to it.
+	//construct an instance of the RouteSimulationExampleHud, and create and cache a persistent reference to it.
 	//we will make calls on to this instance, and it will add elements to the UI for us form Java.
 	jlong pThis = (jlong)(this);
 
@@ -426,6 +442,20 @@ void RouteSimulationExample::CreateAndBindUI()
     		m_usingFollowCamera);
 
     m_routeSimulationExampleHud = env->NewGlobalRef(instance);
+}
+
+void RouteSimulationExample::TeardownUI()
+{
+	AndroidSafeNativeThreadAttachment attached(m_nativeState);
+	JNIEnv* env = attached.envForThread;
+
+	//Get a reference to the 'removeHud' method and call it to remove the HUD.
+	jmethodID removeHudMethod = env->GetMethodID(m_routeSimulationExampleHudClass, "removeHud", "()V");
+	env->CallVoidMethod(m_routeSimulationExampleHud, removeHudMethod);
+
+	//Destroy the cached global references.
+    env->DeleteGlobalRef(m_routeSimulationExampleHud);
+    env->DeleteGlobalRef(m_routeSimulationExampleHudClass);
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_ToggleFollowCamera(
@@ -458,4 +488,12 @@ JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_Decreas
 {
 	Examples::RouteSimulationExample* example = (Examples::RouteSimulationExample*)(nativeObjectPtr);
 	example->DecreaseSpeedFollowed();
+}
+
+JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_ToggleDirectFollow(
+		JNIEnv* jenv, jobject obj,
+		jlong nativeObjectPtr)
+{
+	Examples::RouteSimulationExample* example = (Examples::RouteSimulationExample*)(nativeObjectPtr);
+	example->ToggleDirectFollow();
 }
