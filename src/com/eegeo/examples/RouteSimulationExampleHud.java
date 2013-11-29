@@ -19,6 +19,7 @@ public class RouteSimulationExampleHud
     public static native void IncreaseSpeedFollowed(long nativeCallerPointer);
     public static native void DecreaseSpeedFollowed(long nativeCallerPointer);
     public static native void ToggleDirectFollow(long nativeCallerPointer);
+    public static native void ToggleSideOfRoadToDriveOn(long nativeCallerPointer);
     
 	public RouteSimulationExampleHud(MainActivity activity, long nativeCallerPointer, boolean followEnabled)
     {
@@ -44,6 +45,7 @@ public class RouteSimulationExampleHud
 	            	final Button decreaseSpeed = (Button)m_view.findViewById(R.id.decrease_speed);
 	            	final Button changeDirection = (Button)m_view.findViewById(R.id.change_direction);
 	            	final Button toggleDirectFollow = (Button)m_view.findViewById(R.id.toggle_direct_follow);
+	            	final Button toggleRoadSide = (Button)m_view.findViewById(R.id.toggle_road_side);
 	            	
 	            	int visibility = followEnabled ? View.VISIBLE : View.INVISIBLE;
 	            	increaseSpeed.setVisibility(visibility);
@@ -89,6 +91,13 @@ public class RouteSimulationExampleHud
 	                    @Override
 	                    public void onClick(View v) {
 	                    	ToggleDirectFollow(nativeCallerPointer);
+	                    }
+	                });
+	            	
+	            	toggleRoadSide.setOnClickListener(new OnClickListener() {
+	                    @Override
+	                    public void onClick(View v) {
+	                    	ToggleSideOfRoadToDriveOn(nativeCallerPointer);
 	                    }
 	                });
 	            	

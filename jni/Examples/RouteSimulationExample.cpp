@@ -262,6 +262,13 @@ void RouteSimulationExample::ToggleDirectFollow()
     }
 }
 
+void RouteSimulationExample::ToggleSideOfRoadToDriveOn()
+{
+    m_pSessionAlternatingSpeedChanger->SetDrivesOnRight(!m_pSessionAlternatingSpeedChanger->GetDrivesOnRight());
+    m_pSessionCamera->SetDrivesOnRight(!m_pSessionCamera->GetDrivesOnRight());
+    m_pSessionCycle->SetDrivesOnRight(!m_pSessionCycle->GetDrivesOnRight());
+}
+
 Route* RouteSimulationExample::BuildRoute() const
 {
     const float halfWidth = 5.f;
@@ -497,3 +504,12 @@ JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_ToggleD
 	Examples::RouteSimulationExample* example = (Examples::RouteSimulationExample*)(nativeObjectPtr);
 	example->ToggleDirectFollow();
 }
+
+JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_ToggleSideOfRoadToDriveOn(
+		JNIEnv* jenv, jobject obj,
+		jlong nativeObjectPtr)
+{
+	Examples::RouteSimulationExample* example = (Examples::RouteSimulationExample*)(nativeObjectPtr);
+	example->ToggleSideOfRoadToDriveOn();
+}
+

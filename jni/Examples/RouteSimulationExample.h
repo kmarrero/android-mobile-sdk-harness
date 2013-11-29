@@ -102,6 +102,7 @@ namespace Examples
         void IncreaseSpeedFollowed();
         void DecreaseSpeedFollowed();
         void ToggleDirectFollow();
+        void ToggleSideOfRoadToDriveOn();
 
     private:
 
@@ -139,8 +140,11 @@ extern "C"
 			JNIEnv* jenv, jobject obj,
 			jlong nativeObjectPtr);
 
-
 	JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_ToggleDirectFollow(
+			JNIEnv* jenv, jobject obj,
+			jlong nativeObjectPtr);
+
+	JNIEXPORT void JNICALL Java_com_eegeo_examples_RouteSimulationExampleHud_ToggleSideOfRoadToDriveOn(
 			JNIEnv* jenv, jobject obj,
 			jlong nativeObjectPtr);
 }
