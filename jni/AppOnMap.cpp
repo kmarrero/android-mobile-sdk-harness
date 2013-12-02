@@ -164,6 +164,7 @@ void MyApp::Update (float dt)
     Eegeo::EegeoWorld& eegeoWorld = World();
 
     eegeoWorld.EarlyUpdate(dt);
+    pExample->EarlyUpdate(dt);
 
     m_cameraTouchController->Update(dt);
     m_globeCameraController->Update(dt);
