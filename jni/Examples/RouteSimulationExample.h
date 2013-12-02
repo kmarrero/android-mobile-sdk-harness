@@ -31,9 +31,30 @@
 #include "IInterestPointProvider.h"
 #include "AndroidNativeState.h"
 #include "IdentityRouteThicknessPolicy.h"
+#include "IRouteSimulationSessionObserver.h"
 
 namespace Examples
 {
+	class RouteSimulationExampleObserver : public Eegeo::Routes::Simulation::IRouteSimulationSessionObserver
+	{
+	public:
+		RouteSimulationExampleObserver(
+									   Eegeo::Routes::Simulation::View::RouteSimulationModelBinding* pModelBinding,
+									   Eegeo::Model* pModel)
+		: m_pModelBinding(pModelBinding)
+		, m_pModel(pModel)
+		{
+		}
+
+		void OnLinkReached(const Eegeo::Routes::Simulation::RouteSimulationSession& session,
+						   const Eegeo::Routes::RouteVertex& startVertex,
+						   const Eegeo::Routes::RouteVertex& endVertex) const;
+	private:
+		Eegeo::Routes::Simulation::View::RouteSimulationModelBinding* m_pModelBinding;
+		Eegeo::Model* m_pModel;
+		Eegeo::Node* GetRandomModelNode() const;
+	};
+
     class RouteSimulationExample : public IExample
     {
     private:
@@ -55,6 +76,8 @@ namespace Examples
         Eegeo::Model* m_pModel;
         Eegeo::Routes::Route* m_route;
         Eegeo::Routes::IdentityRouteThicknessPolicy m_routeThicknessPolicy;
+
+        RouteSimulationExampleObserver* m_pExampleObserver;
 
         Eegeo::Routes::Simulation::RouteSimulationSession* m_pSessionCycle;
         Eegeo::Routes::Simulation::RouteSimulationSession* m_pSessionAlternatingSpeedChanger;
