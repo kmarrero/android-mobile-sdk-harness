@@ -19,6 +19,7 @@
 #include "GlobeCameraController.h"
 #include "RenderCamera.h"
 #include "CameraHelpers.h"
+#include "EnvironmentMaterialController.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
@@ -48,6 +49,8 @@ AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistent
 , m_androidNativeUIFactories(m_androidAlertBoxFactory, m_androidInputBoxFactory, m_androidKeyboardInputFactory)
 , m_terrainHeightRepository()
 , m_terrainHeightProvider(&m_terrainHeightRepository)
+, m_pEnvironmentFlatteningService(NULL)
+, m_pEnvironmentMaterialController(NULL)
 {
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
     pthread_mutex_init(&m_mutex, 0);
@@ -313,6 +316,8 @@ void AppWindow::TerminateDisplay()
     delete pAndroidWebLoadRequestFactory;
     delete pVehicleModelRepository;
     delete pVehicleModelLoader;
+    delete m_pEnvironmentFlatteningService;
+    delete m_pEnvironmentMaterialController;
 
     if (this->display != EGL_NO_DISPLAY)
     {
@@ -358,6 +363,9 @@ void AppWindow::InitWorld()
 
 	pLighting = new Eegeo::Lighting::GlobalLighting();
 	pFogging = new Eegeo::Lighting::GlobalFogging();
+	m_pEnvironmentFlatteningService = new Eegeo::Rendering::EnvironmentFlatteningService();
+	m_pEnvironmentMaterialController = new Eegeo::Rendering::EnvironmentMaterialController(*pRenderContext,
+				*pLighting, *pFogging, *m_pEnvironmentFlatteningService);
 
 	std::set<std::string> customApplicationAssetDirectories;
 	customApplicationAssetDirectories.insert("MyAppDataDirectory");
@@ -371,8 +379,7 @@ void AppWindow::InitWorld()
 	pBlitter = new Eegeo::Blitter(1024 * 128, 1024 * 64, 1024 * 32, *pRenderContext);
 	pBlitter->Initialise();
 
-	pMaterialFactory = new Eegeo::Rendering::DefaultMaterialFactory;
-	pMaterialFactory->Initialise(&currentWeatherModel, pRenderContext, pLighting, pFogging, pBlitter, pFileIO, pTextureLoader);
+	pMaterialFactory = new Eegeo::Rendering::DefaultMaterialFactory(currentWeatherModel, *m_pEnvironmentMaterialController);
 
 	pTaskQueue = new AndroidTaskQueue(10, resourceBuildShareContext, shareSurface, display);
 
@@ -390,6 +397,8 @@ void AppWindow::InitWorld()
 	Eegeo::Traffic::VehicleModelLoaderHelper::LoadAllVehicleResourcesIntoRepository(*pVehicleModelLoader, *pVehicleModelRepository);
 
 	m_pInterestPointProvider = new Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider();
+
+	const Eegeo::EnvironmentCharacterSet::Type environmentCharacterSet = Eegeo::EnvironmentCharacterSet::Latin;
 
 	pWorld = new Eegeo::EegeoWorld(
 		API_KEY,
@@ -410,6 +419,9 @@ void AppWindow::InitWorld()
 		m_androidNativeUIFactories,
 		&m_terrainHeightRepository,
 		&m_terrainHeightProvider,
+		m_pEnvironmentMaterialController,
+		m_pEnvironmentFlatteningService,
+		environmentCharacterSet,
 		new Eegeo::Search::Service::SearchServiceCredentials("", ""));
 
 

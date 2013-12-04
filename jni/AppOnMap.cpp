@@ -311,8 +311,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         case ExampleTypes::Pins:
             return new Examples::PinsExample(
                                              World().GetTextureLoader(),
-                                             World().GetRenderContext(),
-                                             World().GetGlobalLighting(),
+                                             World().GetEnvironmentMaterialController(),
                                              World().GetGlBufferPool(),
                                              World().GetItemRenderer(),
                                              World().GetCameraProvider(),

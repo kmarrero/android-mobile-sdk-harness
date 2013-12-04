@@ -68,6 +68,8 @@ private:
 	Eegeo::Weather::CurrentWeatherModel currentWeatherModel;
     Eegeo::Resources::Terrain::Heights::TerrainHeightRepository m_terrainHeightRepository;
     Eegeo::Resources::Terrain::Heights::TerrainHeightProvider m_terrainHeightProvider;
+    Eegeo::Rendering::EnvironmentFlatteningService* m_pEnvironmentFlatteningService;
+    Eegeo::Rendering::EnvironmentMaterialController* m_pEnvironmentMaterialController;
 
 	Eegeo::UI::NativeInput::Android::AndroidInputBoxFactory m_androidInputBoxFactory;
 	Eegeo::UI::NativeInput::Android::AndroidKeyboardInputFactory m_androidKeyboardInputFactory;

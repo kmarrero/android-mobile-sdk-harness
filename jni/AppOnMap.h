@@ -50,7 +50,7 @@ namespace ExampleTypes
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteThicknessPolicy;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pins;
 
 namespace Eegeo
 {

@@ -11,8 +11,7 @@ namespace Examples
 {
     PinsExample::PinsExample(
                             Eegeo::Helpers::ITextureFileLoader& textureLoader,
-                            Eegeo::Rendering::RenderContext& renderContext,
-                            Eegeo::Lighting::GlobalLighting& lighting,
+                            Eegeo::Rendering::EnvironmentMaterialController& environmentMaterialController,
                             Eegeo::Rendering::GlBufferPool& glBufferPool,
                             Eegeo::Rendering::ItemRenderer& itemRenderer,
                             const Eegeo::Camera::ICameraProvider& cameraProvider,
@@ -41,8 +40,7 @@ namespace Examples
         m_pPinsModule = Eegeo_NEW(Eegeo::Pins::PinsModule)(
                                                            m_pinIconsTexture.textureId,
                                                            *m_pPinIconsTexturePageLayout,
-                                                           renderContext,
-                                                           lighting,
+                                                           environmentMaterialController,
                                                            glBufferPool,
                                                            itemRenderer,
                                                            cameraProvider,
