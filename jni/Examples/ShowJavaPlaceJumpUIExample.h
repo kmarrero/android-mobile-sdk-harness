@@ -13,6 +13,7 @@
 #include "LatLongAltitude.h"
 #include "Camera.h"
 
+#include <pthread.h>
 #include <map>
 #include <string>
 #include <jni.h>
@@ -52,6 +53,9 @@ namespace Examples
     	jclass m_placeJumpMenuClass;
     	jobject m_placeJumpMenu;
 
+    	pthread_mutex_t m_mutex;
+    	ViewLocation* m_pTargetLocation;
+
     public:
     	ShowJavaPlaceJumpUIExample(
     			AndroidNativeState& pNativeState,
@@ -59,7 +63,7 @@ namespace Examples
 
     	void JumpToLocation(const std::string& location);
         void Start();
-        void Update(float dt) {}
+        void Update(float dt);
         void Draw() {}
         void Suspend();
     };

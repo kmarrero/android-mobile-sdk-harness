@@ -19,6 +19,7 @@ namespace Examples
 			)
 	: m_nativeState(nativeState)
 	, m_cameraJumpController(cameraJumpController)
+	, m_pTargetLocation(NULL)
     {
 		m_locations["NYC"] = ViewLocation(40.703762, -74.013733, 0, 240.0f, 1800.0f);
 		m_locations["London"] = ViewLocation(51.506172,-0.118915, 0, 351.0f, 2731.0f);
@@ -29,6 +30,8 @@ namespace Examples
 
     void ShowJavaPlaceJumpUIExample::Start()
     {
+        pthread_mutex_init(&m_mutex, 0);
+
 		//get an env for the current thread
 		//
 		//AndroidSafeNativeThreadAttachment will detach the thread if required at the end of the method
@@ -76,12 +79,26 @@ namespace Examples
 		//delete the persistent references to the class and object
 		env->DeleteGlobalRef(m_placeJumpMenuClass);
 		env->DeleteGlobalRef(m_placeJumpMenu);
+
+	    pthread_mutex_destroy(&m_mutex);
 	}
+
+    void ShowJavaPlaceJumpUIExample::Update(float dt)
+    {
+        pthread_mutex_lock(&m_mutex);
+        if(m_pTargetLocation != NULL)
+        {
+        	m_cameraJumpController.JumpTo(m_pTargetLocation->location, m_pTargetLocation->heading, m_pTargetLocation->distance);
+        	m_pTargetLocation = NULL;
+        }
+        pthread_mutex_unlock(&m_mutex);
+    }
 
     void ShowJavaPlaceJumpUIExample::JumpToLocation(const std::string& location)
     {
-    	ViewLocation& result = m_locations[location];
-    	m_cameraJumpController.JumpTo(result.location, result.heading, result.distance);
+        pthread_mutex_lock(&m_mutex);
+    	m_pTargetLocation = &m_locations[location];
+        pthread_mutex_unlock(&m_mutex);
     }
 }
 

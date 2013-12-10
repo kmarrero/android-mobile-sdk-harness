@@ -40,84 +40,14 @@ LOCAL_SRC_FILES += ./Examples/PinsExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteSimulationExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteThicknessPolicyExample.cpp
 
+platformincludes := $(shell find ./libs/platform -type d ! -path "*/OSX/*" ! -path "*/iOS/*")
+LOCAL_C_INCLUDES := $(platformincludes:$(LOCAL_PATH)/%=%)
+
 LOCAL_C_INCLUDES += ./jni/Examples 
 
 LOCAL_C_INCLUDES += ./libs/png
 LOCAL_C_INCLUDES += ./libs/curl 
 LOCAL_C_INCLUDES += ./libs/jpeg  
-
-LOCAL_C_INCLUDES += ./libs/platform
-LOCAL_C_INCLUDES += ./libs/platform/Android
-LOCAL_C_INCLUDES += ./libs/platform/Android/Input
-LOCAL_C_INCLUDES += ./libs/platform/Android/KtxTextures/
-LOCAL_C_INCLUDES += ./libs/platform/Android/WebRequestCacheTasks/
-LOCAL_C_INCLUDES += ./libs/platform/AnimatedObjects
-LOCAL_C_INCLUDES += ./libs/platform/Base
-LOCAL_C_INCLUDES += ./libs/platform/Base/Model
-LOCAL_C_INCLUDES += ./libs/platform/Camera
-LOCAL_C_INCLUDES += ./libs/platform/Camera/GlobeCamera
-LOCAL_C_INCLUDES += ./libs/platform/Culling
-LOCAL_C_INCLUDES += ./libs/platform/DataStructures
-LOCAL_C_INCLUDES += ./libs/platform/Debug
-LOCAL_C_INCLUDES += ./libs/platform/Fonts
-LOCAL_C_INCLUDES += ./libs/platform/Fonts/BMFont
-LOCAL_C_INCLUDES += ./libs/platform/Geometry
-LOCAL_C_INCLUDES += ./libs/platform/Helpers
-LOCAL_C_INCLUDES += ./libs/platform/Infrastructure
-LOCAL_C_INCLUDES += ./libs/platform/Io
-LOCAL_C_INCLUDES += ./libs/platform/Io/ChunkedFileFormat
-LOCAL_C_INCLUDES += ./libs/platform/Io/POD
-LOCAL_C_INCLUDES += ./libs/platform/Lighting
-LOCAL_C_INCLUDES += ./libs/platform/Location
-LOCAL_C_INCLUDES += ./libs/platform/Pins
-LOCAL_C_INCLUDES += ./libs/platform/Rendering
-LOCAL_C_INCLUDES += ./libs/platform/Rendering/Materials
-LOCAL_C_INCLUDES += ./libs/platform/Rendering/Shaders
-LOCAL_C_INCLUDES += ./libs/platform/Rendering/Sprites
-LOCAL_C_INCLUDES += ./libs/platform/Rendering/AsyncTexturing
-LOCAL_C_INCLUDES += ./libs/platform/Rendering/VertexTypes
-LOCAL_C_INCLUDES += ./libs/platform/Resources
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Buildings
-LOCAL_C_INCLUDES += ./libs/platform/Resources/CityThemes
-LOCAL_C_INCLUDES += ./libs/platform/Resources/CustomTextures
-LOCAL_C_INCLUDES += ./libs/platform/Resources/PlaceNames
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Roads
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Roads/Navigation
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Shadows
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Heights
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Lcm
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Placeholder
-LOCAL_C_INCLUDES += ./libs/platform/Resources/Terrain/Raster
-LOCAL_C_INCLUDES += ./libs/platform/Routes
-LOCAL_C_INCLUDES += ./libs/platform/Routes/View
-LOCAL_C_INCLUDES += ./libs/platform/Routes/Simulation
-LOCAL_C_INCLUDES += ./libs/platform/Routes/Simulation/Camera
-LOCAL_C_INCLUDES += ./libs/platform/Routes/Simulation/View
-LOCAL_C_INCLUDES += ./libs/platform/Search
-LOCAL_C_INCLUDES += ./libs/platform/Search/Service
-LOCAL_C_INCLUDES += ./libs/platform/Space
-LOCAL_C_INCLUDES += ./libs/platform/Streaming
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/CoverageTrees
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/Loaders
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/Payload
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/Prioritisers
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/Quadtree
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/SceneGraph
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/Stream
-LOCAL_C_INCLUDES += ./libs/platform/Streaming/Volume
-LOCAL_C_INCLUDES += ./libs/platform/TextMeshes
-LOCAL_C_INCLUDES += ./libs/platform/TextMeshes/Internal
-LOCAL_C_INCLUDES += ./libs/platform/Traffic
-LOCAL_C_INCLUDES += ./libs/platform/Unicode
-LOCAL_C_INCLUDES += ./libs/platform/Web
-LOCAL_C_INCLUDES += ./libs/platform/Weather
-
-LOCAL_C_INCLUDES += ./libs/platform/UI
-LOCAL_C_INCLUDES += ./libs/platform/UI/NativeInput
-LOCAL_C_INCLUDES += ./libs/platform/UI/NativeInput/Android
-LOCAL_C_INCLUDES += ./libs/platform/UI/NativeAlerts
-LOCAL_C_INCLUDES += ./libs/platform/UI/NativeAlerts/Android
 
 include $(BUILD_SHARED_LIBRARY)
 
