@@ -18,6 +18,7 @@
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
 #include "WeatherUpdateModel.h"
+#include "TerrainHeightRepository.h"
 
 namespace Eegeo
 {
