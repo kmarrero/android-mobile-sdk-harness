@@ -46,11 +46,12 @@ namespace ExampleTypes
         RouteDrawing,
         Pins,
         RouteSimulation,
-        RouteThicknessPolicy
+        RouteThicknessPolicy,
+        JavaHudCrossThreadCommunication
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pins;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::JavaHudCrossThreadCommunication;
 
 namespace Eegeo
 {

@@ -14,6 +14,7 @@ LOCAL_SRC_FILES += ./main.cpp
 LOCAL_SRC_FILES += ./AppWindow.cpp
 LOCAL_SRC_FILES += ./AppOnMap.cpp
 LOCAL_SRC_FILES += ./ExampleCameraJumpController.cpp
+LOCAL_SRC_FILES += ./UiThreadToNativeThreadTaskQueue.cpp
 
 LOCAL_SRC_FILES += ./Examples/ControlCityThemeExample.cpp
 LOCAL_SRC_FILES += ./Examples/DebugSphereExample.cpp
@@ -39,6 +40,7 @@ LOCAL_SRC_FILES += ./Examples/RouteDrawingExample.cpp
 LOCAL_SRC_FILES += ./Examples/PinsExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteSimulationExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteThicknessPolicyExample.cpp
+LOCAL_SRC_FILES += ./Examples/JavaHudCrossThreadCommunicationExample.cpp
 
 platformincludes := $(shell find ./libs/platform -type d ! -path "*/OSX/*" ! -path "*/iOS/*")
 LOCAL_C_INCLUDES := $(platformincludes:$(LOCAL_PATH)/%=%)

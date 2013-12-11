@@ -41,6 +41,7 @@
 #include "PinsExample.h"
 #include "RouteSimulationExample.h"
 #include "RouteThicknessPolicyExample.h"
+#include "JavaHudCrossThreadCommunicationExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -344,6 +345,15 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         			World().GetRouteService(),
         			renderContext,
         			World());
+        }
+
+        case ExampleTypes::JavaHudCrossThreadCommunication:
+        {
+        	return new Examples::JavaHudCrossThreadCommunicationExample(
+        			m_nativeState,
+        			World().GetCityThemesService(),
+                    World().GetCityThemesRepository(),
+                    World().GetCityThemesUpdater());
         }
 
 
