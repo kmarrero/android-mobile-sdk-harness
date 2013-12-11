@@ -167,7 +167,6 @@ void AppWindow::UpdateWorld()
 		pAndroidWebRequestService->Update();
 		pAppOnMap->Update(fps);
 		pAppOnMap->Draw(fps);
-		currentWeatherModel.SetWeatherType(pAppOnMap->World().GetWeatherController().GetWeatherType());
 
 		Eegeo_GL(glFinish());
 		Eegeo_GL(eglSwapBuffers(display, surface));
@@ -411,6 +410,7 @@ void AppWindow::InitWorld()
 		*pRenderContext,
 		pLighting,
 		pFogging,
+		currentWeatherModel,
 		pMaterialFactory,
 		pAndroidLocationService,
 		pBlitter,

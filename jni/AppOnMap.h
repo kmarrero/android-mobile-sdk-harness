@@ -51,7 +51,7 @@ namespace ExampleTypes
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::JavaHudCrossThreadCommunication;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::DebugSphere;
 
 namespace Eegeo
 {

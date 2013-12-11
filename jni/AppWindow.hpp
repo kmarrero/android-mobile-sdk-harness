@@ -19,6 +19,7 @@
 #include "NativeUIFactories.h"
 #include "WeatherUpdateModel.h"
 #include "TerrainHeightRepository.h"
+#include "CurrentWeatherModel.h"
 
 namespace Eegeo
 {
