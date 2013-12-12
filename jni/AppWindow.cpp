@@ -69,9 +69,9 @@ void AppWindow::Pause(PersistentAppState* pPersistentState)
 	appRunning = false;
 	pthread_mutex_unlock(&m_mutex);
 
-	if(pPersistentState != NULL)
+	if (pAppOnMap != NULL && pPersistentState != NULL)
 	{
-		Eegeo::Camera::GlobeCamera::GlobeCameraController& cameraController = GetAppOnMap().GetCameraController();
+		Eegeo::Camera::GlobeCamera::GlobeCameraController& cameraController = pAppOnMap->GetCameraController();
 	    const Eegeo::Space::EcefTangentBasis& cameraInterest = cameraController.GetInterestBasis();
 
 	    pPersistentState->lastGlobeCameraDistanceToInterest = cameraController.GetDistanceToInterest();
