@@ -43,7 +43,6 @@ LOCAL_SRC_FILES += ./Examples/RouteThicknessPolicyExample.cpp
 LOCAL_SRC_FILES += ./Examples/JavaHudCrossThreadCommunicationExample.cpp
 
 os_name:=$(shell uname -s)
-$(info Compiling for --> $(os_name))
 
 ifeq ($(os_name),Darwin)
 	platformincludes := $(shell find ./libs/platform -type d ! -path "*/OSX/*" ! -path "*/iOS/*")
