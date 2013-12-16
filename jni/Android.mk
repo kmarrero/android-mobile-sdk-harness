@@ -42,8 +42,18 @@ LOCAL_SRC_FILES += ./Examples/RouteSimulationExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteThicknessPolicyExample.cpp
 LOCAL_SRC_FILES += ./Examples/JavaHudCrossThreadCommunicationExample.cpp
 
-platformincludes := $(shell find ./libs/platform -type d ! -path "*/OSX/*" ! -path "*/iOS/*")
-LOCAL_C_INCLUDES := $(platformincludes:$(LOCAL_PATH)/%=%)
+os_name:=$(shell uname -s)
+$(info Compiling for --> $(os_name))
+
+ifeq ($(os_name),Darwin)
+	platformincludes := $(shell find ./libs/platform -type d ! -path "*/OSX/*" ! -path "*/iOS/*")
+	LOCAL_C_INCLUDES := $(platformincludes:$(LOCAL_PATH)/%=%)
+else
+	# assume windows if not specified for now (due to no uname)
+	platformincludes := $(shell dir .\libs\platform /ad-h /s /b)
+	LOCAL_C_INCLUDES := $(platformincludes:$(LOCAL_PATH)/%=%)
+	LOCAL_C_INCLUDES += ./libs/platform 
+endif 
 
 LOCAL_C_INCLUDES += ./jni/Examples 
 
