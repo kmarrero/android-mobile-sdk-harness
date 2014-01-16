@@ -42,6 +42,7 @@
 #include "RouteSimulationExample.h"
 #include "RouteThicknessPolicyExample.h"
 #include "JavaHudCrossThreadCommunicationExample.h"
+#include "RouteMatchingExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -341,7 +342,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
 
         case ExampleTypes::RouteThicknessPolicy:
         {
-        	return new Examples::RouteThicknessPolicyExample(\
+        	return new Examples::RouteThicknessPolicyExample(
         			World().GetRouteService(),
         			renderContext,
         			World());
@@ -354,6 +355,14 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         			World().GetCityThemesService(),
                     World().GetCityThemesRepository(),
                     World().GetCityThemesUpdater());
+        }
+
+        case ExampleTypes::RouteMatching:
+        {
+        	return new Examples::RouteMatchingExample(
+        			World().GetRouteService(),
+        			World(),
+        			m_nativeState);
         }
 
 
