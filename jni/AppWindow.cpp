@@ -173,23 +173,100 @@ void AppWindow::UpdateWorld()
 	}
 }
 
+// based on nVidia example app for Tegra
+bool DefaultEGLChooser(EGLDisplay disp, u32 requestedSurfaceType, EGLConfig& bestConfig)
+{
+	EGLint count = 0;
+	if (!eglGetConfigs(disp, NULL, 0, &count))
+	{
+		Eegeo_TTY("defaultEGLChooser cannot query count of all configs");
+		return false;
+	}
+
+	Eegeo_TTY("Config count = %d", count);
+
+	EGLConfig* configs = new EGLConfig[count];
+	if (!eglGetConfigs(disp, configs, count, &count))
+	{
+		Eegeo_TTY("defaultEGLChooser cannot query all configs");
+		return false;
+	}
+
+	int bestMatch = 1<<30;
+	int bestIndex = -1;
+
+	int i;
+	for (i = 0; i < count; i++)
+	{
+		int match = 0;
+		EGLint surfaceType = 0;
+		EGLint blueBits = 0;
+		EGLint greenBits = 0;
+		EGLint redBits = 0;
+		EGLint alphaBits = 0;
+		EGLint depthBits = 0;
+		EGLint stencilBits = 0;
+		EGLint renderableFlags = 0;
+
+		eglGetConfigAttrib(disp, configs[i], EGL_SURFACE_TYPE, &surfaceType);
+		eglGetConfigAttrib(disp, configs[i], EGL_BLUE_SIZE, &blueBits);
+		eglGetConfigAttrib(disp, configs[i], EGL_GREEN_SIZE, &greenBits);
+		eglGetConfigAttrib(disp, configs[i], EGL_RED_SIZE, &redBits);
+		eglGetConfigAttrib(disp, configs[i], EGL_ALPHA_SIZE, &alphaBits);
+		eglGetConfigAttrib(disp, configs[i], EGL_DEPTH_SIZE, &depthBits);
+		eglGetConfigAttrib(disp, configs[i], EGL_STENCIL_SIZE, &stencilBits);
+		eglGetConfigAttrib(disp, configs[i], EGL_RENDERABLE_TYPE, &renderableFlags);
+
+
+		if ((surfaceType & requestedSurfaceType) == 0)
+			continue;
+		if ((renderableFlags & EGL_OPENGL_ES2_BIT) == 0)
+			continue;
+
+		if (depthBits < 16)
+			continue;
+		if ((redBits < 5) || (greenBits < 6) || (blueBits < 5))
+			continue;
+		if (stencilBits < 8)
+			continue;
+
+		int penalty = depthBits - 16;
+		match += penalty * penalty;
+		penalty = redBits - 5;
+		match += penalty * penalty;
+		penalty = greenBits - 6;
+		match += penalty * penalty;
+		penalty = blueBits - 5;
+		match += penalty * penalty;
+		penalty = alphaBits;
+		match += penalty * penalty;
+		penalty = stencilBits - 8;
+		match += penalty * penalty;
+
+		if ((match < bestMatch) || (bestIndex == -1))
+		{
+			bestMatch = match;
+			bestIndex = i;
+			Eegeo_TTY("New best Config[%d]: R%dG%dB%dA%d D%dS%d Type=%04x Render=%04x",
+				i, redBits, greenBits, blueBits, alphaBits, depthBits, stencilBits, surfaceType, renderableFlags);
+		}
+	}
+
+	if (bestIndex < 0)
+	{
+		delete[] configs;
+		return false;
+	}
+
+	bestConfig = configs[bestIndex];
+	delete[] configs;
+
+	return true;
+}
+
 void AppWindow::InitDisplay()
 {
-    // initialize OpenGL ES and EGL
-    const EGLint attribs[] = {
-    		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_ALPHA_SIZE, 8,
-            EGL_DEPTH_SIZE, 16,
-            EGL_STENCIL_SIZE, 8,
-            EGL_NONE
-    };
-
     EGLint w, h, dummy, format;
-    EGLint numConfigs;
     EGLConfig config;
     EGLSurface surface;
     EGLContext context;
@@ -197,7 +274,13 @@ void AppWindow::InitDisplay()
     EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
     eglInitialize(display, 0, 0);
-    eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+
+    if (!DefaultEGLChooser(display, EGL_WINDOW_BIT, config))
+    {
+    	Eegeo_ERROR("unabled to find a good display type");
+    	return;
+    }
+
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
 
     ANativeWindow_setBuffersGeometry(pState->window, 0, 0, format);
@@ -211,8 +294,7 @@ void AppWindow::InitDisplay()
     context = eglCreateContext(display, config, NULL, contextAttribs);
 
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        Eegeo_TTY("Unable to eglMakeCurrent");
-
+    	Eegeo_ERROR("Unable to eglMakeCurrent");
         return;
     }
 
@@ -233,31 +315,28 @@ void AppWindow::InitDisplay()
 #else
     resourceBuildShareContext = eglCreateContext(display, config, context, contextAttribs);
 
-    const EGLint sharedSurfaceAttributes[] = {
-      		  EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-              EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-              EGL_BLUE_SIZE, 8,
-              EGL_GREEN_SIZE, 8,
-              EGL_RED_SIZE, 8,
-              EGL_ALPHA_SIZE, 8,
-              EGL_DEPTH_SIZE, 16,
-              EGL_STENCIL_SIZE, 8,
-              EGL_NONE,
-
-      };
-
     EGLint pbufferAttribs[] =
         {
             EGL_WIDTH, 1,
             EGL_HEIGHT, 1,
+            EGL_TEXTURE_TARGET, EGL_NO_TEXTURE,
+            EGL_TEXTURE_FORMAT, EGL_NO_TEXTURE,
             EGL_NONE
         };
     EGLConfig sharedSurfaceConfig;
-    eglChooseConfig(display, sharedSurfaceAttributes, &sharedSurfaceConfig, 1, &numConfigs);
+    if (!DefaultEGLChooser(display, EGL_PBUFFER_BIT, sharedSurfaceConfig))
+    {
+    	Eegeo_ERROR("unabled to find a good pbuffer surface type");
+    }
+
     this->shareSurface = eglCreatePbufferSurface(display, sharedSurfaceConfig, pbufferAttribs);
+
 #endif
     this->width = w;
     this->height = h;
+
+	glViewport(0, 0, width, height);
+	pInputHandler.SetViewportOffset(0, 0);
 
     // Initialize GL state.
     Eegeo_GL(glClearDepthf(1.0f));
@@ -266,7 +345,7 @@ void AppWindow::InitDisplay()
 	// Set up default Depth test.
 	Eegeo_GL(glEnable(GL_DEPTH_TEST));
 	Eegeo_GL(glDepthMask(GL_TRUE));
-	Eegeo_GL(glDepthFunc(GL_LEQUAL))
+	Eegeo_GL(glDepthFunc(GL_LEQUAL));
 
 	// Set up default culling.
 	Eegeo_GL(glEnable(GL_CULL_FACE));
@@ -282,7 +361,10 @@ void AppWindow::InitDisplay()
 	Eegeo_GL(glDisable(GL_BLEND));
 	Eegeo_GL(glColorMask(true, true, true, true));
 
-	//when window and gl context are ready, init the world
+	Eegeo_GL(glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
+	eglSwapInterval(display, 1);
+
 	InitWorld();
 }
 
