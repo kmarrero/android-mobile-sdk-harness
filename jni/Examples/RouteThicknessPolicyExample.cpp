@@ -113,7 +113,7 @@ void RouteThicknessPolicyExample::MyScalingRouteThicknessPolicy::UpdateScale()
     m_scaledown = m_scaledown ? m_scale > 0.5f : (!m_scaledown ? m_scale > 2.f : false);
 }
 
-float RouteThicknessPolicyExample::MyScalingRouteThicknessPolicy::GetThicknessScale() const
+float RouteThicknessPolicyExample::MyScalingRouteThicknessPolicy::GetThicknessScale(const Eegeo::Routes::Fitting::FittedRoute& fittedRoute) const
 {
     return m_scale;
 }
