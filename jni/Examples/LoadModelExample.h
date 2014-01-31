@@ -64,6 +64,8 @@ namespace Examples
         Eegeo::Model* pModel;
         BoundsVisualiser boundsVisualiser;
         MeshInstance mesh;
+        Eegeo::ModelMaterial* discMaterial;
+        float elapsedTime;
         
     public:
         LoadModelExample(Eegeo::Rendering::RenderContext& renderContext,
