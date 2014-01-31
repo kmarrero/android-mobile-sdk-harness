@@ -25,18 +25,29 @@ namespace Examples
         pModel = new Eegeo::Model(renderContext.GetGLState(), textureLoader, fileIO);
         
         //this is a .pod resource file included in the build
-        pModel->Load("SanFrancisco_Vehicles.pod");
+        pModel->Load("sanfrancisco_vehicles_alpha.POD");
         
         //the layout of this resource is assumed - a "Vehicles" node should exist
         Eegeo::Node* parentNode = pModel->FindNode("Vehicles");
         Eegeo_ASSERT(parentNode);
         
+        // Print details of the materials in the POD.
+        for(int i = 0; i < pModel->GetNumMaterials(); i++)
+        {
+            Eegeo::ModelMaterial* pMaterial = pModel->GetMaterial(i);
+            Eegeo_TTY(
+                      "Material: %s %s alpha=%f\n",
+                      pMaterial->GetName().c_str(),
+                      (pMaterial->GetMaterialFlags() & Eegeo::kMaterialFlag_Blend) ? "blended" : "opaque",
+                      pMaterial->GetAlpha()
+                      );
+        }
+
         //it should have some children, which are the vehicle meshes...
         Eegeo_ASSERT(parentNode->GetNumChildNodes() > 0);
 
-        //select a random vehicle
-        srand(time(NULL));
-        mesh.node = parentNode->GetChildNode(rand() % parentNode->GetNumChildNodes());;
+        //select a vehicle.
+        mesh.node = parentNode->GetChildNode(0);
     }
     
     void LoadModelExample::Suspend()
@@ -97,9 +108,15 @@ namespace Examples
         mesh.node->UpdateRecursive();
         mesh.node->UpdateSphereRecursive();
         mesh.node->UpdateBBRecursive();
+
+        // Enable z buffering.
+        Eegeo::Rendering::GLState& glState = renderContext.GetGLState();
+        glState.DepthTest.Enable();
+        glState.DepthFunc(GL_LEQUAL);
+        glState.DepthMask(GL_TRUE);
         
         //draw the mesh
-        mesh.node->Draw(renderContext, globalFogging);
+        mesh.node->DrawRecursive(renderContext, globalFogging, NULL, true, true);
         
         Eegeo::v3 min, max;
         mesh.node->GetMinExtent(min);
