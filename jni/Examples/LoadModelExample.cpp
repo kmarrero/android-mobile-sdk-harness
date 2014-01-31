@@ -44,6 +44,7 @@ namespace Examples
                       );
         }
 
+        // Look up the material for the disc so that we can animate its alpha value.
         if(!pModel->TryGetMaterialByName("alpha_disc_material", discMaterial))
         {
         	Eegeo_TTY("Failed to find disc material.\n");
