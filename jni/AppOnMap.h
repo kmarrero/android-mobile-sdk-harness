@@ -52,7 +52,7 @@ namespace ExampleTypes
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::LoadModel;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteMatching;
 
 namespace Eegeo
 {
@@ -121,8 +121,10 @@ public:
                                       Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
                                       Eegeo::Web::IWebLoadRequestFactory& webRequestFactory,
                                       Eegeo::Resources::Roads::Navigation::NavigationGraphRepository& navigationGraphs,
-                                      Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& buildingPool,
-                                      Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool,
+                                      Eegeo::Rendering::Scene::SceneElementRepository<Eegeo::Rendering::Renderables::PackedRenderable>& buildingRepository,
+                                      Eegeo::Rendering::Filters::PackedRenderableFilter& buildingFilter,
+                                      Eegeo::Rendering::Scene::SceneElementRepository<Eegeo::Rendering::Renderables::PackedRenderable>& shadowRepository,
+                                      Eegeo::Rendering::Filters::PackedRenderableFilter& shadowFilter,
                                       Eegeo::Streaming::IStreamingVolume& visibleVolume,
                                       Eegeo::Lighting::GlobalLighting& lighting,
                                       Eegeo::Lighting::GlobalFogging& fogging,
@@ -132,9 +134,9 @@ public:
                                       Eegeo::Search::Service::SearchService* searchService,
                                       Eegeo::UI::NativeUIFactories& nativeInputFactories,
                                       Eegeo::Location::IInterestPointProvider& interestPointProvider,
-                                      Eegeo::Camera::ICameraJumpController& cameraJumpController,
                                       Eegeo::Routes::RouteService& routeService,
-                                      Eegeo::EegeoWorld& world);
+                                      Eegeo::EegeoWorld& world
+                                      );
 
     void Event_TouchRotate 			(const AppInterface::RotateData& data);
     void Event_TouchRotate_Start	(const AppInterface::RotateData& data);

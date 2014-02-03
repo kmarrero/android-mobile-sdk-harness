@@ -8,7 +8,6 @@
 
 #include "ResourceSpatialQueryExample.h"
 #include "IInterestPointProvider.h"
-#include "Logger.h"
 
 using namespace Examples;
 
@@ -28,7 +27,7 @@ void ResourceSpatialQueryExample::Update(float dt)
 
     Eegeo::Streaming::MortonKey lastKey = key;
     
-    std::vector<Eegeo::Rendering::RenderableItem*> buildings = resourceSpatialQueryService.GetBuildingByEcefPoint(ecefPointOfInterest,
+    std::vector<const Eegeo::Rendering::Scene::SceneElement<Eegeo::Rendering::Renderables::PackedRenderable>*> buildings = resourceSpatialQueryService.GetBuildingByEcefPoint(ecefPointOfInterest,
                                                                                                                  15,
                                                                                                                  10,
                                                                                                                  key);
@@ -39,11 +38,11 @@ void ResourceSpatialQueryExample::Update(float dt)
         
         if(numBuildings == 0)
         {
-        	EXAMPLE_LOG("No resources detected\n");
+            Eegeo_TTY("No resources detected\n");
         }
         else
         {
-        	EXAMPLE_LOG("%d buildings detected at camera focus point --> %s! (LOD %d)\n",
+            Eegeo_TTY("%d buildings detected at camera focus point --> %s! (LOD %d)\n",
                       numBuildings,
                       key.ToString().c_str(),
                       key.Depth());

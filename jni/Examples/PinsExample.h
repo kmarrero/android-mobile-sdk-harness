@@ -15,13 +15,13 @@
 #include "PinsModule.h"
 #include <string>
 
+
 namespace Examples
 {
     /*!
      *  PinsExample demonstrates the display of Pins within the 3D world.
      *  Pins are placed relative to the underlying terrain and displayed as Sprites which always face the camera.
      *  This example also demonstrates how Pins can be selected by testing against their screen bounds.
-     *  Pin add / remove functionality is demonstrated by adding / removing pin 0 every 3 seconds.
      */
     class PinsExample : public IExample
     {
@@ -34,15 +34,15 @@ namespace Examples
         std::string m_pin2UserData;
         std::string m_pin3UserData;
 
-        float m_addRemoveTimer;
-        Eegeo::Pins::Pin* m_pPin0;
-
     public:
         PinsExample(
                     Eegeo::Helpers::ITextureFileLoader& textureLoader,
-                    Eegeo::Rendering::EnvironmentMaterialController& environmentMaterialController,
                     Eegeo::Rendering::GlBufferPool& glBufferPool,
-                    Eegeo::Rendering::ItemRenderer& itemRenderer,
+                    Eegeo::Rendering::Shaders::ShaderIdGenerator& shaderIdGenerator,
+                    Eegeo::Rendering::Materials::MaterialIdGenerator& materialIdGenerator,
+                    Eegeo::Rendering::VertexLayouts::VertexBindingPool& vertexBindingPool,
+                    Eegeo::Rendering::VertexLayouts::VertexLayoutPool& vertexLayoutPool,
+                    Eegeo::Rendering::RenderableFilters& renderableFilters,
                     const Eegeo::Camera::ICameraProvider& cameraProvider,
                     Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider
                     );
@@ -52,12 +52,12 @@ namespace Examples
         void Draw();
         void Suspend();
 
-        bool Event_TouchDown(const AppInterface::TouchData& data);
+        bool Event_TouchTap(const AppInterface::TapData& data);
 
     private:
         void CreateExamplePins();
-        void AddRemovePin0();
     };
 }
+
 
 #endif /* defined(__ExampleApp__PinsExample__) */

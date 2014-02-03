@@ -14,7 +14,6 @@
 #include "GlobeCameraInterestPointProvider.h"
 #include "GlobeCameraController.h"
 #include "CameraHelpers.h"
-#include "WeatherController.h"
 #include "NativeUIFactories.h"
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
@@ -122,8 +121,6 @@ void MyApp::OnStart ()
 
     m_globeCameraController->SetView(cameraInterestBasis, cameraControllerDistanceFromInterestPointMeters);
 
-    eegeoWorld.GetWeatherController().SetWeather(Eegeo::Weather::Sunny, 1.0f);
-
     Eegeo::Search::Service::SearchService* searchService = NULL;
 
     if (eegeoWorld.IsSearchServiceAvailable())
@@ -132,31 +129,33 @@ void MyApp::OnStart ()
     }
 
     pExample = CreateExample(m_selectedExampleType,
-                             eegeoWorld.GetRenderContext(),
-                             location,
-                             eegeoWorld.GetCameraProvider(),
-                             *m_globeCameraController,
-                             *m_cameraTouchController,
-                             eegeoWorld.GetTerrainHeightProvider(),
-                             eegeoWorld.GetTextureLoader(),
-                             eegeoWorld.GetFileIO(),
-                             eegeoWorld.GetTerrainStreaming(),
-                             eegeoWorld.GetWebRequestFactory(),
-                             eegeoWorld.GetNavigationGraphRepository(),
-                             eegeoWorld.GetBuildingMeshPool(),
-                             eegeoWorld.GetShadowMeshPool(),
-                             eegeoWorld.GetStreamingVolume(),
-                             eegeoWorld.GetGlobalLighting(),
-                             eegeoWorld.GetGlobalFogging(),
-                             eegeoWorld.GetTrafficSimulation(),
-                             eegeoWorld.GetResourceSpatialQueryService(),
-                             eegeoWorld.GetEnvironmentFlatteningService(),
-                             searchService,
-                             eegeoWorld.GetNativeUIFactories(),
-                             eegeoWorld.GetInterestPointProvider(),
-                             *m_cameraJumpController,
-                             eegeoWorld.GetRouteService(),
-                             eegeoWorld);
+                                eegeoWorld.GetRenderContext(),
+                                location,
+                                eegeoWorld.GetCameraProvider(),
+                                *m_globeCameraController,
+                                *m_cameraTouchController,
+                                eegeoWorld.GetTerrainHeightProvider(),
+                                eegeoWorld.GetTextureLoader(),
+                                eegeoWorld.GetFileIO(),
+                                eegeoWorld.GetTerrainStreaming(),
+                                eegeoWorld.GetWebRequestFactory(),
+                                eegeoWorld.GetNavigationGraphRepository(),
+                                eegeoWorld.GetBuildingSceneElementRepository(),
+                                eegeoWorld.GetBuildingsRenderableFilter(),
+                                eegeoWorld.GetShadowSceneElementRepository(),
+                                eegeoWorld.GetShadowRenderableFilter(),
+                                eegeoWorld.GetStreamingVolume(),
+                                eegeoWorld.GetGlobalLighting(),
+                                eegeoWorld.GetGlobalFogging(),
+                                eegeoWorld.GetTrafficSimulation(),
+                                eegeoWorld.GetResourceSpatialQueryService(),
+                                eegeoWorld.GetEnvironmentFlatteningService(),
+                                searchService,
+                                eegeoWorld.GetNativeUIFactories(),
+                                eegeoWorld.GetInterestPointProvider(),
+                                eegeoWorld.GetRouteService(),
+                                eegeoWorld
+                                );
 
     pExample->Start();
 }
@@ -195,31 +194,33 @@ void MyApp::JumpTo(double latitudeDegrees, double longitudeDegrees, double altit
 }
 
 Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
-                                         Eegeo::Rendering::RenderContext& renderContext,
-                                         Eegeo::Space::LatLongAltitude interestLocation,
-                                         Eegeo::Camera::ICameraProvider& cameraProvider,
-                                         Eegeo::Camera::GlobeCamera::GlobeCameraController& globeCameraController,
-                                         Eegeo::ITouchController& cameraTouchController,
-                                         Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
-                                         Eegeo::Helpers::ITextureFileLoader& textureLoader,
-                                         Eegeo::Helpers::IFileIO& fileIO,
-                                         Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
-                                         Eegeo::Web::IWebLoadRequestFactory& webRequestFactory,
-                                         Eegeo::Resources::Roads::Navigation::NavigationGraphRepository& navigationGraphs,
-                                         Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& buildingPool,
-                                         Eegeo::Resources::MeshPool<Eegeo::Rendering::RenderableItem*>& shadowPool,
-                                         Eegeo::Streaming::IStreamingVolume& visibleVolume,
-                                         Eegeo::Lighting::GlobalLighting& lighting,
-                                         Eegeo::Lighting::GlobalFogging& fogging,
-                                         Eegeo::Traffic::TrafficSimulation& trafficSimulation,
-                                         Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
-                                         Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
-                                         Eegeo::Search::Service::SearchService* searchService,
-                                         Eegeo::UI::NativeUIFactories& nativeInputFactories,
-                                         Eegeo::Location::IInterestPointProvider& interestPointProvider,
-                                         Eegeo::Camera::ICameraJumpController& cameraJumpController,
-                                         Eegeo::Routes::RouteService& routeService,
-                                         Eegeo::EegeoWorld& world)
+        Eegeo::Rendering::RenderContext& renderContext,
+        Eegeo::Space::LatLongAltitude interestLocation,
+        Eegeo::Camera::ICameraProvider& cameraProvider,
+        Eegeo::Camera::GlobeCamera::GlobeCameraController& globeCameraController,
+        Eegeo::ITouchController& cameraTouchController,
+        Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
+        Eegeo::Helpers::ITextureFileLoader& textureLoader,
+        Eegeo::Helpers::IFileIO& fileIO,
+        Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
+        Eegeo::Web::IWebLoadRequestFactory& webRequestFactory,
+        Eegeo::Resources::Roads::Navigation::NavigationGraphRepository& navigationGraphs,
+        Eegeo::Rendering::Scene::SceneElementRepository<Eegeo::Rendering::Renderables::PackedRenderable>& buildingRepository,
+        Eegeo::Rendering::Filters::PackedRenderableFilter& buildingFilter,
+        Eegeo::Rendering::Scene::SceneElementRepository<Eegeo::Rendering::Renderables::PackedRenderable>& shadowRepository,
+        Eegeo::Rendering::Filters::PackedRenderableFilter& shadowFilter,
+        Eegeo::Streaming::IStreamingVolume& visibleVolume,
+        Eegeo::Lighting::GlobalLighting& lighting,
+        Eegeo::Lighting::GlobalFogging& fogging,
+        Eegeo::Traffic::TrafficSimulation& trafficSimulation,
+        Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
+        Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
+        Eegeo::Search::Service::SearchService* searchService,
+        Eegeo::UI::NativeUIFactories& nativeInputFactories,
+        Eegeo::Location::IInterestPointProvider& interestPointProvider,
+        Eegeo::Routes::RouteService& routeService,
+        Eegeo::EegeoWorld& world
+        )
 {
     switch(example)
     {
@@ -258,12 +259,17 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
 
         case ExampleTypes::ModifiedRendering:
             return new Examples::ModifiedRenderingExample(renderContext,
-                                                          cameraProvider,
-                                                          interestPointProvider,
-                                                          visibleVolume,
-                                                          lighting,
-                                                          buildingPool,
-                                                          shadowPool);
+                    cameraProvider,
+                    interestPointProvider,
+                    visibleVolume,
+                    lighting,
+                    buildingRepository,
+                    buildingFilter,
+                    World().GetRenderQueue(),
+                    World().GetRenderableFilters(),
+                    World().GetShaderIdGenerator(),
+                    World().GetMaterialIdGenerator(),
+                    World().GetEnvironmentPlaceholderTexture());
 
         case ExampleTypes::ToggleTraffic:
             return new Examples::ToggleTrafficExample(trafficSimulation);
@@ -312,13 +318,16 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
 
         case ExampleTypes::Pins:
             return new Examples::PinsExample(
-                                             World().GetTextureLoader(),
-                                             World().GetEnvironmentMaterialController(),
-                                             World().GetGlBufferPool(),
-                                             World().GetItemRenderer(),
-                                             World().GetCameraProvider(),
-                                             World().GetTerrainHeightProvider()
-                                             );
+                    World().GetTextureLoader(),
+                    World().GetGlBufferPool(),
+                    World().GetShaderIdGenerator(),
+                    World().GetMaterialIdGenerator(),
+                    World().GetVertexBindingPool(),
+                    World().GetVertexLayoutPool(),
+                    World().GetRenderableFilters(),
+                    World().GetCameraProvider(),
+                    World().GetTerrainHeightProvider()
+                    );
 
         case ExampleTypes::RouteSimulation:
         {

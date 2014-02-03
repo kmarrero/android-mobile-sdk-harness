@@ -5,7 +5,6 @@
 #include "AndroidWebRequestService.hpp"
 #include "AppOnMap.h"
 #include "AndroidTaskQueue.h"
-#include "DefaultMaterialFactory.h"
 #include "AndroidWebLoadRequestFactory.h"
 #include "AndroidInputProcessor.h"
 #include "AndroidLocationService.h"
@@ -17,9 +16,7 @@
 #include "AndroidKeyboardInputFactory.h"
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
-#include "WeatherUpdateModel.h"
 #include "TerrainHeightRepository.h"
-#include "CurrentWeatherModel.h"
 
 namespace Eegeo
 {
@@ -61,17 +58,14 @@ private:
 	Eegeo::Lighting::GlobalLighting *pLighting;
 	Eegeo::Lighting::GlobalFogging *pFogging;
 	Eegeo::Blitter* pBlitter;
-	Eegeo::Rendering::DefaultMaterialFactory* pMaterialFactory ;
 	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
 	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
 	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
-	Eegeo::Weather::CurrentWeatherModel currentWeatherModel;
     Eegeo::Resources::Terrain::Heights::TerrainHeightRepository m_terrainHeightRepository;
     Eegeo::Resources::Terrain::Heights::TerrainHeightProvider m_terrainHeightProvider;
     Eegeo::Rendering::EnvironmentFlatteningService* m_pEnvironmentFlatteningService;
-    Eegeo::Rendering::EnvironmentMaterialController* m_pEnvironmentMaterialController;
 
 	Eegeo::UI::NativeInput::Android::AndroidInputBoxFactory m_androidInputBoxFactory;
 	Eegeo::UI::NativeInput::Android::AndroidKeyboardInputFactory m_androidKeyboardInputFactory;
