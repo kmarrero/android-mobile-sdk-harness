@@ -42,10 +42,10 @@ public class ThemeReaderWriterHud
 	            	final Spinner spinner = (Spinner)m_view.findViewById(R.id.themes);
 	            
 	            	String items[] = new String[4];
-	            	items[0] = "San Francisco";
-	            	items[1] = "New York";
-	            	items[2] = "London";
-	            	items[3] = "Osaka";
+	            	items[0] = "SummerSanFrancisco";
+	            	items[1] = "WinterNewYork";
+	            	items[2] = "AutumnLondon";
+	            	items[3] = "SpringJapan";
 	                ArrayAdapter<String> adapter = new ArrayAdapter<String>(m_activity, android.R.layout.simple_spinner_item, items);
 	            	spinner.setAdapter(adapter);
 	            	

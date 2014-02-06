@@ -63,10 +63,10 @@ namespace Examples
 
     // This method does the following:
     // 1. Disables ICityThemesUpdater - so the App is in sole control of what Theme is active
-    // 2. Sets "New York" as the current Theme.
+    // 2. Sets "SummerNewYork" as the current Theme.
     void ControlCityThemeExample::ChangeTheme()
     {
-        const std::string themeToSelect = "New York";
+        const std::string themeToSelect = "SummerNewYork";
         
         EXAMPLE_LOG("Starting City Theme Control Example\n");
         
