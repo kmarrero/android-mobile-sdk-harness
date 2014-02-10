@@ -17,6 +17,7 @@
 #include "AndroidAlertBoxFactory.h"
 #include "NativeUIFactories.h"
 #include "TerrainHeightRepository.h"
+#include "GlobalShadowing.h"
 
 namespace Eegeo
 {
@@ -57,6 +58,7 @@ private:
 	Eegeo::Rendering::RenderContext* pRenderContext;
 	Eegeo::Lighting::GlobalLighting *pLighting;
 	Eegeo::Lighting::GlobalFogging *pFogging;
+	Eegeo::Lighting::GlobalShadowing *pShadowing;
 	Eegeo::Blitter* pBlitter;
 	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
 	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;

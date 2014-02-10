@@ -439,6 +439,7 @@ void AppWindow::InitWorld()
 
 	pLighting = new Eegeo::Lighting::GlobalLighting();
 	pFogging = new Eegeo::Lighting::GlobalFogging();
+	pShadowing = new Eegeo::Lighting::GlobalShadowing();
 	m_pEnvironmentFlatteningService = new Eegeo::Rendering::EnvironmentFlatteningService();
 
 	std::set<std::string> customApplicationAssetDirectories;
@@ -482,6 +483,7 @@ void AppWindow::InitWorld()
             *pRenderContext,
             pLighting,
             pFogging,
+            pShadowing,
             pAndroidLocationService,
             pBlitter,
             pAndroidUrlEncoder,
