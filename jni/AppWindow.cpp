@@ -497,8 +497,8 @@ void AppWindow::InitWorld()
             "",
             "Default-Landscape@2x~ipad.png",
             Eegeo::Standard,
-            "http://cdn1.eegeo.com/coverage-trees/vian_malc_placenames_01/manifest.txt.gz",
-            "http://eegeo-static.s3.amazonaws.com/mobile-themes-new/vtest_placenames_style_04/manifest.txt.gz"
+            "http://cdn1.eegeo.com/coverage-trees/v199/manifest.txt.gz",
+            "http://cdn1.eegeo.com/mobile-themes-new/v75/manifest.txt.gz"
             );
 
 	pAppOnMap = new MyApp(&pInputHandler, *pState, *m_pInterestPointProvider);
