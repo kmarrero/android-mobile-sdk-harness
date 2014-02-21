@@ -61,8 +61,6 @@ private:
 	Eegeo::Lighting::GlobalShadowing *pShadowing;
 	Eegeo::Blitter* pBlitter;
 	Eegeo::Android::AndroidWebLoadRequestFactory* pAndroidWebLoadRequestFactory;
-	Eegeo::Traffic::VehicleModelRepository* pVehicleModelRepository;
-	Eegeo::Traffic::VehicleModelLoader* pVehicleModelLoader;
 	Eegeo::Android::AndroidLocationService* pAndroidLocationService;
 	Eegeo::Android::AndroidUrlEncoder* pAndroidUrlEncoder;
     Eegeo::Resources::Terrain::Heights::TerrainHeightRepository m_terrainHeightRepository;

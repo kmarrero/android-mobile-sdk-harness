@@ -62,7 +62,7 @@ namespace Examples
         Eegeo::Routes::Simulation::View::RouteSimulationViewService& m_routeSimulationViewService;
         Eegeo::Rendering::GLState& m_glState;
         Eegeo::Helpers::IFileIO& m_fileIO;
-        Eegeo::Helpers::ITextureFileLoader& m_textureLoader;
+        Eegeo::Rendering::AsyncTexturing::IAsyncTextureRequestor& m_textureRequestor;
         Eegeo::Camera::GlobeCamera::GlobeCameraController& m_defaultCamera;
         Eegeo::Location::IInterestPointProvider& m_interestPointProvider;
     	AndroidNativeState& m_nativeState;
@@ -95,7 +95,7 @@ namespace Examples
                                Eegeo::Routes::Simulation::View::RouteSimulationViewService& routeSimulationViewService,
                                Eegeo::Rendering::GLState& glState,
                                Eegeo::Helpers::IFileIO& fileIO,
-                               Eegeo::Helpers::ITextureFileLoader& textureLoader,
+                               Eegeo::Rendering::AsyncTexturing::IAsyncTextureRequestor& textureRequestor,
                                Eegeo::Camera::GlobeCamera::GlobeCameraController& defaultCamera,
                                Eegeo::Location::IInterestPointProvider& interestPointProvider,
                                Eegeo::Routes::Simulation::Camera::RouteSimulationGlobeCameraControllerFactory routeSimulationGlobeCameraControllerFactory,

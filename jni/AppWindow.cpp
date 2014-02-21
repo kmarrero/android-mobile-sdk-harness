@@ -11,8 +11,6 @@
 #include "AppInterface.h"
 #include "Blitter.h"
 #include "EffectHandler.h"
-#include "VehicleModelLoader.h"
-#include "VehicleModelRepository.h"
 #include "SearchServiceCredentials.h"
 #include "AndroidThreadHelper.h"
 #include "GlobeCameraController.h"
@@ -391,8 +389,6 @@ void AppWindow::TerminateDisplay()
     delete pBlitter;
     delete pAndroidWebRequestService;
     delete pAndroidWebLoadRequestFactory;
-    delete pVehicleModelRepository;
-    delete pVehicleModelLoader;
     delete m_pEnvironmentFlatteningService;
 
     if (this->display != EGL_NO_DISPLAY)
@@ -463,12 +459,6 @@ void AppWindow::InitWorld()
 
 	pAndroidWebLoadRequestFactory = new AndroidWebLoadRequestFactory(pAndroidWebRequestService, pHttpCache);
 
-	pVehicleModelRepository = new Eegeo::Traffic::VehicleModelRepository;
-	pVehicleModelLoader = new Eegeo::Traffic::VehicleModelLoader(pRenderContext->GetGLState(),
-																									 *pTextureLoader,
-																									 *pFileIO);
-	Eegeo::Traffic::VehicleModelLoaderHelper::LoadAllVehicleResourcesIntoRepository(*pVehicleModelLoader, *pVehicleModelRepository);
-
 	m_pInterestPointProvider = new Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider();
 
 	const Eegeo::EnvironmentCharacterSet::Type environmentCharacterSet = Eegeo::EnvironmentCharacterSet::Latin;
@@ -479,7 +469,6 @@ void AppWindow::InitWorld()
             pTextureLoader,
             pAndroidWebLoadRequestFactory,
             pTaskQueue,
-            pVehicleModelRepository,
             *pRenderContext,
             pLighting,
             pFogging,
@@ -497,8 +486,8 @@ void AppWindow::InitWorld()
             "",
             "Default-Landscape@2x~ipad.png",
             Eegeo::Standard,
-            "http://cdn1.eegeo.com/coverage-trees/v199/manifest.txt.gz",
-            "http://cdn1.eegeo.com/mobile-themes-new/v75/manifest.txt.gz"
+            "http://cdn1.eegeo.com/coverage-trees/v203/manifest.txt.gz",
+            "http://cdn1.eegeo.com/mobile-themes-new/v83/manifest.txt.gz"
             );
 
 	pAppOnMap = new MyApp(&pInputHandler, *pState, *m_pInterestPointProvider);
