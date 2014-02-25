@@ -49,11 +49,12 @@ namespace ExampleTypes
         RouteThicknessPolicy,
         JavaHudCrossThreadCommunication,
         RouteMatching,
-        RouteSimulationAnimation
+        RouteSimulationAnimation,
+        DynamicText3D
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteSimulationAnimation;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::DynamicText3D;
 
 namespace Eegeo
 {

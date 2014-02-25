@@ -43,6 +43,7 @@ LOCAL_SRC_FILES += ./Examples/RouteThicknessPolicyExample.cpp
 LOCAL_SRC_FILES += ./Examples/JavaHudCrossThreadCommunicationExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteMatchingExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteSimulationAnimationExample.cpp
+LOCAL_SRC_FILES += ./Examples/DynamicText3DExample.cpp
 
 os_name:=$(shell uname -s)
 

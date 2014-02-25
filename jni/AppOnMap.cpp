@@ -43,6 +43,7 @@
 #include "JavaHudCrossThreadCommunicationExample.h"
 #include "RouteMatchingExample.h"
 #include "RouteSimulationAnimationExample.h"
+#include "DynamicText3DExample.h"
 #include "LocalAsyncTextureLoader.h"
 
 MyApp::MyApp(
@@ -391,6 +392,15 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                 	                                                        factory,
                 	                                                        World());
                 }
+
+        case ExampleTypes::DynamicText3D:
+        {
+            return new Examples::DynamicText3DExample(World().GetRenderContext().GetGLState(),
+                                                      World().GetCameraProvider(),
+                                                      World().GetEnvironmentFlatteningService(),
+                                                      World().GetPlaceNameViewBuilder(),
+                                                      World());
+        }
 
 
         default:
