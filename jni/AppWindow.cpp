@@ -31,7 +31,7 @@ void AppWindow::EnqueuePointerEvent(TouchInputEvent& e)
 
 AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState)
 : pState(pState)
-, pPersistentState(pPersistentState)
+, persistentState(pPersistentState)
 , pAppOnMap(NULL)
 , pInputProcessor(NULL)
 , pWorld(NULL)
@@ -64,19 +64,14 @@ void AppWindow::Pause(PersistentAppState* pPersistentState)
 	appRunning = false;
 	pthread_mutex_unlock(&m_mutex);
 
-	if (pAppOnMap != NULL && pPersistentState != NULL)
-	{
-		Eegeo::Camera::GlobeCamera::GlobeCameraController& cameraController = pAppOnMap->GetCameraController();
-	    const Eegeo::Space::EcefTangentBasis& cameraInterest = cameraController.GetInterestBasis();
-
-	    pPersistentState->lastGlobeCameraDistanceToInterest = cameraController.GetDistanceToInterest();
-		float cameraHeadingRadians = Eegeo::Camera::CameraHelpers::GetAbsoluteBearingRadians(cameraInterest.GetPointEcef(), cameraInterest.GetForward());
-
-		pPersistentState->lastGlobeCameraHeadingDegrees = Eegeo::Math::Rad2Deg(cameraHeadingRadians);
-		pPersistentState->lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(cameraInterest.GetPointEcef());
-	}
-
     pthread_join(m_mainNativeThread, 0);
+
+	if(pPersistentState != NULL)
+	{
+		pPersistentState->lastGlobeCameraDistanceToInterest = this->persistentState.lastGlobeCameraDistanceToInterest;
+		pPersistentState->lastGlobeCameraHeadingDegrees = this->persistentState.lastGlobeCameraHeadingDegrees;
+		pPersistentState->lastGlobeCameraLatLong = this->persistentState.lastGlobeCameraLatLong;
+	}
 }
 
 void AppWindow::Resume()
@@ -126,13 +121,26 @@ void* AppWindow::Run(void* self)
         }
         else
         {
+        	if(displayAvailable)
+        	{
+        		Eegeo::Camera::GlobeCamera::GlobeCameraController& getCameraController = pSelf->GetAppOnMap().GetCameraController();
+
+        	    const Eegeo::Space::EcefTangentBasis& cameraInterest = getCameraController.GetInterestBasis();
+        	    const float cameraHeadingRadians = Eegeo::Camera::CameraHelpers::GetAbsoluteBearingRadians(cameraInterest.GetPointEcef(), cameraInterest.GetForward());
+
+        	    pSelf->persistentState.lastGlobeCameraDistanceToInterest = getCameraController.GetDistanceToInterest();
+        	    pSelf->persistentState.lastGlobeCameraHeadingDegrees = Eegeo::Math::Rad2Deg(cameraHeadingRadians);
+        	    pSelf->persistentState.lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(cameraInterest.GetPointEcef());
+
+        		pSelf->TerminateDisplay();
+        		pSelf->displayAvailable = false;
+        	}
+
+            pthread_exit(0);
         	break;
         }
     }
 
-    pSelf->TerminateDisplay();
-
-    pthread_exit(0);
     return NULL;
 }
 
@@ -366,10 +374,11 @@ void AppWindow::InitDisplay()
 
 void AppWindow::TerminateDisplay()
 {
+	pTaskQueue->StopWorkQueue();
+
 	delete pAppOnMap;
 	pHttpCache->FlushInMemoryCacheRepresentation();
 
-    delete pTaskQueue;
 
     delete m_pInterestPointProvider;
 
@@ -390,6 +399,8 @@ void AppWindow::TerminateDisplay()
     delete pAndroidWebRequestService;
     delete pAndroidWebLoadRequestFactory;
     delete m_pEnvironmentFlatteningService;
+
+    delete pTaskQueue;
 
     if (this->display != EGL_NO_DISPLAY)
     {
@@ -495,15 +506,12 @@ void AppWindow::InitWorld()
 
 	pAppOnMap->Start(pWorld);
 
-	if (pPersistentState != NULL)
-    {
-		pAppOnMap->JumpTo(
-    			pPersistentState->lastGlobeCameraLatLong.GetLatitudeInDegrees(),
-    			pPersistentState->lastGlobeCameraLatLong.GetLongitudeInDegrees(),
-    			pPersistentState->lastGlobeCameraLatLong.GetAltitude(),
-    			pPersistentState->lastGlobeCameraHeadingDegrees,
-    			pPersistentState->lastGlobeCameraDistanceToInterest);
-    }
+	if (persistentState.valid)
+	{
+        Eegeo::Space::EcefTangentBasis cameraInterestBasis;
+        Eegeo::Camera::CameraHelpers::EcefTangentBasisFromPointAndHeading(persistentState.lastGlobeCameraLatLong.ToECEF(), persistentState.lastGlobeCameraHeadingDegrees, cameraInterestBasis);
+		pAppOnMap->GetCameraController().SetView(cameraInterestBasis, persistentState.lastGlobeCameraDistanceToInterest);
+	}
 
     pthread_mutex_lock(&m_mutex);
     worldInitialised = true;

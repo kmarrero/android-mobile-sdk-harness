@@ -57,9 +57,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     @Override
     protected void onPause() 
     {
-        super.onPause();
-		setNativeSurface(null);
         pauseNativeCode();
+        super.onPause();
     }
 
     @Override

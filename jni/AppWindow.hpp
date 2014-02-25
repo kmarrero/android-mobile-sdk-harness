@@ -26,18 +26,30 @@ namespace Eegeo
 
 struct PersistentAppState
 {
-	PersistentAppState():lastGlobeCameraLatLong(0,0,0){}
+	PersistentAppState(PersistentAppState* pValues)
+	:lastGlobeCameraLatLong(0,0,0)
+	{
+		valid = pValues!=NULL;
+		if(valid)
+		{
+			lastGlobeCameraLatLong = pValues->lastGlobeCameraLatLong;
+			lastGlobeCameraHeadingDegrees = pValues->lastGlobeCameraHeadingDegrees;
+			lastGlobeCameraDistanceToInterest = pValues->lastGlobeCameraDistanceToInterest;
+		}
+	}
 
+	bool valid;
 	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
 	float lastGlobeCameraHeadingDegrees;
 	float lastGlobeCameraDistanceToInterest;
 };
 
+
 class AppWindow 
 {
 private:
 	MyApp* pAppOnMap;
-	PersistentAppState* pPersistentState;
+	PersistentAppState persistentState;
 	Eegeo::Android::Input::AndroidInputProcessor* pInputProcessor;
 	Eegeo::Android::Input::AndroidInputHandler pInputHandler;
 	Eegeo::EegeoWorld* pWorld;
