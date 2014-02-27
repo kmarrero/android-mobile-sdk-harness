@@ -202,7 +202,7 @@ void RouteSimulationExample::Update(float dt)
         m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(linkSpeedMultiplier);
     }
 
-    EXAMPLE_LOG("%d metres from start of route.\n", m_pSessionAlternatingSpeedChanger->GetDistanceFromStartInMetres());
+    EXAMPLE_LOG("%f metres from start of route.\n", m_pSessionAlternatingSpeedChanger->GetDistanceFromStartInMetres());
 }
 
 void RouteSimulationExample::Suspend()
