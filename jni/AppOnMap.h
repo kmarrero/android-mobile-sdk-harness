@@ -49,11 +49,12 @@ namespace ExampleTypes
         RouteThicknessPolicy,
         JavaHudCrossThreadCommunication,
         RouteMatching,
-        RouteSimulationAnimation
+        RouteSimulationAnimation,
+        DynamicText3D
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteSimulationAnimation;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::DynamicText3D;
 
 namespace Eegeo
 {
@@ -129,7 +130,7 @@ public:
                                       Eegeo::Streaming::IStreamingVolume& visibleVolume,
                                       Eegeo::Lighting::GlobalLighting& lighting,
                                       Eegeo::Lighting::GlobalFogging& fogging,
-                                      Eegeo::Traffic::TrafficSimulation& trafficSimulation,
+                                      Eegeo::Traffic::TrafficSimulationController& trafficSimulation,
                                       Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
                                       Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
                                       Eegeo::Search::Service::SearchService* searchService,

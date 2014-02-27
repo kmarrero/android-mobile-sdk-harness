@@ -7,6 +7,7 @@
 //
 
 #include "ToggleTrafficExample.h"
+#include "TrafficSimulationController.h"
 #include "TimeHelpers.h"
 #include "Logger.h"
 
@@ -16,7 +17,7 @@ using namespace Eegeo::Helpers::Time;
 
 #define TRAFFIC_ENABLED_SWITCH_DELAY_MILLISECONDS 5000
 
-ToggleTrafficExample::ToggleTrafficExample(Eegeo::Traffic::TrafficSimulation& trafficSimulation)
+ToggleTrafficExample::ToggleTrafficExample(Eegeo::Traffic::TrafficSimulationController& trafficSimulation)
 :trafficSimulation(trafficSimulation)
 ,lastToggle(MillisecondsSinceEpoch())
 {

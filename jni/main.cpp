@@ -13,7 +13,7 @@ using namespace Eegeo::Android::Input;
 
 AppWindow* g_pAppWindow;
 AndroidNativeState g_nativeState;
-PersistentAppState g_persistentAppState;
+PersistentAppState g_persistentAppState(NULL);
 bool firstTime = true;
 
 namespace

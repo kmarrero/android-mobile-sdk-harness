@@ -43,6 +43,8 @@
 #include "JavaHudCrossThreadCommunicationExample.h"
 #include "RouteMatchingExample.h"
 #include "RouteSimulationAnimationExample.h"
+#include "DynamicText3DExample.h"
+#include "LocalAsyncTextureLoader.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -148,7 +150,7 @@ void MyApp::OnStart ()
                                 eegeoWorld.GetStreamingVolume(),
                                 eegeoWorld.GetGlobalLighting(),
                                 eegeoWorld.GetGlobalFogging(),
-                                eegeoWorld.GetTrafficSimulation(),
+                                eegeoWorld.GetTrafficSimulationController(),
                                 eegeoWorld.GetResourceSpatialQueryService(),
                                 eegeoWorld.GetEnvironmentFlatteningService(),
                                 searchService,
@@ -213,7 +215,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         Eegeo::Streaming::IStreamingVolume& visibleVolume,
         Eegeo::Lighting::GlobalLighting& lighting,
         Eegeo::Lighting::GlobalFogging& fogging,
-        Eegeo::Traffic::TrafficSimulation& trafficSimulation,
+        Eegeo::Traffic::TrafficSimulationController& trafficSimulation,
         Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
         Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
         Eegeo::Search::Service::SearchService* searchService,
@@ -229,8 +231,8 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
             return new Examples::LoadModelExample(renderContext,
                                                   interestLocation,
                                                   fileIO,
-                                                  textureLoader,
-                                                  fogging);
+                                                  fogging,
+                                                  World().GetLocalAsyncTextureLoader());
         case ExampleTypes::ScreenUnproject:
         case ExampleTypes::TerrainHeightQuery:
             return new Examples::ScreenUnprojectExample(renderContext,
@@ -292,7 +294,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         case ExampleTypes::PODAnimation:
             return new Examples::PODAnimationExample(renderContext,
                                                      fileIO,
-                                                     textureLoader,
+                                                     World().GetLocalAsyncTextureLoader(),
                                                      fogging);
         case ExampleTypes::Pick3DObject:
             return new Examples::Pick3DObjectExample(renderContext,
@@ -341,7 +343,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                                         World().GetRouteSimulationViewService(),
                                                         World().GetRenderContext().GetGLState(),
                                                         World().GetFileIO(),
-                                                        World().GetTextureLoader(),
+                                                        World().GetLocalAsyncTextureLoader(),
                                                         *m_globeCameraController,
                                                         World().GetInterestPointProvider(),
                                                         factory,
@@ -386,10 +388,19 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                 	                                                        World().GetRouteSimulationViewService(),
                 	                                                        World().GetRenderContext().GetGLState(),
                 	                                                        World().GetFileIO(),
-                	                                                        World().GetTextureLoader(),
+                	                                                        World().GetLocalAsyncTextureLoader(),
                 	                                                        factory,
                 	                                                        World());
                 }
+
+        case ExampleTypes::DynamicText3D:
+        {
+            return new Examples::DynamicText3DExample(World().GetRenderContext().GetGLState(),
+                                                      World().GetCameraProvider(),
+                                                      World().GetEnvironmentFlatteningService(),
+                                                      World().GetPlaceNameViewBuilder(),
+                                                      World());
+        }
 
 
         default:

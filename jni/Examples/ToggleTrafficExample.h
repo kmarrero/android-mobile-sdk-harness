@@ -18,10 +18,10 @@ namespace Examples
     {
     private:
         long long lastToggle;
-        Eegeo::Traffic::TrafficSimulation& trafficSimulation;
+        Eegeo::Traffic::TrafficSimulationController& trafficSimulation;
         
     public:
-        ToggleTrafficExample(Eegeo::Traffic::TrafficSimulation& trafficSimulation);
+        ToggleTrafficExample(Eegeo::Traffic::TrafficSimulationController& trafficSimulation);
         
         void Start() {}
         void Update(float dt);
