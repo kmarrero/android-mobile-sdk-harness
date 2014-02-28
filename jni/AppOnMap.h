@@ -54,7 +54,7 @@ namespace ExampleTypes
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::RouteSimulation;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pins;
 
 namespace Eegeo
 {

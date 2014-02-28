@@ -17,7 +17,8 @@ namespace Examples
                             Eegeo::Rendering::VertexLayouts::VertexLayoutPool& vertexLayoutPool,
                             Eegeo::Rendering::RenderableFilters& renderableFilters,
                             const Eegeo::Camera::ICameraProvider& cameraProvider,
-                            Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider
+                            Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
+                            Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService
                             )
     : m_pin0UserData("Pin Zero(0) User Data")
     , m_pin1UserData("Pin One(1) User Data")
@@ -52,7 +53,8 @@ namespace Examples
                                                            terrainHeightProvider,
                                                            spriteWidthInMetres,
                                                            spriteHeightInMetres,
-                                                           Eegeo::Rendering::LayerIds::PlaceNames
+                                                           Eegeo::Rendering::LayerIds::PlaceNames,
+                                                           environmentFlatteningService
                                                            );
 
         CreateExamplePins();
