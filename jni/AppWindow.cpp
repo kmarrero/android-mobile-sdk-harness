@@ -16,6 +16,7 @@
 #include "GlobeCameraController.h"
 #include "RenderCamera.h"
 #include "CameraHelpers.h"
+#include "LoadingScreen.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
@@ -29,7 +30,7 @@ void AppWindow::EnqueuePointerEvent(TouchInputEvent& e)
 	pthread_mutex_unlock(&m_inputMutex);
 }
 
-AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState)
+AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState, bool initialStart)
 : pState(pState)
 , persistentState(pPersistentState)
 , pAppOnMap(NULL)
@@ -39,6 +40,7 @@ AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistent
 , appRunning(false)
 , displayAvailable(false)
 , worldInitialised(false)
+, initialStart(initialStart)
 , m_androidInputBoxFactory(pState)
 , m_androidKeyboardInputFactory(pState, pInputHandler)
 , m_androidAlertBoxFactory(pState)
@@ -498,7 +500,9 @@ void AppWindow::InitWorld()
             "Default-Landscape@2x~ipad.png",
             Eegeo::Standard,
             "http://cdn1.eegeo.com/coverage-trees/v207/manifest.txt.gz",
-            "http://cdn1.eegeo.com/mobile-themes-new/v86/manifest.txt.gz"
+            "http://cdn1.eegeo.com/mobile-themes-new/v86/manifest.txt.gz",
+            NULL,
+            (initialStart) ? Eegeo::Rendering::LoadingScreenLayout::FullScreen : Eegeo::Rendering::LoadingScreenLayout::Centred
             );
 
 	pAppOnMap = new MyApp(&pInputHandler, *pState, *m_pInterestPointProvider);

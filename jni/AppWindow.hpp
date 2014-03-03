@@ -87,6 +87,7 @@ private:
 	bool appRunning;
 	bool displayAvailable;
 	bool worldInitialised;
+	bool initialStart;
 
 	pthread_t m_mainNativeThread;
 	pthread_mutex_t m_mutex;
@@ -110,7 +111,7 @@ private:
 
 public:
 
-	AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState);
+	AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState, bool initialStart);
 	~AppWindow();
 
 	void Pause(PersistentAppState* pPersistentState);

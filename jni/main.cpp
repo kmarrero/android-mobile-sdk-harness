@@ -62,7 +62,7 @@ JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv,
 	g_nativeState.assetManagerGlobalRef = jenv->NewGlobalRef(assetManager);
 	g_nativeState.assetManager = AAssetManager_fromJava(jenv, g_nativeState.assetManagerGlobalRef);
 	PersistentAppState* pPersistentAppState = firstTime ? NULL : &g_persistentAppState;
-	g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState);
+	g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState, firstTime);
 	firstTime = false;
 
 	return ((long)g_pAppWindow);
