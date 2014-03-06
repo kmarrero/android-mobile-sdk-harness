@@ -50,11 +50,12 @@ namespace ExampleTypes
         JavaHudCrossThreadCommunication,
         RouteMatching,
         RouteSimulationAnimation,
-        DynamicText3D
+        DynamicText3D,
+        SingleCity
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::Pins;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::SingleCity;
 
 namespace Eegeo
 {

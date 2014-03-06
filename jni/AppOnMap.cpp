@@ -15,6 +15,8 @@
 #include "GlobeCameraController.h"
 #include "CameraHelpers.h"
 #include "NativeUIFactories.h"
+#include "LocalAsyncTextureLoader.h"
+
 #include "DebugSphereExample.h"
 #include "ScreenUnprojectExample.h"
 #include "ScreenPickExample.h"
@@ -44,7 +46,7 @@
 #include "RouteMatchingExample.h"
 #include "RouteSimulationAnimationExample.h"
 #include "DynamicText3DExample.h"
-#include "LocalAsyncTextureLoader.h"
+#include "SingleCityExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -172,6 +174,7 @@ void MyApp::Update (float dt)
 
     m_cameraTouchController->Update(dt);
     m_globeCameraController->Update(dt);
+    pExample->AfterCameraUpdate();
 
     eegeoWorld.Update(dt);
     pExample->Update(dt);
@@ -401,6 +404,14 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                                       World().GetEnvironmentFlatteningService(),
                                                       World().GetPlaceNameViewBuilder(),
                                                       World());
+        }
+
+        case ExampleTypes::SingleCity:
+        {
+            return new Examples::SingleCityExample(*m_globeCameraController,
+                                                   World().GetPrecachingService(),
+                                                   World().GetStreamingVolumeController(),
+                                                   World());
         }
 
 
