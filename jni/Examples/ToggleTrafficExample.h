@@ -10,7 +10,7 @@
 #define __ExampleApp__ToggleTrafficExample__
 
 #include "IExample.h"
-#include "TrafficSimulation.h"
+#include "Traffic.h"
 
 namespace Examples
 {
