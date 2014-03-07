@@ -45,6 +45,7 @@ LOCAL_SRC_FILES += ./Examples/RouteMatchingExample.cpp
 LOCAL_SRC_FILES += ./Examples/RouteSimulationAnimationExample.cpp
 LOCAL_SRC_FILES += ./Examples/DynamicText3DExample.cpp
 LOCAL_SRC_FILES += ./Examples/SingleCityExample.cpp
+LOCAL_SRC_FILES += ./Examples/PinOverModelExample.cpp
 
 os_name:=$(shell uname -s)
 

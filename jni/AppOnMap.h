@@ -51,11 +51,12 @@ namespace ExampleTypes
         RouteMatching,
         RouteSimulationAnimation,
         DynamicText3D,
-        SingleCity
+        SingleCity,
+        PinOverModel
 	};
 }
 
-static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::SingleCity;
+static const ExampleTypes::Examples g_defaultSelectedExample = ExampleTypes::PinOverModel;
 
 namespace Eegeo
 {

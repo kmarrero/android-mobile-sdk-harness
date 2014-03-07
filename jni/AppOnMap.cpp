@@ -47,6 +47,7 @@
 #include "RouteSimulationAnimationExample.h"
 #include "DynamicText3DExample.h"
 #include "SingleCityExample.h"
+#include "PinOverModelExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -412,6 +413,26 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                                                    World().GetPrecachingService(),
                                                    World().GetStreamingVolumeController(),
                                                    World());
+        }
+
+        case ExampleTypes::PinOverModel:
+        {
+            return new Examples::PinOverModelExample(
+				World().GetTextureLoader(),
+				World().GetGlBufferPool(),
+				World().GetShaderIdGenerator(),
+				World().GetMaterialIdGenerator(),
+				World().GetVertexBindingPool(),
+				World().GetVertexLayoutPool(),
+				World().GetRenderableFilters(),
+				World().GetCameraProvider(),
+				World().GetTerrainHeightProvider(),
+				World().GetEnvironmentFlatteningService(),
+				renderContext,
+				fileIO,
+				World().GetLocalAsyncTextureLoader(),
+				fogging,
+				World().GetNullMaterial());
         }
 
 
