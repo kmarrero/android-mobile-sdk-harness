@@ -88,6 +88,7 @@ private:
 	bool displayAvailable;
 	bool worldInitialised;
 	bool initialStart;
+	bool updatedForFirstTime;
 
 	pthread_t m_mainNativeThread;
 	pthread_mutex_t m_mutex;

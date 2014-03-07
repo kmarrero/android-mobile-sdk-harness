@@ -48,7 +48,9 @@ AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistent
 , m_terrainHeightRepository()
 , m_terrainHeightProvider(&m_terrainHeightRepository)
 , m_pEnvironmentFlatteningService(NULL)
+, updatedForFirstTime(false)
 {
+
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
     pthread_mutex_init(&m_mutex, 0);
     pthread_mutex_init(&m_inputMutex, 0);
@@ -118,6 +120,11 @@ void* AppWindow::Run(void* self)
         			pSelf->InitDisplay();
         		}
 
+        		if(!pSelf->updatedForFirstTime)
+        		{
+        			Eegeo_TTY("First call to EegeoWorld::Update()\n");
+        			pSelf->updatedForFirstTime = true;
+        		}
             	pSelf->UpdateWorld();
         	}
         }
