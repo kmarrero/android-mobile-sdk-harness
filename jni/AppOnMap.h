@@ -52,7 +52,8 @@ namespace ExampleTypes
         RouteSimulationAnimation,
         DynamicText3D,
         SingleCity,
-        PinOverModel
+        PinOverModel,
+        TrafficCongestion
 	};
 }
 

@@ -48,6 +48,7 @@
 #include "DynamicText3DExample.h"
 #include "SingleCityExample.h"
 #include "PinOverModelExample.h"
+#include "TrafficCongestionExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -435,6 +436,12 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
 				World().GetNullMaterial());
         }
 
+        case ExampleTypes::TrafficCongestion:
+        {
+			return new Examples::TrafficCongestionExample(
+					World().GetTrafficCongestionService(),
+					World());
+        }
 
         default:
         	Eegeo_ASSERT(false, "Unhandled ExampleType");
