@@ -451,7 +451,7 @@ void AppWindow::InitWorld()
 	pAndroidLocationService = new AndroidLocationService(pState);
 
 	pRenderContext = new Eegeo::Rendering::RenderContext();
-	pRenderContext->SetScreenDimensions(width, height, 1.0f);
+	pRenderContext->SetScreenDimensions(width, height, 1.0f, pState->deviceDpi);
 
 	pLighting = new Eegeo::Lighting::GlobalLighting();
 	pFogging = new Eegeo::Lighting::GlobalFogging();

@@ -37,12 +37,13 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* pvt)
 }
 
 //lifecycle
-JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv, jobject obj, jobject activity, jobject assetManager)
+JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv, jobject obj, jobject activity, jobject assetManager, jfloat dpi)
 {
 	g_nativeState.javaMainThread = pthread_self();
 	g_nativeState.mainThreadEnv = jenv;
 	g_nativeState.activity = jenv->NewGlobalRef(activity);
 	g_nativeState.activityClass = (jclass)jenv->NewGlobalRef(jenv->FindClass("com/eegeo/MainActivity"));
+	g_nativeState.deviceDpi = dpi;
 
 	jmethodID getClassLoader = jenv->GetMethodID(g_nativeState.activityClass,"getClassLoader", "()Ljava/lang/ClassLoader;");
 	g_nativeState.classLoader = jenv->NewGlobalRef(jenv->CallObjectMethod(activity, getClassLoader));

@@ -1,6 +1,7 @@
 package com.eegeo;
 
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.app.Activity;
@@ -12,7 +13,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     private SurfaceHolder m_surfaceHolder;
     private long m_nativeAppWindowPtr;
     
-    public static native long startNativeCode(MainActivity activity, AssetManager assetManager);
+    public static native long startNativeCode(MainActivity activity, AssetManager assetManager, float dpi);
     public static native void stopNativeCode();
     public static native void pauseNativeCode();
     public static native void resumeNativeCode();
@@ -34,7 +35,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     protected void onStart() 
     {
         super.onStart();
-        m_nativeAppWindowPtr = startNativeCode(this, getAssets());
+        
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+		float dpi = dm.ydpi;
+        
+        m_nativeAppWindowPtr = startNativeCode(this, getAssets(), dpi);
         
         if(m_nativeAppWindowPtr == 0)
         {
