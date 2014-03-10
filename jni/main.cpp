@@ -63,7 +63,11 @@ JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv,
 	g_nativeState.assetManagerGlobalRef = jenv->NewGlobalRef(assetManager);
 	g_nativeState.assetManager = AAssetManager_fromJava(jenv, g_nativeState.assetManagerGlobalRef);
 	PersistentAppState* pPersistentAppState = firstTime ? NULL : &g_persistentAppState;
-	g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState, firstTime);
+
+	if(firstTime) {
+		g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState, firstTime);
+	}
+
 	firstTime = false;
 
 	return ((long)g_pAppWindow);
@@ -76,8 +80,6 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_stopNativeCode(JNIEnv* jenv, 
 	jenv->DeleteGlobalRef(g_nativeState.activityClass);
 	jenv->DeleteGlobalRef(g_nativeState.classLoaderClass);
 	jenv->DeleteGlobalRef(g_nativeState.classLoader);
-	delete g_pAppWindow;
-	g_pAppWindow = NULL;
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_pauseNativeCode(JNIEnv* jenv, jobject obj)

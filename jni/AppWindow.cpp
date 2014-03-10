@@ -40,6 +40,7 @@ AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistent
 , appRunning(false)
 , displayAvailable(false)
 , worldInitialised(false)
+, displayBound(false)
 , initialStart(initialStart)
 , m_androidInputBoxFactory(pState)
 , m_androidKeyboardInputFactory(pState, pInputHandler)
@@ -49,17 +50,26 @@ AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistent
 , m_terrainHeightProvider(&m_terrainHeightRepository)
 , m_pEnvironmentFlatteningService(NULL)
 , updatedForFirstTime(false)
+, context(EGL_NO_CONTEXT)
+, resourceBuildShareContext(EGL_NO_CONTEXT)
+, pTaskQueue(NULL)
 {
 
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
     pthread_mutex_init(&m_mutex, 0);
     pthread_mutex_init(&m_inputMutex, 0);
+
+    this->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    eglInitialize(display, 0, 0);
 }
 
 AppWindow::~AppWindow()
 {
 	pthread_mutex_destroy(&m_mutex);
 	pthread_mutex_destroy(&m_inputMutex);
+
+	TerminateDisplay(true);
+	TerminateWorld();
 }
 
 void AppWindow::Pause(PersistentAppState* pPersistentState)
@@ -83,7 +93,6 @@ void AppWindow::Resume()
 	pthread_mutex_lock(&m_mutex);
 	appRunning = true;
 	displayAvailable = false;
-	worldInitialised = false;
 	pthread_mutex_unlock(&m_mutex);
 
     pthread_create(&m_mainNativeThread, 0, Run, this);
@@ -109,15 +118,24 @@ void* AppWindow::Run(void* self)
     	bool running = pSelf->appRunning;
     	bool displayAvailable = pSelf->displayAvailable;
     	bool worldInitialised = pSelf->worldInitialised;
+    	bool displayBound = pSelf->displayBound;
     	pthread_mutex_unlock(&pSelf->m_mutex);
 
         if(running)
         {
         	if(displayAvailable)
         	{
+        		if(!displayBound)
+				{
+					if(!pSelf->InitDisplay())
+					{
+						continue;
+					}
+				}
+
         		if(!worldInitialised)
         		{
-        			pSelf->InitDisplay();
+        			pSelf->InitWorld();
         		}
 
         		if(!pSelf->updatedForFirstTime)
@@ -141,8 +159,9 @@ void* AppWindow::Run(void* self)
         	    pSelf->persistentState.lastGlobeCameraHeadingDegrees = Eegeo::Math::Rad2Deg(cameraHeadingRadians);
         	    pSelf->persistentState.lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(cameraInterest.GetPointEcef());
 
-        		pSelf->TerminateDisplay();
+        	    pSelf->TerminateDisplay(false);
         		pSelf->displayAvailable = false;
+        		pSelf->displayBound = false;
         	}
 
             pthread_exit(0);
@@ -276,21 +295,16 @@ bool DefaultEGLChooser(EGLDisplay disp, u32 requestedSurfaceType, EGLConfig& bes
 	return true;
 }
 
-void AppWindow::InitDisplay()
+bool AppWindow::InitDisplay()
 {
     EGLint w, h, dummy, format;
     EGLConfig config;
     EGLSurface surface;
-    EGLContext context;
-
-    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-
-    eglInitialize(display, 0, 0);
 
     if (!DefaultEGLChooser(display, EGL_WINDOW_BIT, config))
     {
     	Eegeo_ERROR("unabled to find a good display type");
-    	return;
+    	return false;
     }
 
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
@@ -303,11 +317,14 @@ void AppWindow::InitDisplay()
            };
 
     surface = eglCreateWindowSurface(display, config, pState->window, NULL);
-    context = eglCreateContext(display, config, NULL, contextAttribs);
+
+    if(context == EGL_NO_CONTEXT) {
+    	context = eglCreateContext(display, config, NULL, contextAttribs);
+    }
 
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
     	Eegeo_ERROR("Unable to eglMakeCurrent");
-        return;
+        return false;
     }
 
     //Eegeo_TTY("printing extensions\n");
@@ -317,15 +334,16 @@ void AppWindow::InitDisplay()
     Eegeo_GL(eglQuerySurface(display, surface, EGL_WIDTH, &w));
     Eegeo_GL(eglQuerySurface(display, surface, EGL_HEIGHT, &h));
 
-    this->display = display;
-    this->context = context;
     this->surface = surface;
 
 #ifdef EEGEO_DROID_EMULATOR
     this->shareSurface = EGL_NO_SURFACE;
     this->resourceBuildShareContext = EGL_NO_CONTEXT;
 #else
-    resourceBuildShareContext = eglCreateContext(display, config, context, contextAttribs);
+
+    if(resourceBuildShareContext == EGL_NO_CONTEXT) {
+    	resourceBuildShareContext = eglCreateContext(display, config, context, contextAttribs);
+    }
 
     EGLint pbufferAttribs[] =
         {
@@ -342,6 +360,10 @@ void AppWindow::InitDisplay()
     }
 
     this->shareSurface = eglCreatePbufferSurface(display, sharedSurfaceConfig, pbufferAttribs);
+
+    if(pTaskQueue != NULL) {
+    	pTaskQueue->UpdateSurface(shareSurface);
+    }
 
 #endif
     this->width = w;
@@ -377,11 +399,13 @@ void AppWindow::InitDisplay()
 
 	eglSwapInterval(display, 1);
 
-	InitWorld();
+	pthread_mutex_lock(&m_mutex);
+	displayBound = true;
+	pthread_mutex_unlock(&m_mutex);
 }
 
 
-void AppWindow::TerminateDisplay()
+void AppWindow::TerminateWorld()
 {
 	pTaskQueue->StopWorkQueue();
 
@@ -410,7 +434,10 @@ void AppWindow::TerminateDisplay()
     delete m_pEnvironmentFlatteningService;
 
     delete pTaskQueue;
+}
 
+void AppWindow::TerminateDisplay(bool teardownEGL)
+{
     if (this->display != EGL_NO_DISPLAY)
     {
     	Eegeo_GL(eglMakeCurrent(this->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
@@ -425,22 +452,26 @@ void AppWindow::TerminateDisplay()
     		Eegeo_GL(eglDestroySurface(this->display, this->shareSurface));
 		}
 
-    	if (this->context != EGL_NO_CONTEXT)
-        {
-        	Eegeo_GL(eglDestroyContext(this->display, this->context));
-        }
+    	if(teardownEGL)
+    	{
+			if (this->context != EGL_NO_CONTEXT)
+			{
+				Eegeo_GL(eglDestroyContext(this->display, this->context));
+			}
 
-        if(this->resourceBuildShareContext != EGL_NO_CONTEXT)
-        {
-        	Eegeo_GL(eglDestroyContext(this->display, this->resourceBuildShareContext));
-        }
+			if(this->resourceBuildShareContext != EGL_NO_CONTEXT)
+			{
+				Eegeo_GL(eglDestroyContext(this->display, this->resourceBuildShareContext));
+			}
 
-        Eegeo_GL(eglTerminate(this->display));
+			Eegeo_GL(eglTerminate(this->display));
+
+			this->display = EGL_NO_DISPLAY;
+		    this->context = EGL_NO_CONTEXT;
+		    this->resourceBuildShareContext = EGL_NO_CONTEXT;
+    	}
     }
 
-    this->display = EGL_NO_DISPLAY;
-    this->context = EGL_NO_CONTEXT;
-    this->resourceBuildShareContext = EGL_NO_CONTEXT;
     this->surface = EGL_NO_SURFACE;
     this->shareSurface = EGL_NO_SURFACE;
 }

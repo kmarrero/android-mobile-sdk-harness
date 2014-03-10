@@ -89,6 +89,7 @@ private:
 	bool worldInitialised;
 	bool initialStart;
 	bool updatedForFirstTime;
+	bool displayBound;
 
 	pthread_t m_mainNativeThread;
 	pthread_mutex_t m_mutex;
@@ -99,8 +100,9 @@ private:
 
 	double CalcSmoothedDelta() const;
 
-	void InitDisplay();
-	void TerminateDisplay();
+	bool InitDisplay();
+	void TerminateDisplay(bool teardownEGL);
+	void TerminateWorld();
 	void InitWorld();
 	void UpdateWorld();
 	double GetTimeNowSeconds();
