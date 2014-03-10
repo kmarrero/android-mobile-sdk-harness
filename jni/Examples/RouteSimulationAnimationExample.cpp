@@ -9,6 +9,8 @@
 #include "RouteSimulationAnimationExample.h"
 #include "VectorMath.h"
 #include "GlobeCameraTouchControllerConfiguration.h"
+#include "TransformHelpers.h"
+#include "ICameraProvider.h"
 
 using namespace Examples;
 using namespace Eegeo;
@@ -17,13 +19,11 @@ using namespace Eegeo::Routes::Simulation;
 using namespace Eegeo::Routes::Simulation::View;
 using namespace Eegeo::Routes::Simulation::Camera;
 
-
-
-
 RouteSimulationAnimationExample::RouteSimulationAnimationExample(
                                                RouteService& routeService,
                                                RouteSimulationService& routeSimulationService,
                                                RouteSimulationViewService& routeSimulationViewService,
+                                               Eegeo::Camera::ICameraProvider& cameraProvider,
                                                Eegeo::Rendering::GLState& glState,
                                                Eegeo::Helpers::IFileIO& fileIO,
                                                Eegeo::Rendering::AsyncTexturing::IAsyncTextureRequestor& textureRequestor,
@@ -32,6 +32,7 @@ RouteSimulationAnimationExample::RouteSimulationAnimationExample(
 :m_routeService(routeService)
 ,m_routeSimulationService(routeSimulationService)
 ,m_routeSimulationViewService(routeSimulationViewService)
+,m_cameraProvider(cameraProvider)
 ,m_glState(glState)
 ,m_fileIO(fileIO)
 ,m_textureRequestor(textureRequestor)
@@ -61,13 +62,9 @@ void RouteSimulationAnimationExample::Initialise()
     
     m_pSessionCamera = m_routeSimulationService.BeginRouteSimulationSession(*m_route);
     
-    //Create a local transform for the views which will be bound to the route simulation
-    //session.
-    Eegeo::m44 scale, rotation, transform;
-    scale.Scale(3.f);
-    rotation.RotateY(M_PI);
-    m44::Mul(transform, scale, rotation);
-    
+    Eegeo::m44 transform;
+    CalculateTransform(transform);
+
     m_pViewBindingForCameraSession = m_routeSimulationViewService.CreateBinding(*m_pSessionCamera, pCharacter, transform);
     
     m_pSessionCamera->StartPlaybackFromBeginning();
@@ -116,6 +113,10 @@ void RouteSimulationAnimationExample::Update(float dt)
         m_pSessionCamera->Unpause();
     }
     
+    Eegeo::m44 transform;
+    CalculateTransform(transform);
+    m_pViewBindingForCameraSession->SetModelTransform(transform);
+
     //Update animation
     //For this walking animation, the animation speed scales
     //with the speed of the route (See line 155)
@@ -186,6 +187,26 @@ Eegeo::Model* RouteSimulationAnimationExample::LoadCharacterModel(Eegeo::Node*& 
     pCharacter = pModel->GetRootNode();
     
     return pModel;
+}
+
+void RouteSimulationAnimationExample::CalculateTransform(Eegeo::m44& transform)
+{
+    const float scaleModifier = 100.f;
+    const float minimumScale = 3.f;
+
+    Eegeo::dv3 position;
+
+    if (m_pSessionCamera->TryGetCurrentPositionEcef(position))
+    {
+        float scaleAsFunctionOfAltitude = Eegeo::Helpers::TransformHelpers::ComputeModelScaleForConstantScreenSize(
+                                                    m_cameraProvider.GetRenderCamera(),
+                                                    position
+                                            ) / scaleModifier;
+        Eegeo::m44 scale, rotation;
+        scale.Scale(Eegeo::Max(scaleAsFunctionOfAltitude, minimumScale));
+        rotation.RotateY(M_PI);
+        m44::Mul(transform, scale, rotation);
+    }
 }
 
 bool RouteSimulationAnimationExample::Event_TouchRotate(const AppInterface::RotateData& data)
