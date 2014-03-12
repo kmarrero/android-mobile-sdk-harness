@@ -100,6 +100,11 @@ void AppWindow::Resume()
 	displayAvailable = false;
 	pthread_mutex_unlock(&m_mutex);
 
+	if(pHttpCache != NULL)
+	{
+		pHttpCache->ReloadCacheRepresentationFromStorage();
+	}
+
     pthread_create(&m_mainNativeThread, 0, Run, this);
 }
 
