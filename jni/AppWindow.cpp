@@ -81,8 +81,14 @@ void AppWindow::Pause(PersistentAppState* pPersistentState)
 
     pthread_join(m_mainNativeThread, 0);
 
-    if(pHttpCache != NULL) {
+    if(pHttpCache != NULL)
+    {
     	pHttpCache->FlushInMemoryCacheRepresentation();
+    }
+
+    if(pAndroidLocationService != NULL)
+    {
+    	pAndroidLocationService->StopListening();
     }
 
 	if(pPersistentState != NULL)
