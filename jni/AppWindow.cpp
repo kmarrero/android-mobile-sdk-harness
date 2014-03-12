@@ -53,6 +53,7 @@ AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistent
 , context(EGL_NO_CONTEXT)
 , resourceBuildShareContext(EGL_NO_CONTEXT)
 , pTaskQueue(NULL)
+, pHttpCache(NULL)
 {
 
 	//Eegeo_TTY("CONSTRUCTING AppWindow");
@@ -79,6 +80,10 @@ void AppWindow::Pause(PersistentAppState* pPersistentState)
 	pthread_mutex_unlock(&m_mutex);
 
     pthread_join(m_mainNativeThread, 0);
+
+    if(pHttpCache != NULL) {
+    	pHttpCache->FlushInMemoryCacheRepresentation();
+    }
 
 	if(pPersistentState != NULL)
 	{
