@@ -86,6 +86,7 @@ private:
 
 	bool appRunning;
 	bool displayAvailable;
+	int surfaceChanged;
 	bool worldInitialised;
 	bool initialStart;
 	bool updatedForFirstTime;

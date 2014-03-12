@@ -41,6 +41,7 @@ AppWindow::AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistent
 , displayAvailable(false)
 , worldInitialised(false)
 , displayBound(false)
+, surfaceChanged(0)
 , initialStart(initialStart)
 , m_androidInputBoxFactory(pState)
 , m_androidKeyboardInputFactory(pState, pInputHandler)
@@ -81,8 +82,14 @@ void AppWindow::Pause(PersistentAppState* pPersistentState)
 
     pthread_join(m_mainNativeThread, 0);
 
-    if(pHttpCache != NULL) {
+    if(pHttpCache != NULL)
+    {
     	pHttpCache->FlushInMemoryCacheRepresentation();
+    }
+
+    if(pAndroidLocationService != NULL)
+    {
+    	pAndroidLocationService->StopListening();
     }
 
 	if(pPersistentState != NULL)
@@ -111,6 +118,7 @@ void AppWindow::Resume()
 void AppWindow::ActivateSurface()
 {
 	pthread_mutex_lock(&m_mutex);
+	surfaceChanged++;
 	displayAvailable = true;
 	pthread_mutex_unlock(&m_mutex);
 }
@@ -129,12 +137,19 @@ void* AppWindow::Run(void* self)
     	bool displayAvailable = pSelf->displayAvailable;
     	bool worldInitialised = pSelf->worldInitialised;
     	bool displayBound = pSelf->displayBound;
+    	int surfaceChanged = pSelf->surfaceChanged;
     	pthread_mutex_unlock(&pSelf->m_mutex);
 
         if(running)
         {
         	if(displayAvailable)
         	{
+        		if (displayBound && (surfaceChanged > 0))
+        		{
+        			pSelf->TerminateDisplay(false);
+        			displayBound = false;
+        		}
+
         		if(!displayBound)
 				{
 					if(!pSelf->InitDisplay())
@@ -411,6 +426,7 @@ bool AppWindow::InitDisplay()
 
 	pthread_mutex_lock(&m_mutex);
 	displayBound = true;
+	surfaceChanged--;
 	pthread_mutex_unlock(&m_mutex);
 }
 
