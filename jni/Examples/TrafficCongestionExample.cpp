@@ -22,6 +22,7 @@ namespace Examples
 
             const int roadId = 0;
 
+            // This is a segment of the bay bridge
             Eegeo::Streaming::MortonKey key = Eegeo::Streaming::MortonKey::CreateFromString("01131232132021");
 
             bool success = m_trafficCongestionService.TrySetCongestionFor(
