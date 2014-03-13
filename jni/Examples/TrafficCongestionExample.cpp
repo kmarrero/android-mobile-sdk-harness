@@ -22,7 +22,7 @@ namespace Examples
 
             const int roadId = 0;
 
-            Eegeo::Streaming::MortonKey key = Eegeo::Streaming::MortonKey::CreateFromString("01131232132001");
+            Eegeo::Streaming::MortonKey key = Eegeo::Streaming::MortonKey::CreateFromString("01131232132021");
 
             bool success = m_trafficCongestionService.TrySetCongestionFor(
                     key,
