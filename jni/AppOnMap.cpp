@@ -161,6 +161,7 @@ void MyApp::OnStart ()
                                 eegeoWorld.GetNativeUIFactories(),
                                 eegeoWorld.GetInterestPointProvider(),
                                 eegeoWorld.GetRouteService(),
+                                eegeoWorld.GetCollisionMeshResourceProvider(),
                                 eegeoWorld
                                 );
 
@@ -227,6 +228,7 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         Eegeo::UI::NativeUIFactories& nativeInputFactories,
         Eegeo::Location::IInterestPointProvider& interestPointProvider,
         Eegeo::Routes::RouteService& routeService,
+        const Eegeo::Resources::Terrain::Collision::ICollisionMeshResourceProvider& collisionMeshResourceProvider,
         Eegeo::EegeoWorld& world
         )
 {
@@ -247,7 +249,8 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         case ExampleTypes::ScreenPick:
             return new Examples::ScreenPickExample(renderContext,
                                                    cameraProvider,
-                                                   terrainHeightProvider);
+                                                   terrainHeightProvider,
+                                                   collisionMeshResourceProvider);
 
         case ExampleTypes::DebugSphere:
             return new Examples::DebugSphereExample(renderContext,
