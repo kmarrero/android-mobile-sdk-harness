@@ -17,6 +17,7 @@
 #include "RenderCamera.h"
 #include "CameraHelpers.h"
 #include "LoadingScreen.h"
+#include "PlatformConfig.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
@@ -539,6 +540,7 @@ void AppWindow::InitWorld()
 	m_pInterestPointProvider = new Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider();
 
 	const Eegeo::EnvironmentCharacterSet::Type environmentCharacterSet = Eegeo::EnvironmentCharacterSet::Latin;
+	Eegeo::Config::PlatformConfig config = Eegeo::Config::PlatformConfig();
 
 	pWorld = new Eegeo::EegeoWorld(API_KEY,
             pHttpCache,
@@ -559,10 +561,10 @@ void AppWindow::InitWorld()
             &m_terrainHeightProvider,
             m_pEnvironmentFlatteningService,
             environmentCharacterSet,
+            config,
             new Eegeo::Search::Service::SearchServiceCredentials("", ""),
             "",
             "Default-Landscape@2x~ipad.png",
-            Eegeo::Standard,
             "http://cdn1.eegeo.com/coverage-trees/v207/manifest.txt.gz",
             "http://cdn1.eegeo.com/mobile-themes-new/v99/manifest.txt.gz",
             NULL,
