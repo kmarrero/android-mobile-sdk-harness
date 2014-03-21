@@ -50,6 +50,8 @@ JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv,
 	g_nativeState.classLoaderClass  = (jclass)jenv->NewGlobalRef(jenv->FindClass("java/lang/ClassLoader"));
 	g_nativeState.classLoaderLoadClassMethod = jenv->GetMethodID(g_nativeState.classLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
 
+	g_nativeState.DetermineDeviceModel(jenv);
+
 	jthrowable exc;
 	exc = jenv->ExceptionOccurred();
 

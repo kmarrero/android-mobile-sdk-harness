@@ -18,6 +18,7 @@
 #include "CameraHelpers.h"
 #include "LoadingScreen.h"
 #include "PlatformConfig.h"
+#include "AndroidPlatformConfigBuilder.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
@@ -540,7 +541,8 @@ void AppWindow::InitWorld()
 	m_pInterestPointProvider = new Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider();
 
 	const Eegeo::EnvironmentCharacterSet::Type environmentCharacterSet = Eegeo::EnvironmentCharacterSet::Latin;
-	Eegeo::Config::PlatformConfig config = Eegeo::Config::PlatformConfig();
+	std::string deviceModel = std::string(pState->deviceModel, strlen(pState->deviceModel));
+	Eegeo::Config::PlatformConfig config = Eegeo::Android::AndroidPlatformConfigBuilder(deviceModel).Build();
 
 	pWorld = new Eegeo::EegeoWorld(API_KEY,
             pHttpCache,
