@@ -16,6 +16,7 @@ LOCAL_SRC_FILES += ./AppOnMap.cpp
 LOCAL_SRC_FILES += ./ExampleCameraJumpController.cpp
 LOCAL_SRC_FILES += ./UiThreadToNativeThreadTaskQueue.cpp
 
+LOCAL_SRC_FILES += ./Examples/PinsWithAttachedJavaUIExample.cpp
 LOCAL_SRC_FILES += ./Examples/ControlCityThemeExample.cpp
 LOCAL_SRC_FILES += ./Examples/DebugSphereExample.cpp
 LOCAL_SRC_FILES += ./Examples/EnvironmentFlatteningExample.cpp

@@ -45,6 +45,7 @@ namespace ExampleTypes
         ControlCityThemes,
         RouteDrawing,
         Pins,
+        PinsWithAttachedJavaUI,
         RouteSimulation,
         RouteThicknessPolicy,
         JavaHudCrossThreadCommunication,

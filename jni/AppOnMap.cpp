@@ -49,6 +49,7 @@
 #include "SingleCityExample.h"
 #include "PinOverModelExample.h"
 #include "TrafficCongestionExample.h"
+#include "PinsWithAttachedJavaUIExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -340,6 +341,22 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
                     World().GetTerrainHeightProvider(),
                     World().GetEnvironmentFlatteningService()
                     );
+
+        case ExampleTypes::PinsWithAttachedJavaUI:
+        	return new Examples::PinsWithAttachedJavaUIExample(
+        			world,
+        			m_nativeState,
+        			renderContext,
+        			World().GetTextureLoader(),
+        	        World().GetGlBufferPool(),
+        	        World().GetShaderIdGenerator(),
+        	        World().GetMaterialIdGenerator(),
+        	        World().GetVertexBindingPool(),
+        	        World().GetVertexLayoutPool(),
+        	        World().GetRenderableFilters(),
+        	        World().GetCameraProvider(),
+        	        World().GetTerrainHeightProvider(),
+        	        World().GetEnvironmentFlatteningService());
 
         case ExampleTypes::RouteSimulation:
         {
