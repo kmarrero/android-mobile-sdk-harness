@@ -116,14 +116,6 @@ namespace Examples
         m_pPinsModule->Update(dt);
     }
 
-    namespace
-    {
-    	Eegeo::v2 GetBoundsCentre(const Eegeo::Geometry::Bounds2D& bounds)
-    	{
-    		return (bounds.min + bounds.max) * 0.5f;
-    	}
-    }
-
     void PinsWithAttachedJavaUIExample::Draw()
     {
     	//lazily create the pin button when we start drawing so it is not displayed on top of the loading screen
@@ -147,7 +139,7 @@ namespace Examples
 		Eegeo::Pins::PinController& pinController = m_pPinsModule->GetController();
 		Eegeo::Geometry::Bounds2D pinScreenBounds = Eegeo::Geometry::Bounds2D::Empty();
 		pinController.GetScreenBoundsForPin(*pPin, pinScreenBounds);
-		Eegeo::v2 screenPosition = GetBoundsCentre(pinScreenBounds);
+		Eegeo::v2 screenPosition = pinScreenBounds.center();
 
 		// now update the java ui to be in sync with the pin, positioned above it on screen.
 		// the pixel nudging is hard-coded for simplicity; you should probably do something more sophisticated
