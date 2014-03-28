@@ -430,6 +430,8 @@ bool AppWindow::InitDisplay()
 	displayBound = true;
 	surfaceChanged--;
 	pthread_mutex_unlock(&m_mutex);
+
+	return true;
 }
 
 
