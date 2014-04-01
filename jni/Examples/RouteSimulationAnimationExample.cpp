@@ -11,6 +11,7 @@
 #include "GlobeCameraTouchControllerConfiguration.h"
 #include "TransformHelpers.h"
 #include "ICameraProvider.h"
+#include "Logger.h"
 
 using namespace Examples;
 using namespace Eegeo;
@@ -113,6 +114,8 @@ void RouteSimulationAnimationExample::Update(float dt)
         m_pSessionCamera->Unpause();
     }
     
+    EXAMPLE_LOG("%f metres from start of route. %f percent.\n", m_pSessionCamera->GetDistanceFromStartInMetres(),(m_pSessionCamera->GetDistanceFromStartInMetres() / m_route->GetLength())*100.0f);
+
     Eegeo::m44 transform;
     CalculateTransform(transform);
     m_pViewBindingForCameraSession->SetModelTransform(transform);
