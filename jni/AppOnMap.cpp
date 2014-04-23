@@ -17,39 +17,11 @@
 #include "NativeUIFactories.h"
 #include "LocalAsyncTextureLoader.h"
 
-#include "DebugSphereExample.h"
-#include "ScreenUnprojectExample.h"
-#include "ScreenPickExample.h"
-#include "LoadModelExample.h"
-#include "EnvironmentNotifierExample.h"
-#include "FileIOExample.h"
-#include "WebRequestExample.h"
-#include "NavigationGraphExample.h"
-#include "ModifiedRenderingExample.h"
-#include "ToggleTrafficExample.h"
-#include "ResourceSpatialQueryExample.h"
-#include "EnvironmentFlatteningExample.h"
-#include "SearchExample.h"
-#include "KeyboardInputExample.h"
-#include "PODAnimationExample.h"
-#include "Pick3DObjectExample.h"
+#include "ExampleCameraJumpController.h"
+
 #include "ShowJavaPlaceJumpUIExample.h"
 #include "PositionJavaPinButtonExample.h"
-#include "ExampleCameraJumpController.h"
-#include "DebugPrimitiveRenderingExample.h"
-#include "ControlCityThemeExample.h"
-#include "RouteDrawingExample.h"
-#include "PinsExample.h"
-#include "RouteSimulationExample.h"
-#include "RouteThicknessPolicyExample.h"
 #include "JavaHudCrossThreadCommunicationExample.h"
-#include "RouteMatchingExample.h"
-#include "RouteSimulationAnimationExample.h"
-#include "DynamicText3DExample.h"
-#include "SingleCityExample.h"
-#include "PinOverModelExample.h"
-#include "TrafficCongestionExample.h"
-#include "PinsWithAttachedJavaUIExample.h"
 
 MyApp::MyApp(
 		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
@@ -64,13 +36,26 @@ MyApp::MyApp(
 , m_cameraTouchController(NULL)
 , m_cameraJumpController(NULL)
 , pExample(NULL)
+, m_pActiveGame(NULL)
 {
 	Eegeo_ASSERT(&m_globeCameraInterestPointProvider != NULL);
 	pInputHandler.AddDelegateInputHandler(this);
+
+	IGame* pGame1 = Eegeo_NEW(Game)("Scavenger Hunt");
+	m_games.push_back(pGame1);
+
+	IGame* pGame2 = Eegeo_NEW(Game)("Helicopter");
+	m_games.push_back(pGame2);
 }
 
 MyApp::~MyApp()
 {
+	for(IGamePtrVec::iterator it = m_games.begin(); it != m_games.end(); ++it)
+	{
+		Eegeo_DELETE(*it);
+	}
+	m_games.clear();
+
 	pInputHandler.RemoveDelegateInputHandler(this);
 	pExample->Suspend();
 	delete pExample;
@@ -182,6 +167,11 @@ void MyApp::Update (float dt)
 
     eegeoWorld.Update(dt);
     pExample->Update(dt);
+
+    if(m_pActiveGame != NULL)
+    {
+    	m_pActiveGame->OnUpdate(dt);
+    }
 }
 
 void MyApp::Draw (float dt)
@@ -190,6 +180,11 @@ void MyApp::Draw (float dt)
     glState.ClearColor(0.8f, 0.8f, 0.8f, 1.f);
     World().Draw(dt);
     pExample->Draw();
+
+    if(m_pActiveGame != NULL)
+    {
+    	m_pActiveGame->OnDraw(dt);
+    }
 }
 
 void MyApp::JumpTo(double latitudeDegrees, double longitudeDegrees, double altitudeMetres, double headingDegrees, double distanceToInterestMetres)
@@ -235,235 +230,21 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
 {
     switch(example)
     {
-        case ExampleTypes::LoadModel:
-            return new Examples::LoadModelExample(renderContext,
-                                                  interestLocation,
-                                                  fileIO,
-                                                  fogging,
-                                                  World().GetLocalAsyncTextureLoader());
-        case ExampleTypes::ScreenUnproject:
-        case ExampleTypes::TerrainHeightQuery:
-            return new Examples::ScreenUnprojectExample(renderContext,
-                                                        cameraProvider,
-                                                        terrainHeightProvider);
-
-        case ExampleTypes::ScreenPick:
-            return new Examples::ScreenPickExample(renderContext,
-                                                   cameraProvider,
-                                                   terrainHeightProvider,
-                                                   collisionMeshResourceProvider);
-
-        case ExampleTypes::DebugSphere:
-            return new Examples::DebugSphereExample(renderContext,
-                                                    interestLocation);
-        case ExampleTypes::EnvironmentNotifier:
-            return new Examples::EnvironmentNotifierExample(renderContext,
-                                                            terrainStreaming);
-        case ExampleTypes::WebRequest:
-            return new Examples::WebRequestExample(webRequestFactory);
-
-        case ExampleTypes::FileIO:
-            return new Examples::FileIOExample(fileIO);
-
-        case ExampleTypes::NavigationGraph:
-            return new Examples::NavigationGraphExample(renderContext,
-                                                        navigationGraphs);
-
-        case ExampleTypes::ModifiedRendering:
-            return new Examples::ModifiedRenderingExample(renderContext,
-                    cameraProvider,
-                    interestPointProvider,
-                    visibleVolume,
-                    lighting,
-                    buildingRepository,
-                    buildingFilter,
-                    World().GetRenderQueue(),
-                    World().GetRenderableFilters(),
-                    World().GetShaderIdGenerator(),
-                    World().GetMaterialIdGenerator(),
-                    World().GetEnvironmentPlaceholderTexture());
-
-        case ExampleTypes::ToggleTraffic:
-            return new Examples::ToggleTrafficExample(trafficSimulation);
-
-        case ExampleTypes::ResourceSpatialQuery:
-            return new Examples::ResourceSpatialQueryExample(resourceSpatialQueryService,
-                                                             interestPointProvider);
-
-        case ExampleTypes::EnvironmentFlattening:
-            return new Examples::EnvironmentFlatteningExample(environmentFlatteningService);
-
-        case ExampleTypes::Search:
-            Eegeo_ASSERT(searchService != NULL, "Cannot run Search example, you must set up here.com Credentials in ViewController.mm");
-            return new Examples::SearchExample(*searchService, interestPointProvider);
-
-        case ExampleTypes::KeyboardInput:
-            return new Examples::KeyboardInputExample(nativeInputFactories.IKeyboardInputFactory());
-
-        case ExampleTypes::PODAnimation:
-            return new Examples::PODAnimationExample(renderContext,
-                                                     fileIO,
-                                                     World().GetLocalAsyncTextureLoader(),
-                                                     fogging);
-        case ExampleTypes::Pick3DObject:
-            return new Examples::Pick3DObjectExample(renderContext,
-                                                     interestLocation,
-                                                     cameraProvider);
-
-        case ExampleTypes::ShowJavaPlaceJumpUI:
+/*
+    	case ExampleTypes::ShowJavaPlaceJumpUI:
         	return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState, *m_cameraJumpController);
 
         case ExampleTypes::PositionJavaPinButton:
         	return new Examples::PositionJavaPinButtonExample(world, m_nativeState, renderContext);
-
-        case ExampleTypes::DebugPrimitiveRendering:
-        	return new Examples::DebugPrimitiveRenderingExample(world.GetDebugPrimitiveRenderer());
-
-        case ExampleTypes::ControlCityThemes:
-            return new Examples::ControlCityThemeExample(World().GetCityThemesService(),
-                                                         World().GetCityThemesRepository(),
-                                                         World().GetCityThemesUpdater(),
-                                                         World());
-
-        case ExampleTypes::RouteDrawing:
-            return new Examples::RouteDrawingExample(routeService, World());
-
-        case ExampleTypes::Pins:
-            return new Examples::PinsExample(
-                    World().GetTextureLoader(),
-                    World().GetGlBufferPool(),
-                    World().GetShaderIdGenerator(),
-                    World().GetMaterialIdGenerator(),
-                    World().GetVertexBindingPool(),
-                    World().GetVertexLayoutPool(),
-                    World().GetRenderableFilters(),
-                    World().GetCameraProvider(),
-                    World().GetTerrainHeightProvider(),
-                    World().GetEnvironmentFlatteningService()
-                    );
-
-        case ExampleTypes::PinsWithAttachedJavaUI:
-        	return new Examples::PinsWithAttachedJavaUIExample(
-        			world,
-        			m_nativeState,
-        			renderContext,
-        			World().GetTextureLoader(),
-        	        World().GetGlBufferPool(),
-        	        World().GetShaderIdGenerator(),
-        	        World().GetMaterialIdGenerator(),
-        	        World().GetVertexBindingPool(),
-        	        World().GetVertexLayoutPool(),
-        	        World().GetRenderableFilters(),
-        	        World().GetCameraProvider(),
-        	        World().GetTerrainHeightProvider(),
-        	        World().GetEnvironmentFlatteningService());
-
-        case ExampleTypes::RouteSimulation:
-        {
-            Eegeo::Routes::Simulation::Camera::RouteSimulationGlobeCameraControllerFactory factory(World().GetTerrainHeightProvider(),
-                                                                                                   World().GetEnvironmentFlatteningService(),
-                                                                                                   World().GetResourceCeilingProvider(),
-                                                                                                   collisionMeshResourceProvider);
-
-            return new Examples::RouteSimulationExample(World().GetRouteService(),
-                                                        World().GetRouteSimulationService(),
-                                                        World().GetRouteSimulationViewService(),
-                                                        World().GetRenderContext().GetGLState(),
-                                                        World().GetFileIO(),
-                                                        World().GetLocalAsyncTextureLoader(),
-                                                        *m_globeCameraController,
-                                                        World().GetInterestPointProvider(),
-                                                        factory,
-                                                        m_nativeState,
-                                                        World()
-                                                        );
-        }
-
-        case ExampleTypes::RouteThicknessPolicy:
-        {
-        	return new Examples::RouteThicknessPolicyExample(
-        			World().GetRouteService(),
-        			renderContext,
-        			World());
-        }
-
+*/
         case ExampleTypes::JavaHudCrossThreadCommunication:
         {
         	return new Examples::JavaHudCrossThreadCommunicationExample(
         			m_nativeState,
         			World().GetCityThemesService(),
                     World().GetCityThemesRepository(),
-                    World().GetCityThemesUpdater());
-        }
-
-        case ExampleTypes::RouteMatching:
-        {
-        	return new Examples::RouteMatchingExample(
-        			World().GetRouteService(),
-        			World(),
-        			m_nativeState);
-        }
-
-        case ExampleTypes::RouteSimulationAnimation:
-                {
-                	Eegeo::Routes::Simulation::Camera::RouteSimulationGlobeCameraControllerFactory factory(World().GetTerrainHeightProvider(),
-                	                                                                                                   World().GetEnvironmentFlatteningService(),
-                	                                                                                                   World().GetResourceCeilingProvider(),
-                	                                                                                                   collisionMeshResourceProvider);
-
-                	            return new Examples::RouteSimulationAnimationExample(World().GetRouteService(),
-                	                                                        World().GetRouteSimulationService(),
-                	                                                        World().GetRouteSimulationViewService(),
-                	                                                        World().GetCameraProvider(),
-                	                                                        World().GetRenderContext().GetGLState(),
-                	                                                        World().GetFileIO(),
-                	                                                        World().GetLocalAsyncTextureLoader(),
-                	                                                        factory,
-                	                                                        World());
-                }
-
-        case ExampleTypes::DynamicText3D:
-        {
-            return new Examples::DynamicText3DExample(World().GetRenderContext().GetGLState(),
-                                                      World().GetCameraProvider(),
-                                                      World().GetEnvironmentFlatteningService(),
-                                                      World().GetPlaceNameViewBuilder(),
-                                                      World());
-        }
-
-        case ExampleTypes::SingleCity:
-        {
-            return new Examples::SingleCityExample(*m_globeCameraController,
-                                                   World().GetPrecachingService(),
-                                                   World().GetStreamingVolumeController(),
-                                                   World());
-        }
-
-        case ExampleTypes::PinOverModel:
-        {
-            return new Examples::PinOverModelExample(
-				World().GetTextureLoader(),
-				World().GetGlBufferPool(),
-				World().GetShaderIdGenerator(),
-				World().GetMaterialIdGenerator(),
-				World().GetVertexBindingPool(),
-				World().GetVertexLayoutPool(),
-				World().GetRenderableFilters(),
-				World().GetCameraProvider(),
-				World().GetTerrainHeightProvider(),
-				World().GetEnvironmentFlatteningService(),
-				renderContext,
-				fileIO,
-				World().GetLocalAsyncTextureLoader(),
-				fogging,
-				World().GetNullMaterial());
-        }
-
-        case ExampleTypes::TrafficCongestion:
-        {
-			return new Examples::TrafficCongestionExample(
-					World().GetTrafficCongestionService(),
-					World());
+                    World().GetCityThemesUpdater(),
+                    *this);
         }
 
         default:
@@ -473,7 +254,6 @@ Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
         return NULL;
     }
 }
-
 
 void MyApp::Event_TouchRotate(const AppInterface::RotateData& data)
 {
@@ -586,3 +366,27 @@ void MyApp::Event_TouchUp(const AppInterface::TouchData& data)
         m_cameraTouchController->Event_TouchUp(data);
     }
 }
+
+void MyApp::ActivateGame(int gameIndex)
+{
+	if(m_pActiveGame)
+	{
+		m_pActiveGame->OnDeactivated();
+	}
+
+	if(gameIndex >= 0)
+	{
+		m_pActiveGame = m_games.at(gameIndex);
+		m_pActiveGame->OnActivated();
+	}
+	else
+	{
+		m_pActiveGame = NULL;
+	}
+}
+
+size_t MyApp::GetNumOfGames() const
+{
+	return m_games.size();
+}
+

@@ -1,7 +1,9 @@
 #include <jni.h>
-#include "AppWindow.hpp"
+#include "AppRunner.h"
+#include "AppProxy.h"
 #include "main.h"
-#include "TouchEventWrapper.h"
+#include "TouchEventMessage.h"
+#include "AppRunner.h"
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include <android/asset_manager.h>
@@ -11,9 +13,12 @@
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
 
-AppWindow* g_pAppWindow;
+const std::string ApiKey = "b5541b17fb15378626ff634684975e1a";
+
 AndroidNativeState g_nativeState;
 PersistentAppState g_persistentAppState(NULL);
+AppProxy* g_pAppProxy;
+AppRunner* g_pAppRunner;
 bool firstTime = true;
 
 namespace
@@ -66,13 +71,17 @@ JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv,
 	g_nativeState.assetManager = AAssetManager_fromJava(jenv, g_nativeState.assetManagerGlobalRef);
 	PersistentAppState* pPersistentAppState = firstTime ? NULL : &g_persistentAppState;
 
-	if(firstTime) {
-		g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState, firstTime);
+	if(firstTime)
+	{
+		Eegeo_TTY("********SPIN UP APP....***********\n");
+		g_pAppRunner = Eegeo_NEW(AppRunner)(ApiKey, &g_nativeState, pPersistentAppState);
+		g_pAppProxy = Eegeo_NEW(AppProxy)(*g_pAppRunner);
+//		g_pAppWindow = new AppWindow(&g_nativeState, pPersistentAppState, firstTime);
 	}
 
 	firstTime = false;
 
-	return ((long)g_pAppWindow);
+	return ( (long) g_pAppProxy);
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_stopNativeCode(JNIEnv* jenv, jobject obj)
@@ -86,12 +95,14 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_stopNativeCode(JNIEnv* jenv, 
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_pauseNativeCode(JNIEnv* jenv, jobject obj)
 {
-	g_pAppWindow->Pause(&g_persistentAppState);
+//	g_pAppWindow->Pause(&g_persistentAppState);
+	g_pAppProxy->Pause(&g_persistentAppState);
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_resumeNativeCode(JNIEnv* jenv, jobject obj)
 {
-	g_pAppWindow->Resume();
+//	g_pAppWindow->Resume();
+	g_pAppProxy->Resume();
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_setNativeSurface(JNIEnv* jenv, jobject obj, jobject surface)
@@ -105,7 +116,7 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_setNativeSurface(JNIEnv* jenv
     if (surface != NULL)
     {
     	g_nativeState.window = ANativeWindow_fromSurface(jenv, surface);
-    	g_pAppWindow->ActivateSurface();
+    	g_pAppProxy->ActivateSurface();
     }
 }
 
@@ -120,7 +131,8 @@ JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerDown(
 {
 	TouchInputEvent event(false, true, primaryActionIndex, primaryActionIdentifier);
 	FillEventFromJniData(jenv, primaryActionIndex, primaryActionIdentifier, numPointers, x, y, pointerIdentity, pointerIndex, event);
-	g_pAppWindow->EnqueuePointerEvent(event);
+	InputMessages::TouchEventMessage* pMessage = Eegeo_NEW(InputMessages::TouchEventMessage)(event);
+	g_pAppProxy->SendTouchEvent(*pMessage);
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerUp(JNIEnv* jenv, jobject obj,
@@ -134,7 +146,8 @@ JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerUp(JN
 {
 	TouchInputEvent event(true, false, primaryActionIndex, primaryActionIdentifier);
 	FillEventFromJniData(jenv, primaryActionIndex, primaryActionIdentifier, numPointers, x, y, pointerIdentity, pointerIndex, event);
-	g_pAppWindow->EnqueuePointerEvent(event);
+	InputMessages::TouchEventMessage* pMessage = Eegeo_NEW(InputMessages::TouchEventMessage)(event);
+	g_pAppProxy->SendTouchEvent(*pMessage);
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerMove(JNIEnv* jenv, jobject obj,
@@ -148,7 +161,8 @@ JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerMove(
 {
 	TouchInputEvent event(false, false, primaryActionIndex, primaryActionIdentifier);
 	FillEventFromJniData(jenv, primaryActionIndex, primaryActionIdentifier, numPointers, x, y, pointerIdentity, pointerIndex, event);
-	g_pAppWindow->EnqueuePointerEvent(event);
+	InputMessages::TouchEventMessage* pMessage = Eegeo_NEW(InputMessages::TouchEventMessage)(event);
+	g_pAppProxy->SendTouchEvent(*pMessage);
 }
 
 namespace
@@ -181,3 +195,7 @@ namespace
 		jenv->ReleaseIntArrayElements(pointerIndex, indexBuffer, 0);
 	}
 }
+
+
+
+

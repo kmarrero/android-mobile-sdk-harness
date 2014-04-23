@@ -18,32 +18,12 @@
 #include "NativeUIFactories.h"
 #include "TerrainHeightRepository.h"
 #include "GlobalShadowing.h"
+#include "PersistentAppState.h"
 
 namespace Eegeo
 {
 	class EegeoWorld;
 }
-
-struct PersistentAppState
-{
-	PersistentAppState(PersistentAppState* pValues)
-	:lastGlobeCameraLatLong(0,0,0)
-	{
-		valid = pValues!=NULL;
-		if(valid)
-		{
-			lastGlobeCameraLatLong = pValues->lastGlobeCameraLatLong;
-			lastGlobeCameraHeadingDegrees = pValues->lastGlobeCameraHeadingDegrees;
-			lastGlobeCameraDistanceToInterest = pValues->lastGlobeCameraDistanceToInterest;
-		}
-	}
-
-	bool valid;
-	Eegeo::Space::LatLongAltitude lastGlobeCameraLatLong;
-	float lastGlobeCameraHeadingDegrees;
-	float lastGlobeCameraDistanceToInterest;
-};
-
 
 class AppWindow 
 {
@@ -113,6 +93,9 @@ private:
 
 	static void* Run(void* self);
 
+	Eegeo::EegeoWorld& GetWorld() { return *pWorld; }
+	MyApp& GetAppOnMap() { return *pAppOnMap; }
+
 public:
 
 	AppWindow(AndroidNativeState* pState, PersistentAppState* pPersistentState, bool initialStart);
@@ -124,6 +107,5 @@ public:
 
 	void EnqueuePointerEvent(Eegeo::Android::Input::TouchInputEvent& e);
 
-	Eegeo::EegeoWorld& GetWorld() { return *pWorld; }
-	MyApp& GetAppOnMap() { return *pAppOnMap; }
+//	MyApp& GetAppOnMap() { return *pAppOnMap; }
 };

@@ -20,12 +20,14 @@ namespace Examples
 		AndroidNativeState& nativeState,
 		Eegeo::Resources::CityThemes::ICityThemesService& themeService,
 		Eegeo::Resources::CityThemes::ICityThemeRepository& themeRepository,
-		Eegeo::Resources::CityThemes::ICityThemesUpdater& themeUpdater
+		Eegeo::Resources::CityThemes::ICityThemesUpdater& themeUpdater,
+		IGameController& gameController
 	)
 	: m_nativeState(nativeState)
 	, m_themeService(themeService)
 	, m_themeUpdater(themeUpdater)
 	, m_themeRepository(themeRepository)
+	, m_gameController(gameController)
     {
     }
 
@@ -90,6 +92,12 @@ namespace Examples
     	m_uiToNativeQueue.PostWork(pWork);
     }
 
+
+	void JavaHudCrossThreadCommunicationExample::ActivateGame(int gameIndexToActivate)
+	{
+		m_gameController.ActivateGame(gameIndexToActivate);
+	}
+
     void JavaHudCrossThreadCommunicationExample::SetCurrentThemeByName(const std::string& themeName)
     {
 		m_themeUpdater.SetEnabled(false);
@@ -138,6 +146,25 @@ public:
 	}
 };
 
+class ActivateGameWorkItem : public UiThreadToNativeThreadTaskQueue::IBufferedWork
+{
+public:
+	ActivateGameWorkItem(Examples::JavaHudCrossThreadCommunicationExample* pExample, int gameIndexToActivate)
+	: m_pExample(pExample)
+	, m_gameIndexToActivate(gameIndexToActivate)
+	{
+	}
+
+	void DoWork()
+	{
+		m_pExample->ActivateGame(m_gameIndexToActivate);
+	}
+
+private:
+	Examples::JavaHudCrossThreadCommunicationExample* m_pExample;
+	int m_gameIndexToActivate;
+};
+
 class GetCurrentThemeWorkItem : public UiThreadToNativeThreadTaskQueue::IBufferedWork
 {
 	Examples::JavaHudCrossThreadCommunicationExample* m_pExample;
@@ -164,8 +191,11 @@ JNIEXPORT void JNICALL Java_com_eegeo_examples_ThemeReaderWriterHud_setCurrentTh
 	jenv->ReleaseStringUTFChars(name, chars);
 
 	//create a an item to set the theme and post it to our thread safe queue for deferred execution on native main thread
-	Examples::JavaHudCrossThreadCommunicationExample* example = (Examples::JavaHudCrossThreadCommunicationExample*)(nativeObjectPtr);
-	example->PostWorkToNative(new SetCurrentThemeWorkItem(example, nameString));
+	Examples::JavaHudCrossThreadCommunicationExample* pExample = (Examples::JavaHudCrossThreadCommunicationExample*)(nativeObjectPtr);
+	//example->PostWorkToNative(new SetCurrentThemeWorkItem(example, nameString));
+	static int nextActiveGameIndex = 0;
+	pExample->PostWorkToNative(new ActivateGameWorkItem(pExample, nextActiveGameIndex));
+	nextActiveGameIndex = (nextActiveGameIndex + 1) % 2;
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_examples_ThemeReaderWriterHud_readCurrentThemeName(JNIEnv* jenv, jobject obj, jlong nativeObjectPtr)

@@ -14,6 +14,7 @@
 #include "CityThemes.h"
 #include <string>
 #include <jni.h>
+#include "AppOnMap.h"
 
 extern "C"
 {
@@ -31,6 +32,7 @@ namespace Examples
 		Eegeo::Resources::CityThemes::ICityThemesUpdater& m_themeUpdater;
 
     	UiThreadToNativeThreadTaskQueue m_uiToNativeQueue;
+		IGameController& m_gameController;
 
     	jclass m_themeReaderWriterHudClass;
     	jobject m_themeReaderWriterHud;
@@ -40,9 +42,11 @@ namespace Examples
 			AndroidNativeState& pNativeState,
 			Eegeo::Resources::CityThemes::ICityThemesService& themeService,
 			Eegeo::Resources::CityThemes::ICityThemeRepository& themeRepository,
-			Eegeo::Resources::CityThemes::ICityThemesUpdater& themeUpdater);
+			Eegeo::Resources::CityThemes::ICityThemesUpdater& themeUpdater,
+			IGameController& gameController);
 
     	void PostWorkToNative(UiThreadToNativeThreadTaskQueue::IBufferedWork* work);
+    	void ActivateGame(int gameIndexToActivate);
 
         void SetCurrentThemeByName(const std::string& themeName);
         void PostCurrentThemeNameToHud();

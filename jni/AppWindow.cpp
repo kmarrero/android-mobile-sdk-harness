@@ -23,7 +23,7 @@
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
 
-#define API_KEY "OBTAIN API_KEY FROM https://appstore.eegeo.com AND INSERT IT HERE"
+#define API_KEY "b5541b17fb15378626ff634684975e1a"
 
 void AppWindow::EnqueuePointerEvent(TouchInputEvent& e)
 {
