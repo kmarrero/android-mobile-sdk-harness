@@ -160,8 +160,6 @@ namespace
 
 bool GlDisplayService::TryBindDisplay(ANativeWindow& window)
 {
-    Eegeo_TTY("TryBindDisplay\n");
-
 	EGLint w, h, dummy, format;
     EGLConfig config;
     EGLSurface surface;
@@ -172,15 +170,9 @@ bool GlDisplayService::TryBindDisplay(ANativeWindow& window)
     	return false;
     }
 
-    Eegeo_TTY("DefaultEGLChooser\n");
-
     eglGetConfigAttrib(m_display, config, EGL_NATIVE_VISUAL_ID, &format);
 
-    Eegeo_TTY("eglGetConfigAttrib\n");
-
     ANativeWindow_setBuffersGeometry(&window, 0, 0, format);
-
-    Eegeo_TTY("ANativeWindow_setBuffersGeometry\n");
 
     static const EGLint contextAttribs[] =
     {
@@ -191,17 +183,10 @@ bool GlDisplayService::TryBindDisplay(ANativeWindow& window)
 
     surface = eglCreateWindowSurface(m_display, config, &window, NULL);
 
-    Eegeo_TTY("eglCreateWindowSurface\n");
-
-
     if(m_context == EGL_NO_CONTEXT)
     {
     	m_context = eglCreateContext(m_display, config, NULL, contextAttribs);
     }
-
-    Eegeo_TTY("eglCreateContext\n");
-
-
 
     if (eglMakeCurrent(m_display, surface, surface, m_context) == EGL_FALSE)
     {
@@ -209,18 +194,12 @@ bool GlDisplayService::TryBindDisplay(ANativeWindow& window)
         return false;
     }
 
-    Eegeo_TTY("eglMakeCurrent\n");
-
-
     //Eegeo_TTY("printing extensions\n");
     //char * extensionsString =  (char *) glGetString(GL_EXTENSIONS);
     //Eegeo_TTY("%s\n",extensionsString);
 
     Eegeo_GL(eglQuerySurface(m_display, surface, EGL_WIDTH, &w));
     Eegeo_GL(eglQuerySurface(m_display, surface, EGL_HEIGHT, &h));
-
-    Eegeo_TTY("eglQuerySurface\n");
-
 
     m_surface = surface;
 
@@ -230,11 +209,8 @@ bool GlDisplayService::TryBindDisplay(ANativeWindow& window)
 #else
     if(m_resourceBuildSharedContext == EGL_NO_CONTEXT)
     {
-    	Eegeo_TTY("!** make resource context\n");
     	m_resourceBuildSharedContext = eglCreateContext(m_display, config, m_context, contextAttribs);
     }
-
-    Eegeo_TTY("eglCreateContext\n");
 
     EGLint pBufferAttribs[] =
         {
@@ -315,8 +291,6 @@ void GlDisplayService::ReleaseDisplay(bool destroyEGL)
 
 			if(m_resourceBuildSharedContext != EGL_NO_CONTEXT)
 			{
-				Eegeo_TTY("**DESTROY EGL!\n");
-
 				Eegeo_GL(eglDestroyContext(m_display, m_resourceBuildSharedContext));
 			}
 
