@@ -8,6 +8,8 @@
 #include "AppProxy.h"
 #include "AppRunner.h"
 #include "TouchEventMessage.h"
+#include "AppPauseMessage.h"
+#include "AppDisplayAvailableMessage.h"
 
 AppProxy::AppProxy(AppRunner& appRunner)
 : m_appRunner(appRunner)
@@ -16,7 +18,8 @@ AppProxy::AppProxy(AppRunner& appRunner)
 
 void AppProxy::Pause(PersistentAppState* pPersistentState)
 {
-	m_appRunner.SendMessage(m_pauseMessage);
+	AppLifecycleMessages::AppPauseMessage* pMessage = Eegeo_NEW(AppLifecycleMessages::AppPauseMessage)();
+	m_appRunner.SendMessage(pMessage);
 	m_appRunner.WaitForStop();
 }
 
@@ -27,12 +30,13 @@ void AppProxy::Resume()
 
 void AppProxy::ActivateSurface()
 {
-	m_appRunner.SendMessage(m_displayAvailableMessage);
+	AppLifecycleMessages::AppDisplayAvailableMessage* pMessage = Eegeo_NEW(AppLifecycleMessages::AppDisplayAvailableMessage)();
+	m_appRunner.SendMessage(pMessage);
 }
 
-void AppProxy::SendTouchEvent(const InputMessages::TouchEventMessage& touchEvent)
+void AppProxy::SendTouchEvent(const InputMessages::TouchEventMessage* pTouchEvent)
 {
-	m_appRunner.SendMessage(touchEvent);
+	m_appRunner.SendMessage(pTouchEvent);
 }
 
 

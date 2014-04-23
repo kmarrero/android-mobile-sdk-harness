@@ -29,9 +29,9 @@ AppRunner::~AppRunner()
 	}
 }
 
-void AppRunner::SendMessage(const AppMessages::IAppMessage& message)
+void AppRunner::SendMessage(const AppMessages::IAppMessage* pMessage)
 {
-	m_messageQueue.Enqueue(&message);
+	m_messageQueue.Enqueue(pMessage);
 }
 
 void AppRunner::OnStarted()
@@ -54,8 +54,6 @@ void AppRunner::OnStopped()
 
 bool AppRunner::HandleMessage(const AppLifecycleMessages::AppPauseMessage& message)
 {
-	Eegeo_TTY("Pause()\n");
-
 	ReleaseDisplay();
 
 	const bool continueRunning = false;
@@ -64,8 +62,6 @@ bool AppRunner::HandleMessage(const AppLifecycleMessages::AppPauseMessage& messa
 
 bool AppRunner::HandleMessage(const AppLifecycleMessages::AppDisplayAvailableMessage& message)
 {
-	Eegeo_TTY("Available()\n");
-
 	ReleaseDisplay();
 
 	if(!TryBindDisplay())
@@ -85,8 +81,6 @@ bool AppRunner::HandleMessage(const InputMessages::TouchEventMessage& message)
 	{
 		m_pAppHost->ProcessTouchInputEvent(message.GetTouchInputEvent());
 	}
-
-	Eegeo_DELETE(&message);
 
 	const bool continueRunning = true;
 	return continueRunning;
@@ -143,7 +137,10 @@ bool AppRunner::operator()()
 	{
 		Eegeo_ASSERT(pMessage);
 
-		if(!pMessage->Handle(*this))
+		bool continueRunning = pMessage->Handle(*this);
+		Eegeo_DELETE(pMessage);
+
+		if(!continueRunning)
 		{
 			return false;
 		}

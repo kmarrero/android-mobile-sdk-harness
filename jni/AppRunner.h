@@ -22,7 +22,7 @@ public:
 	AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState, PersistentAppState* pPersistentState);
 	~AppRunner();
 
-	void SendMessage(const AppMessages::IAppMessage& message);
+	void SendMessage(const AppMessages::IAppMessage* pMessage);
 
 protected:
 	bool operator()();
