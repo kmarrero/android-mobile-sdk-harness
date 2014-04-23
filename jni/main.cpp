@@ -16,7 +16,6 @@ using namespace Eegeo::Android::Input;
 const std::string ApiKey = "b5541b17fb15378626ff634684975e1a";
 
 AndroidNativeState g_nativeState;
-PersistentAppState g_persistentAppState(NULL);
 AppProxy* g_pAppProxy;
 AppRunner* g_pAppRunner;
 bool firstTime = true;
@@ -69,12 +68,10 @@ JNIEXPORT long JNICALL Java_com_eegeo_MainActivity_startNativeCode(JNIEnv* jenv,
 
 	g_nativeState.assetManagerGlobalRef = jenv->NewGlobalRef(assetManager);
 	g_nativeState.assetManager = AAssetManager_fromJava(jenv, g_nativeState.assetManagerGlobalRef);
-	PersistentAppState* pPersistentAppState = firstTime ? NULL : &g_persistentAppState;
 
 	if(firstTime)
 	{
-		Eegeo_TTY("********SPIN UP APP....***********\n");
-		g_pAppRunner = Eegeo_NEW(AppRunner)(ApiKey, &g_nativeState, pPersistentAppState);
+		g_pAppRunner = Eegeo_NEW(AppRunner)(ApiKey, &g_nativeState);
 		g_pAppProxy = Eegeo_NEW(AppProxy)(*g_pAppRunner);
 	}
 
@@ -94,7 +91,7 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_stopNativeCode(JNIEnv* jenv, 
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_pauseNativeCode(JNIEnv* jenv, jobject obj)
 {
-	g_pAppProxy->Pause(&g_persistentAppState);
+	g_pAppProxy->Pause();
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_resumeNativeCode(JNIEnv* jenv, jobject obj)

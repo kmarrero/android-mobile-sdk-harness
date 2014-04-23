@@ -16,10 +16,8 @@ public:
 	AppProxy(AppRunner& appRunner);
 	~AppProxy();
 
-	void Pause(PersistentAppState* pPersistentState);
+	void Pause();
 	void Resume();
-
-	// Should be try acquire display.
 	void ActivateSurface();
 
 	void SendTouchEvent(const InputMessages::TouchEventMessage* pTouchEvent);

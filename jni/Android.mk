@@ -11,17 +11,16 @@ LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv2 -L./libs/ -lpng -lz -lm -L./li
 LOCAL_STATIC_LIBRARIES := android_native_app_glue native-activity-lib
  
 LOCAL_SRC_FILES += ./main.cpp
+LOCAL_SRC_FILES += ./AppProxy.cpp
+LOCAL_SRC_FILES += ./AppRunner.cpp
+LOCAL_SRC_FILES += ./AppHost.cpp
+LOCAL_SRC_FILES += ./AppOnMap.cpp
+LOCAL_SRC_FILES += ./AppMessageQueue.cpp
 LOCAL_SRC_FILES += ./AppLifecycleMessages/AppPauseMessage.cpp
 LOCAL_SRC_FILES += ./AppLifecycleMessages/AppDisplayAvailableMessage.cpp
 LOCAL_SRC_FILES += ./InputMessages/TouchEventMessage.cpp
-LOCAL_SRC_FILES += ./AppMessageQueue.cpp
-LOCAL_SRC_FILES += ./AppProxy.cpp
 LOCAL_SRC_FILES += ./GlDisplayService.cpp
 LOCAL_SRC_FILES += ./Thread.cpp
-LOCAL_SRC_FILES += ./AppWindow.cpp
-LOCAL_SRC_FILES += ./AppHost.cpp
-LOCAL_SRC_FILES += ./AppRunner.cpp
-LOCAL_SRC_FILES += ./AppOnMap.cpp
 LOCAL_SRC_FILES += ./ExampleCameraJumpController.cpp
 LOCAL_SRC_FILES += ./UiThreadToNativeThreadTaskQueue.cpp
 

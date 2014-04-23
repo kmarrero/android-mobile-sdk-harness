@@ -16,7 +16,7 @@ AppProxy::AppProxy(AppRunner& appRunner)
 {
 }
 
-void AppProxy::Pause(PersistentAppState* pPersistentState)
+void AppProxy::Pause()
 {
 	AppLifecycleMessages::AppPauseMessage* pMessage = Eegeo_NEW(AppLifecycleMessages::AppPauseMessage)();
 	m_appRunner.SendMessage(pMessage);

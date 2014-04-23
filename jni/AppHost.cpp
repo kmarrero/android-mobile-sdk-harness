@@ -34,7 +34,6 @@ using namespace Eegeo::Android::Input;
 AppHost::AppHost(
 		const std::string& apiKey,
 		AndroidNativeState& nativeState,
-		const PersistentAppState& persistentAppState,
 		float displayWidth,
 		float displayHeight,
 	    EGLDisplay display,
@@ -140,13 +139,6 @@ AppHost::AppHost(
 	m_pInputProcessor = new Eegeo::Android::Input::AndroidInputProcessor(&m_inputHandler, m_pRenderContext->GetScreenWidth(), m_pRenderContext->GetScreenHeight());
 
 	m_pAppOnMap->Start(m_pWorld);
-
-	if (persistentAppState.valid)
-	{
-        Eegeo::Space::EcefTangentBasis cameraInterestBasis;
-        Eegeo::Camera::CameraHelpers::EcefTangentBasisFromPointAndHeading(persistentAppState.lastGlobeCameraLatLong.ToECEF(), persistentAppState.lastGlobeCameraHeadingDegrees, cameraInterestBasis);
-		m_pAppOnMap->GetCameraController().SetView(cameraInterestBasis, persistentAppState.lastGlobeCameraDistanceToInterest);
-	}
 }
 
 AppHost::~AppHost()
@@ -219,27 +211,6 @@ void AppHost::OnStopped()
 {
 	m_pHttpCache->FlushInMemoryCacheRepresentation();
     m_pAndroidLocationService->StopListening();
-
-    /*
-	if(pPersistentState != NULL)
-	{
-		pPersistentState->lastGlobeCameraDistanceToInterest = this->persistentState.lastGlobeCameraDistanceToInterest;
-		pPersistentState->lastGlobeCameraHeadingDegrees = this->persistentState.lastGlobeCameraHeadingDegrees;
-		pPersistentState->lastGlobeCameraLatLong = this->persistentState.lastGlobeCameraLatLong;
-	}
-	*/
-}
-
-void AppHost::SaveAppState(PersistentAppState& persistentAppState) const
-{
-	Eegeo::Camera::GlobeCamera::GlobeCameraController& cameraController = m_pAppOnMap->GetCameraController();
-
-	const Eegeo::Space::EcefTangentBasis& cameraInterest = cameraController.GetInterestBasis();
-	const float cameraHeadingRadians = Eegeo::Camera::CameraHelpers::GetAbsoluteBearingRadians(cameraInterest.GetPointEcef(), cameraInterest.GetForward());
-
-	persistentAppState.lastGlobeCameraDistanceToInterest = cameraController.GetDistanceToInterest();
-	persistentAppState.lastGlobeCameraHeadingDegrees = Eegeo::Math::Rad2Deg(cameraHeadingRadians);
-	persistentAppState.lastGlobeCameraLatLong = Eegeo::Space::LatLongAltitude::FromECEF(cameraInterest.GetPointEcef());
 }
 
 void AppHost::SetSharedSurface(EGLSurface sharedSurface)

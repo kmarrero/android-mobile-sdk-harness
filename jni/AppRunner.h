@@ -19,7 +19,7 @@
 class AppRunner : public Thread, private AppMessages::IAppMessageDispatcher
 {
 public:
-	AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState, PersistentAppState* pPersistentState);
+	AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState);
 	~AppRunner();
 
 	void SendMessage(const AppMessages::IAppMessage* pMessage);
@@ -32,7 +32,6 @@ protected:
 private:
 	const std::string& m_apiKey;
 	AndroidNativeState* m_pNativeState;
-	PersistentAppState m_persistentState;
 
     AppMessageQueue m_messageQueue;
 	bool HandleMessage(const AppLifecycleMessages::AppPauseMessage& message);

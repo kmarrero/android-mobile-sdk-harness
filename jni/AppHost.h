@@ -28,7 +28,6 @@
 #include "NativeUIFactories.h"
 #include "TerrainHeightRepository.h"
 #include "GlobalShadowing.h"
-#include "PersistentAppState.h"
 #include "AppOnMap.h"
 #include "TouchEventWrapper.h"
 #include <vector>
@@ -39,7 +38,6 @@ public:
 	AppHost(
 			const std::string& apiKey,
 			AndroidNativeState& nativeState,
-			const PersistentAppState& persistentAppState,
 			float displayWidth,
 			float displayHeight,
 		    EGLDisplay display,
@@ -56,7 +54,6 @@ public:
 	void OnStopped();
 
 	// Suspect.
-	void SaveAppState(PersistentAppState& persistentAppState) const;
 	void SetSharedSurface(EGLSurface sharedSurface);
 	void SetViewportOffset(float x, float y);
 

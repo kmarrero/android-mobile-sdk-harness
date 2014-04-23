@@ -10,10 +10,9 @@
 #include "AppDisplayAvailableMessage.h"
 #include "TouchEventMessage.h"
 
-AppRunner::AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState, PersistentAppState* pPersistentState)
+AppRunner::AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState)
 : m_apiKey(apiKey)
 , m_pNativeState(pNativeState)
-, m_persistentState(pPersistentState)
 , m_pAppHost(NULL)
 {
 }
@@ -119,7 +118,6 @@ void AppRunner::CreateAppHost()
 		(
 			m_apiKey,
 			*m_pNativeState,
-			m_persistentState,
 			m_displayService.GetDisplayWidth(),
 			m_displayService.GetDisplayHeight(),
 			m_displayService.GetDisplay(),
