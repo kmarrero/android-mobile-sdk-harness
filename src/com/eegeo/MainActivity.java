@@ -48,25 +48,12 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
         try
         {
         	final RelativeLayout uiRoot = (RelativeLayout) findViewById(R.id.ui_container);
-        	m_view = getLayoutInflater().inflate(R.layout.theme_reader_writer_ui, uiRoot, false);
+        	m_view = getLayoutInflater().inflate(R.layout.change_game_ui, uiRoot, false);
         	
-        	final Spinner spinner = (Spinner) m_view.findViewById(R.id.themes);
-        
-        	String items[] = new String[4];
-        	items[0] = "SummerSanFrancisco";
-        	items[1] = "WinterNewYork";
-        	items[2] = "AutumnLondon";
-        	items[3] = "SpringJapan";
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-        	spinner.setAdapter(adapter);
+        	final Button scavengerHuntButton = (Button)m_view.findViewById(R.id.scavenger_hunt_button);
+        	final Button helicopterButton = (Button)m_view.findViewById(R.id.helicopter_button);
         	
-        	final Button getTheme = (Button)m_view.findViewById(R.id.get_current_theme_name);
-        	final Button changeTheme = (Button)m_view.findViewById(R.id.change_theme);
-        	
-        	final TextView currentThemeLabel = (TextView)m_view.findViewById(R.id.current_theme_name_text);
-        	currentThemeLabel.setText("Current Theme --> ????");
-        	
-        	getTheme.setOnClickListener
+        	scavengerHuntButton.setOnClickListener
         	(
     			new OnClickListener() 
 	        	{
@@ -78,7 +65,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 	            }
         	);
         	
-        	changeTheme.setOnClickListener
+        	helicopterButton.setOnClickListener
         	(
         		new OnClickListener() 
         		{
@@ -94,7 +81,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
         }
         catch (Exception e)
         {
-            Log.v("ThemeReaderWriterHud", e.getMessage() == null ? "Error, but no message?!" : e.getMessage());
+            Log.v("ChangeGameUI", e.getMessage() == null ? "Error, but no message?!" : e.getMessage());
         }                            
     }
         

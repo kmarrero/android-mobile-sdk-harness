@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/example_ui_menu">
+    android:id="@+id/change_game_ui">
 
     <RelativeLayout
 	    android:layout_width="fill_parent"
@@ -10,15 +10,23 @@
 	    android:paddingTop="16dp"
 	    android:paddingLeft="16dp"
 	    android:paddingRight="16dp" >
-	    
+
 	    <Button
-	        android:id="@+id/toggle_match"
+	        android:id="@+id/helicopter_button"
 	        android:layout_width="96dp"
 	        android:layout_height="wrap_content"
-	        android:text="Toggle Match"
-      		android:layout_alignParentLeft="true"
-     		android:layout_alignParentBottom="true" />
-	    
+	        android:layout_marginLeft="14dp"
+	        android:text="Helicopter" />
+
+	    <Button
+	        android:id="@+id/scavenger_hunt_button"
+	        android:layout_width="96dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/helicopter_button"
+	        android:layout_marginLeft="14dp"
+	        android:layout_toRightOf="@+id/helicopter_button"
+	        android:text="Scavenger Hunt" />
+
 	</RelativeLayout>
 	
 </RelativeLayout>
