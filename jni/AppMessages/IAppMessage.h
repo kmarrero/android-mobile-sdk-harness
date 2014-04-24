@@ -12,7 +12,7 @@
 
 namespace AppMessages
 {
-	class IAppMessage : public IMessage<IAppMessageDispatcher>
+	class IAppMessage : public Eegeo::Messaging::IMessage<IAppMessageDispatcher>
 	{
 	};
 }

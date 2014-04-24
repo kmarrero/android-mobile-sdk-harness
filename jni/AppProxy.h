@@ -28,7 +28,7 @@ public:
 
 private:
 	AppRunner& m_appRunner;
-	Thread m_thread;
+	Eegeo::Concurrency::Thread m_thread;
 };
 
 #endif /* APPPROXY_H_ */

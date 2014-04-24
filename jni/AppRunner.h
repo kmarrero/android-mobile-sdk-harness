@@ -18,7 +18,7 @@
 #include <algorithm>
 
 class AppRunner :
-	public ActiveObject<const AppMessages::IAppMessage*, AppMessages::IAppMessageDispatcher>
+	public Eegeo::Messaging::ActiveObject<const AppMessages::IAppMessage*, AppMessages::IAppMessageDispatcher>
 {
 public:
 	AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState);

@@ -20,7 +20,6 @@ LOCAL_SRC_FILES += ./AppLifecycleMessages/AppPauseMessage.cpp
 LOCAL_SRC_FILES += ./AppLifecycleMessages/AppDisplayAvailableMessage.cpp
 LOCAL_SRC_FILES += ./InputMessages/TouchEventMessage.cpp
 LOCAL_SRC_FILES += ./GlDisplayService.cpp
-LOCAL_SRC_FILES += ./Thread.cpp
 LOCAL_SRC_FILES += ./Game/DefaultGame.cpp
 LOCAL_SRC_FILES += ./ExampleCameraJumpController.cpp
 
@@ -37,7 +36,6 @@ else
 endif 
 
 LOCAL_C_INCLUDES += ./jni/Examples 
-LOCAL_C_INCLUDES += ./jni/Messaging 
 LOCAL_C_INCLUDES += ./jni/AppMessages
 LOCAL_C_INCLUDES += ./jni/AppLifecycleMessages
 LOCAL_C_INCLUDES += ./jni/InputMessages
