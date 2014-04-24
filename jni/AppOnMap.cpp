@@ -126,7 +126,7 @@ void MyApp::OnStart ()
     }
 
     CreateGames();
-    ActivateGame(GameId::Default);
+    ActivateGame(Game::GameId::Default);
 }
 
 void MyApp::Update (float dt)
@@ -282,7 +282,7 @@ void MyApp::Event_TouchUp(const AppInterface::TouchData& data)
     }
 }
 
-void MyApp::ActivateGame(GameId::Values gameIndex)
+void MyApp::ActivateGame(Game::GameId::Values gameIndex)
 {
 	Game::IGame* pNewGame = m_games.at(gameIndex);
 

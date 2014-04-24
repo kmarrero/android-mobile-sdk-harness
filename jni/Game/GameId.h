@@ -7,14 +7,17 @@
 #ifndef GAMEID_H_
 #define GAMEID_H_
 
-namespace GameId
+namespace Game
 {
-	enum Values
+	namespace GameId
 	{
-		Default,
-		TreasureHunt,
-		Helicopter
-	};
+		enum Values
+		{
+			Default,
+			TreasureHunt,
+			Helicopter
+		};
+	}
 }
 
 #endif /* GAMEID_H_ */

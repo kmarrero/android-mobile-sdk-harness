@@ -22,7 +22,7 @@ public:
 	void Resume();
 	void ActivateSurface();
 
-	void StartGame(GameId::Values gameId);
+	void StartGame(Game::GameId::Values gameId);
 
 	void SendTouchEvent(const InputMessages::TouchEventMessage* pTouchEvent);
 

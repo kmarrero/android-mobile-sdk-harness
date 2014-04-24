@@ -16,12 +16,12 @@ namespace AppMessages
 	class AppStartGameMessage : public AppMessages::IAppMessage
 	{
 	public:
-		AppStartGameMessage(GameId::Values gameId);
+		AppStartGameMessage(Game::GameId::Values gameId);
 		bool Handle(AppMessages::IAppMessageDispatcher& dispatcher) const;
-		GameId::Values GetGameId() const;
+		Game::GameId::Values GetGameId() const;
 
 	private:
-		GameId::Values m_gameId;
+		Game::GameId::Values m_gameId;
 	};
 }
 

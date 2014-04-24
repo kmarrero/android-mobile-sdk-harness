@@ -116,7 +116,7 @@ JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_setNativeSurface(JNIEnv* jenv
 
 JNIEXPORT void JNICALL Java_com_eegeo_MainActivity_startGame(JNIEnv* jenv, jobject obj, jint gameId)
 {
-	g_pAppProxy->StartGame((GameId::Values) gameId);
+	g_pAppProxy->StartGame((Game::GameId::Values) gameId);
 }
 
 JNIEXPORT void JNICALL Java_com_eegeo_EegeoSurfaceView_processNativePointerDown(JNIEnv* jenv, jobject obj,

@@ -213,7 +213,7 @@ void AppHost::OnStopped()
     m_pAndroidLocationService->StopListening();
 }
 
-void AppHost::StartGame(GameId::Values gameId)
+void AppHost::StartGame(Game::GameId::Values gameId)
 {
 	m_pAppOnMap->ActivateGame(gameId);
 }

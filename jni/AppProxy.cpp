@@ -36,7 +36,7 @@ void AppProxy::ActivateSurface()
 	m_appRunner.SendMessage(pMessage);
 }
 
-void AppProxy::StartGame(GameId::Values gameId)
+void AppProxy::StartGame(Game::GameId::Values gameId)
 {
 	AppMessages::AppStartGameMessage* pMessage = Eegeo_NEW(AppMessages::AppStartGameMessage)(gameId);
 	m_appRunner.SendMessage(pMessage);

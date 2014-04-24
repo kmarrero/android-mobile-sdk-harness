@@ -9,7 +9,7 @@
 
 namespace AppMessages
 {
-	AppStartGameMessage::AppStartGameMessage(GameId::Values gameId)
+	AppStartGameMessage::AppStartGameMessage(Game::GameId::Values gameId)
 	: m_gameId(gameId)
 	{
 	}
@@ -19,7 +19,7 @@ namespace AppMessages
 		return dispatcher.HandleMessage(*this);
 	}
 
-	GameId::Values AppStartGameMessage::GetGameId() const
+	Game::GameId::Values AppStartGameMessage::GetGameId() const
 	{
 		return m_gameId;
 	}

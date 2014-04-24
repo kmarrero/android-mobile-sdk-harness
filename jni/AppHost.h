@@ -55,7 +55,7 @@ public:
 	void OnStarted();
 	void OnStopped();
 
-	void StartGame(GameId::Values gameId);
+	void StartGame(Game::GameId::Values gameId);
 
 	// Suspect.
 	void SetSharedSurface(EGLSurface sharedSurface);

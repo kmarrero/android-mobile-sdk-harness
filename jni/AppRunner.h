@@ -12,7 +12,6 @@
 #include "AppHost.h"
 #include "GlDisplayService.h"
 #include "IMessageQueue.h"
-#include "MessageHandlerChain.h"
 #include "IAppMessage.h"
 #include "ActiveObject.h"
 #include "Types.h"

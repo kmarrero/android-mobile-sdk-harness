@@ -55,7 +55,7 @@ public:
     void JumpTo(double latitudeDegrees, double longitudeDegrees, double altitudeMetres, double headingDegrees, double distanceToInterestMetres);
 
     size_t GetNumOfGames() const;
-    void ActivateGame(GameId::Values gameId);
+    void ActivateGame(Game::GameId::Values gameId);
 
     Eegeo::Camera::GlobeCamera::GlobeCameraController& GetCameraController() { return *m_pGlobeCameraController; }
 
