@@ -13,7 +13,8 @@
 #include "GlDisplayService.h"
 #include "IMessageQueue.h"
 #include "MessageHandlerChain.h"
-#include "AppMessageQueue.h"
+#include "MessageQueue.h"
+#include "IAppMessage.h"
 #include <algorithm>
 
 class AppRunner : public IRunnable, private AppMessages::IAppMessageDispatcher
@@ -33,7 +34,7 @@ private:
 	const std::string& m_apiKey;
 	AndroidNativeState* m_pNativeState;
 
-    AppMessageQueue m_messageQueue;
+    MessageQueue<const AppMessages::IAppMessage*> m_messageQueue;
 	bool HandleMessage(const AppLifecycleMessages::AppPauseMessage& message);
 	bool HandleMessage(const AppLifecycleMessages::AppDisplayAvailableMessage& message);
 	bool HandleMessage(const InputMessages::TouchEventMessage& message);

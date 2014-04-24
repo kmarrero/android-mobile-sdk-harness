@@ -15,7 +15,6 @@ LOCAL_SRC_FILES += ./AppProxy.cpp
 LOCAL_SRC_FILES += ./AppRunner.cpp
 LOCAL_SRC_FILES += ./AppHost.cpp
 LOCAL_SRC_FILES += ./AppOnMap.cpp
-LOCAL_SRC_FILES += ./AppMessageQueue.cpp
 LOCAL_SRC_FILES += ./AppMessages/AppStartGameMessage.cpp
 LOCAL_SRC_FILES += ./AppLifecycleMessages/AppPauseMessage.cpp
 LOCAL_SRC_FILES += ./AppLifecycleMessages/AppDisplayAvailableMessage.cpp
