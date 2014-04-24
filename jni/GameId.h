@@ -11,10 +11,9 @@ namespace GameId
 {
 	enum Values
 	{
+		Default,
 		TreasureHunt,
-		Helicopter,
-
-		None = -1
+		Helicopter
 	};
 }
 

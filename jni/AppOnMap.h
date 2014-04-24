@@ -17,80 +17,24 @@
 #include "AndroidNativeState.h"
 #include "GlobeCamera.h"
 #include "GameId.h"
+#include "IGame.h"
+#include "IGameController.h"
 
-class IGameController
-{
-public:
-	virtual ~IGameController() {};
-	virtual size_t GetNumOfGames() const = 0;
-	virtual void ActivateGame(GameId::Values gameId) = 0;
-};
-
-class IGame
-{
-public:
-	virtual ~IGame() {};
-
-	virtual void OnActivated() = 0;
-	virtual void OnDeactivated() = 0;
-
-	virtual void OnUpdate(float dt) = 0;
-	virtual void OnDraw(float dt) = 0;
-};
-
-class IGameFactory
-{
-public:
-	virtual ~IGameFactory() {};
-	virtual IGame* CreateGame() const = 0;
-};
-
-class Game : public IGame, protected Eegeo::NonCopyable
-{
-public:
-	Game(const std::string& name)
-	: m_name(name)
-	{
-		Eegeo_TTY("Created %s game\n", m_name.c_str());
-	}
-
-	void OnActivated()
-	{
-		Eegeo_TTY("%s game activate\n", m_name.c_str());
-	}
-
-	void OnDeactivated()
-	{
-		Eegeo_TTY("%s game deactivate\n", m_name.c_str());
-	}
-
-	void OnUpdate(float dt)
-	{
-		Eegeo_TTY("%s game update\n", m_name.c_str());
-	}
-
-	void OnDraw(float dt)
-	{
-		Eegeo_TTY("%s game draw\n", m_name.c_str());
-	}
-
-private:
-	const std::string m_name;
-};
-
-class MyApp : public Eegeo::IAppOnMap, public Eegeo::Android::Input::IAndroidInputHandler, public IGameController
+class MyApp : public Eegeo::IAppOnMap, public Eegeo::Android::Input::IAndroidInputHandler, public Game::IGameController
 {
 private:
 	Eegeo::Android::Input::AndroidInputHandler& pInputHandler;
 	AndroidNativeState& m_nativeState;
-    Eegeo::Camera::GlobeCamera::GlobeCameraController* m_globeCameraController;
-    Eegeo::Camera::GlobeCamera::GlobeCameraTouchController* m_cameraTouchController;
-    Eegeo::Camera::ICameraJumpController* m_cameraJumpController;
+    Eegeo::Camera::GlobeCamera::GlobeCameraController* m_pGlobeCameraController;
+    Eegeo::Camera::GlobeCamera::GlobeCameraTouchController* m_pCameraTouchController;
+    Eegeo::Camera::ICameraJumpController* m_pCameraJumpController;
     Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider& m_globeCameraInterestPointProvider;
 
-    typedef std::vector<IGame*> IGamePtrVec;
+    typedef std::vector<Game::IGame*> IGamePtrVec;
     IGamePtrVec m_games;
-    IGame* m_pActiveGame;
+    Game::IGame* m_pActiveGame;
+
+    void CreateGames();
 
 public:
 	MyApp
@@ -113,7 +57,7 @@ public:
     size_t GetNumOfGames() const;
     void ActivateGame(GameId::Values gameId);
 
-    Eegeo::Camera::GlobeCamera::GlobeCameraController& GetCameraController() { return *m_globeCameraController; }
+    Eegeo::Camera::GlobeCamera::GlobeCameraController& GetCameraController() { return *m_pGlobeCameraController; }
 
     void Event_TouchRotate 			(const AppInterface::RotateData& data);
     void Event_TouchRotate_Start	(const AppInterface::RotateData& data);

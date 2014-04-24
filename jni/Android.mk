@@ -22,6 +22,7 @@ LOCAL_SRC_FILES += ./AppLifecycleMessages/AppDisplayAvailableMessage.cpp
 LOCAL_SRC_FILES += ./InputMessages/TouchEventMessage.cpp
 LOCAL_SRC_FILES += ./GlDisplayService.cpp
 LOCAL_SRC_FILES += ./Thread.cpp
+LOCAL_SRC_FILES += ./Game/DefaultGame.cpp
 LOCAL_SRC_FILES += ./ExampleCameraJumpController.cpp
 
 os_name:=$(shell uname -s)
@@ -41,6 +42,7 @@ LOCAL_C_INCLUDES += ./jni/Messaging
 LOCAL_C_INCLUDES += ./jni/AppMessages
 LOCAL_C_INCLUDES += ./jni/AppLifecycleMessages
 LOCAL_C_INCLUDES += ./jni/InputMessages
+LOCAL_C_INCLUDES += ./jni/Game
 
 LOCAL_C_INCLUDES += ./libs/png
 LOCAL_C_INCLUDES += ./libs/curl 

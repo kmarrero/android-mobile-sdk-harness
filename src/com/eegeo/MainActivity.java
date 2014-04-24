@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 	                @Override
 	                public void onClick(View v) 
 	                {
-	                	startGame(0);
+	                	startGame(1);
 	                }
 	            }
         	);
@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 	                @Override
 	                public void onClick(View v) 
 	                {
-	                	startGame(1);
+	                	startGame(2);
 	                }
         		}
         	);

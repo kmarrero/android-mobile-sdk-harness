@@ -16,8 +16,9 @@
 #include "CameraHelpers.h"
 #include "NativeUIFactories.h"
 #include "LocalAsyncTextureLoader.h"
-
 #include "ExampleCameraJumpController.h"
+#include "TestGame.h"
+#include "DefaultGame.h"
 
 MyApp::MyApp
 (
@@ -28,19 +29,13 @@ MyApp::MyApp
 : pInputHandler(*inputHandler)
 , m_nativeState(nativeState)
 , m_globeCameraInterestPointProvider(globeCameraInterestPointProvider)
-, m_globeCameraController(NULL)
-, m_cameraTouchController(NULL)
-, m_cameraJumpController(NULL)
+, m_pGlobeCameraController(NULL)
+, m_pCameraTouchController(NULL)
+, m_pCameraJumpController(NULL)
 , m_pActiveGame(NULL)
 {
 	Eegeo_ASSERT(&m_globeCameraInterestPointProvider != NULL);
 	pInputHandler.AddDelegateInputHandler(this);
-
-	IGame* pGame1 = Eegeo_NEW(Game)("Scavenger Hunt");
-	m_games.push_back(pGame1);
-
-	IGame* pGame2 = Eegeo_NEW(Game)("Helicopter");
-	m_games.push_back(pGame2);
 }
 
 MyApp::~MyApp()
@@ -52,9 +47,25 @@ MyApp::~MyApp()
 	m_games.clear();
 
 	pInputHandler.RemoveDelegateInputHandler(this);
-    delete m_globeCameraController;
-    delete m_cameraTouchController;
-    delete m_cameraJumpController;
+    delete m_pGlobeCameraController;
+    delete m_pCameraTouchController;
+    delete m_pCameraJumpController;
+}
+
+void MyApp::CreateGames()
+{
+	Eegeo_ASSERT(m_pActiveGame == NULL);
+	Eegeo_ASSERT(m_games.size() == 0);
+	Eegeo_ASSERT(m_pCameraTouchController != NULL);
+
+	Game::IGame* pDefaultGame = Eegeo_NEW(Game::DefaultGame)(*m_pCameraTouchController);
+	m_games.push_back(pDefaultGame);
+
+	Game::IGame* pScavengerHuntGame = Eegeo_NEW(Game::TestGame)("Scavenger Hunt");
+	m_games.push_back(pScavengerHuntGame);
+
+	Game::IGame* pHelicopterGame = Eegeo_NEW(Game::TestGame)("Helicopter");
+	m_games.push_back(pHelicopterGame);
 }
 
 void MyApp::OnStart ()
@@ -69,25 +80,25 @@ void MyApp::OnStart ()
     // override default configuration to enable two-finger pan gesture to control additional camera pitch
     touchControllerConfig.tiltEnabled = true;
 
-    m_cameraTouchController = new Eegeo::Camera::GlobeCamera::GlobeCameraTouchController(touchControllerConfig);
+    m_pCameraTouchController = new Eegeo::Camera::GlobeCamera::GlobeCameraTouchController(touchControllerConfig);
 
     const bool useLowSpecSettings = false;
     Eegeo::Camera::GlobeCamera::GlobeCameraControllerConfiguration globeCameraControllerConfig = Eegeo::Camera::GlobeCamera::GlobeCameraControllerConfiguration::CreateDefault(useLowSpecSettings);
 
-    m_globeCameraController = new Eegeo::Camera::GlobeCamera::GlobeCameraController(eegeoWorld.GetTerrainHeightProvider(),
+    m_pGlobeCameraController = new Eegeo::Camera::GlobeCamera::GlobeCameraController(eegeoWorld.GetTerrainHeightProvider(),
                                                                                     eegeoWorld.GetEnvironmentFlatteningService(),
                                                                                     eegeoWorld.GetResourceCeilingProvider(),
-                                                                                    *m_cameraTouchController,
+                                                                                    *m_pCameraTouchController,
                                                                                     globeCameraControllerConfig);
 
-    m_cameraJumpController = new ExampleCameraJumpController(*m_globeCameraController, *m_cameraTouchController);
+    m_pCameraJumpController = new ExampleCameraJumpController(*m_pGlobeCameraController, *m_pCameraTouchController);
 
-    Eegeo::Camera::RenderCamera* renderCamera = m_globeCameraController->GetCamera();
+    Eegeo::Camera::RenderCamera* renderCamera = m_pGlobeCameraController->GetCamera();
     const Eegeo::Rendering::RenderContext& renderContext = eegeoWorld.GetRenderContext();
     renderCamera->SetViewport(0.f, 0.f, renderContext.GetScreenWidth(), renderContext.GetScreenHeight());
     eegeoWorld.SetCamera(renderCamera);
 
-    m_globeCameraInterestPointProvider.SetGlobeCamera(m_globeCameraController);
+    m_globeCameraInterestPointProvider.SetGlobeCamera(m_pGlobeCameraController);
 
     float interestPointLatitudeDegrees = 37.7858f;
     float interestPointLongitudeDegrees = -122.401f;
@@ -105,7 +116,7 @@ void MyApp::OnStart ()
     Eegeo::Space::EcefTangentBasis cameraInterestBasis;
     Eegeo::Camera::CameraHelpers::EcefTangentBasisFromPointAndHeading(location.ToECEF(), cameraControllerOrientationDegrees, cameraInterestBasis);
 
-    m_globeCameraController->SetView(cameraInterestBasis, cameraControllerDistanceFromInterestPointMeters);
+    m_pGlobeCameraController->SetView(cameraInterestBasis, cameraControllerDistanceFromInterestPointMeters);
 
     Eegeo::Search::Service::SearchService* searchService = NULL;
 
@@ -113,6 +124,9 @@ void MyApp::OnStart ()
     {
         searchService = &eegeoWorld.GetSearchService();
     }
+
+    CreateGames();
+    ActivateGame(GameId::Default);
 }
 
 void MyApp::Update (float dt)
@@ -121,8 +135,8 @@ void MyApp::Update (float dt)
 
     eegeoWorld.EarlyUpdate(dt);
 
-    m_cameraTouchController->Update(dt);
-    m_globeCameraController->Update(dt);
+    m_pCameraTouchController->Update(dt);
+    m_pGlobeCameraController->Update(dt);
 
     eegeoWorld.Update(dt);
 
@@ -152,124 +166,125 @@ void MyApp::JumpTo(double latitudeDegrees, double longitudeDegrees, double altit
 
     Eegeo::Camera::CameraHelpers::EcefTangentBasisFromPointAndHeading(interestPoint, headingDegrees, interestBasis);
 
-    m_globeCameraController->SetView(interestBasis, distanceToInterestMetres);
+    m_pGlobeCameraController->SetView(interestBasis, distanceToInterestMetres);
 }
 
 void MyApp::Event_TouchRotate(const AppInterface::RotateData& data)
 {
-//    if(!pExample->Event_TouchRotate(data))
-    {
-        m_cameraTouchController->Event_TouchRotate(data);
-    }
+	if(m_pActiveGame != NULL)
+	{
+		m_pActiveGame->Event_TouchRotate(data);
+
+	}
 }
 
 void MyApp::Event_TouchRotate_Start(const AppInterface::RotateData& data)
 {
-//    if(!pExample->Event_TouchRotate_Start(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchRotate_Start(data);
+		m_pActiveGame->Event_TouchRotate_Start(data);
     }
 }
 
 void MyApp::Event_TouchRotate_End(const AppInterface::RotateData& data)
 {
-//    if(!pExample->Event_TouchRotate_End(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchRotate_End(data);
+        m_pActiveGame->Event_TouchRotate_End(data);
     }
 }
 
 void MyApp::Event_TouchPinch(const AppInterface::PinchData& data)
 {
-//    if(!pExample->Event_TouchPinch(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchPinch(data);
+		m_pActiveGame->Event_TouchPinch(data);
     }
 }
 
 void MyApp::Event_TouchPinch_Start(const AppInterface::PinchData& data)
 {
-//    if(!pExample->Event_TouchPinch_Start(data))
-    {
-        m_cameraTouchController->Event_TouchPinch_Start(data);
+	if(m_pActiveGame != NULL)
+	{
+		m_pActiveGame->Event_TouchPinch_Start(data);
     }
 }
 
 void MyApp::Event_TouchPinch_End(const AppInterface::PinchData& data)
 {
-//    if(!pExample->Event_TouchPinch_End(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchPinch_End(data);
+		m_pActiveGame->Event_TouchPinch_End(data);
     }
 }
 
 void MyApp::Event_TouchPan(const AppInterface::PanData& data)
 {
-//    if(!pExample->Event_TouchPan(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchPan(data);
+		m_pActiveGame->Event_TouchPan(data);
     }
 }
 
 void MyApp::Event_TouchPan_Start(const AppInterface::PanData& data)
 {
-//    if(!pExample->Event_TouchPan_Start(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchPan_Start(data);
+		m_pActiveGame->Event_TouchPan_Start(data);
     }
 }
 
 void MyApp::Event_TouchPan_End(const AppInterface::PanData& data)
 {
-//    if(!pExample->Event_TouchPan_End(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchPan_End(data);
+		m_pActiveGame->Event_TouchPan_End(data);
     }
 }
 
 void MyApp::Event_TouchTap(const AppInterface::TapData& data)
 {
-//    if(!pExample->Event_TouchTap(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchTap(data);
+		m_pActiveGame->Event_TouchTap(data);
     }
 }
 
 void MyApp::Event_TouchDoubleTap(const AppInterface::TapData& data)
 {
-//    if(!pExample->Event_TouchDoubleTap(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchDoubleTap(data);
+		m_pActiveGame->Event_TouchDoubleTap(data);
     }
 }
 
 void MyApp::Event_TouchDown(const AppInterface::TouchData& data)
 {
-//    if(!pExample->Event_TouchDown(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchDown(data);
+		m_pActiveGame->Event_TouchDown(data);
     }
 }
 
 void MyApp::Event_TouchMove(const AppInterface::TouchData& data)
 {
-//    if(!pExample->Event_TouchMove(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchMove(data);
+		m_pActiveGame->Event_TouchMove(data);
     }
 }
 
 void MyApp::Event_TouchUp(const AppInterface::TouchData& data)
 {
-//    if(!pExample->Event_TouchUp(data))
+	if(m_pActiveGame != NULL)
     {
-        m_cameraTouchController->Event_TouchUp(data);
+        m_pActiveGame->Event_TouchUp(data);
     }
 }
 
 void MyApp::ActivateGame(GameId::Values gameIndex)
 {
-	IGame* pNewGame = m_games.at(gameIndex);
+	Game::IGame* pNewGame = m_games.at(gameIndex);
 
 	if(pNewGame != m_pActiveGame)
 	{
