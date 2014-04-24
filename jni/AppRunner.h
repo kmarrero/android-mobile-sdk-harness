@@ -16,7 +16,7 @@
 #include "AppMessageQueue.h"
 #include <algorithm>
 
-class AppRunner : public Thread, private AppMessages::IAppMessageDispatcher
+class AppRunner : public IRunnable, private AppMessages::IAppMessageDispatcher
 {
 public:
 	AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState);

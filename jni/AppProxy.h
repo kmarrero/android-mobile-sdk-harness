@@ -10,6 +10,7 @@
 #include "AppRunner.h"
 #include "InputMessages.h"
 #include "GameId.h"
+#include "Thread.h"
 
 class AppProxy
 {
@@ -27,6 +28,7 @@ public:
 
 private:
 	AppRunner& m_appRunner;
+	Thread m_thread;
 };
 
 #endif /* APPPROXY_H_ */

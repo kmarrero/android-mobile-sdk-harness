@@ -1,33 +1,31 @@
 /*
- * ActiveObject.h
+ * Thread.h
  *
  *  Created on: Apr 21, 2014
  */
 
-#ifndef ACTIVEOBJECT_H_
-#define ACTIVEOBJECT_H_
+#ifndef THREAD_H_
+#define THREAD_H_
 
 #include "Types.h"
+#include "IRunnable.h"
 #include <pthread.h>
 
 class Thread : protected Eegeo::NonCopyable
 {
 public:
-	Thread();
+	Thread(IRunnable& runnable);
 	virtual ~Thread();
 
 	void Start();
 	void WaitForStop();
 
-protected:
-	virtual bool operator()() = 0;
-	virtual void OnStarted() {};
-	virtual void OnStopped() {};
-
 private:
+	IRunnable& m_runnable;
 	pthread_t m_thread;
-
 	static void* Run(void* pObj);
+
+	IRunnable& GetRunnable() const;
 };
 
-#endif /* ACTIVEOBJECT_H_ */
+#endif

@@ -6,8 +6,9 @@
 
 #include "Thread.h"
 
-Thread::Thread()
-: m_thread(0)
+Thread::Thread(IRunnable& runnable)
+: m_runnable(runnable)
+, m_thread(0)
 {
 }
 
@@ -16,19 +17,25 @@ Thread::~Thread()
 	Eegeo_ASSERT(m_thread != 0, "Attempt to destroy an active object that is still running. Please call Stop() before destroying.");
 }
 
+IRunnable& Thread::GetRunnable() const
+{
+	return m_runnable;
+}
+
 void* Thread::Run(void* pObj)
 {
 	Thread* pThread = (Thread*) pObj;
+	IRunnable& runnable = pThread->GetRunnable();
 
-	pThread->OnStarted();
+	runnable.OnStarted();
 
 	bool continueRunning = true;
 	while(continueRunning)
 	{
-		continueRunning = pThread->operator()();
+		continueRunning = runnable.operator()();
 	}
 
-	pThread->OnStopped();
+	runnable.OnStopped();
 
 	return NULL;
 }

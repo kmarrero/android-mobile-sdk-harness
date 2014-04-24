@@ -14,6 +14,7 @@
 
 AppProxy::AppProxy(AppRunner& appRunner)
 : m_appRunner(appRunner)
+, m_thread(appRunner)
 {
 }
 
@@ -21,12 +22,12 @@ void AppProxy::Pause()
 {
 	AppLifecycleMessages::AppPauseMessage* pMessage = Eegeo_NEW(AppLifecycleMessages::AppPauseMessage)();
 	m_appRunner.SendMessage(pMessage);
-	m_appRunner.WaitForStop();
+	m_thread.WaitForStop();
 }
 
 void AppProxy::Resume()
 {
-	m_appRunner.Start();
+	m_thread.Start();
 }
 
 void AppProxy::ActivateSurface()
