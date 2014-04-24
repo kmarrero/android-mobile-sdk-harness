@@ -2,8 +2,16 @@ package com.eegeo;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.app.Activity;
 import android.content.res.AssetManager;
 
@@ -12,12 +20,14 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     private EegeoSurfaceView m_surfaceView;
     private SurfaceHolder m_surfaceHolder;
     private long m_nativeAppWindowPtr;
-    
+	private View m_view;
+	
     public static native long startNativeCode(MainActivity activity, AssetManager assetManager, float dpi);
     public static native void stopNativeCode();
     public static native void pauseNativeCode();
     public static native void resumeNativeCode();
     public static native void setNativeSurface(Surface surface);
+    public static native void startGame(int gameId);
     
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -29,8 +39,65 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
 
         m_surfaceView = (EegeoSurfaceView)findViewById(R.id.surface);
         m_surfaceView.getHolder().addCallback(this);
+        
+        createUI();
     }
     
+    private void createUI()
+    {
+        try
+        {
+        	final RelativeLayout uiRoot = (RelativeLayout) findViewById(R.id.ui_container);
+        	m_view = getLayoutInflater().inflate(R.layout.theme_reader_writer_ui, uiRoot, false);
+        	
+        	final Spinner spinner = (Spinner) m_view.findViewById(R.id.themes);
+        
+        	String items[] = new String[4];
+        	items[0] = "SummerSanFrancisco";
+        	items[1] = "WinterNewYork";
+        	items[2] = "AutumnLondon";
+        	items[3] = "SpringJapan";
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+        	spinner.setAdapter(adapter);
+        	
+        	final Button getTheme = (Button)m_view.findViewById(R.id.get_current_theme_name);
+        	final Button changeTheme = (Button)m_view.findViewById(R.id.change_theme);
+        	
+        	final TextView currentThemeLabel = (TextView)m_view.findViewById(R.id.current_theme_name_text);
+        	currentThemeLabel.setText("Current Theme --> ????");
+        	
+        	getTheme.setOnClickListener
+        	(
+    			new OnClickListener() 
+	        	{
+	                @Override
+	                public void onClick(View v) 
+	                {
+	                	startGame(0);
+	                }
+	            }
+        	);
+        	
+        	changeTheme.setOnClickListener
+        	(
+        		new OnClickListener() 
+        		{
+	                @Override
+	                public void onClick(View v) 
+	                {
+	                	startGame(1);
+	                }
+        		}
+        	);
+        	
+        	uiRoot.addView(m_view);
+        }
+        catch (Exception e)
+        {
+            Log.v("ThemeReaderWriterHud", e.getMessage() == null ? "Error, but no message?!" : e.getMessage());
+        }                            
+    }
+        
     @Override
     protected void onStart() 
     {

@@ -24,6 +24,7 @@ namespace AppMessages
 		virtual bool HandleMessage(const AppLifecycleMessages::AppPauseMessage& message) = 0;
 		virtual bool HandleMessage(const AppLifecycleMessages::AppDisplayAvailableMessage& message) = 0;
 		virtual bool HandleMessage(const InputMessages::TouchEventMessage& message) = 0;
+		virtual bool HandleMessage(const AppMessages::AppStartGameMessage& message) = 0;
 	};
 }
 

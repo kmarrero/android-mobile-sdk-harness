@@ -19,23 +19,18 @@
 
 #include "ExampleCameraJumpController.h"
 
-#include "ShowJavaPlaceJumpUIExample.h"
-#include "PositionJavaPinButtonExample.h"
-#include "JavaHudCrossThreadCommunicationExample.h"
-
-MyApp::MyApp(
-		Eegeo::Android::Input::AndroidInputHandler* inputHandler,
-		AndroidNativeState& nativeState,
-		Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider& globeCameraInterestPointProvider,
-		ExampleTypes::Examples selectedExample)
+MyApp::MyApp
+(
+	Eegeo::Android::Input::AndroidInputHandler* inputHandler,
+	AndroidNativeState& nativeState,
+	Eegeo::Camera::GlobeCamera::GlobeCameraInterestPointProvider& globeCameraInterestPointProvider
+)
 : pInputHandler(*inputHandler)
 , m_nativeState(nativeState)
 , m_globeCameraInterestPointProvider(globeCameraInterestPointProvider)
-, m_selectedExampleType(selectedExample)
 , m_globeCameraController(NULL)
 , m_cameraTouchController(NULL)
 , m_cameraJumpController(NULL)
-, pExample(NULL)
 , m_pActiveGame(NULL)
 {
 	Eegeo_ASSERT(&m_globeCameraInterestPointProvider != NULL);
@@ -57,8 +52,6 @@ MyApp::~MyApp()
 	m_games.clear();
 
 	pInputHandler.RemoveDelegateInputHandler(this);
-	pExample->Suspend();
-	delete pExample;
     delete m_globeCameraController;
     delete m_cameraTouchController;
     delete m_cameraJumpController;
@@ -120,38 +113,6 @@ void MyApp::OnStart ()
     {
         searchService = &eegeoWorld.GetSearchService();
     }
-
-    pExample = CreateExample(m_selectedExampleType,
-                                eegeoWorld.GetRenderContext(),
-                                location,
-                                eegeoWorld.GetCameraProvider(),
-                                *m_globeCameraController,
-                                *m_cameraTouchController,
-                                eegeoWorld.GetTerrainHeightProvider(),
-                                eegeoWorld.GetTextureLoader(),
-                                eegeoWorld.GetFileIO(),
-                                eegeoWorld.GetTerrainStreaming(),
-                                eegeoWorld.GetWebRequestFactory(),
-                                eegeoWorld.GetNavigationGraphRepository(),
-                                eegeoWorld.GetBuildingSceneElementRepository(),
-                                eegeoWorld.GetBuildingsRenderableFilter(),
-                                eegeoWorld.GetShadowSceneElementRepository(),
-                                eegeoWorld.GetShadowRenderableFilter(),
-                                eegeoWorld.GetStreamingVolume(),
-                                eegeoWorld.GetGlobalLighting(),
-                                eegeoWorld.GetGlobalFogging(),
-                                eegeoWorld.GetTrafficSimulationController(),
-                                eegeoWorld.GetResourceSpatialQueryService(),
-                                eegeoWorld.GetEnvironmentFlatteningService(),
-                                searchService,
-                                eegeoWorld.GetNativeUIFactories(),
-                                eegeoWorld.GetInterestPointProvider(),
-                                eegeoWorld.GetRouteService(),
-                                eegeoWorld.GetCollisionMeshResourceProvider(),
-                                eegeoWorld
-                                );
-
-    pExample->Start();
 }
 
 void MyApp::Update (float dt)
@@ -159,14 +120,11 @@ void MyApp::Update (float dt)
     Eegeo::EegeoWorld& eegeoWorld = World();
 
     eegeoWorld.EarlyUpdate(dt);
-    pExample->EarlyUpdate(dt);
 
     m_cameraTouchController->Update(dt);
     m_globeCameraController->Update(dt);
-    pExample->AfterCameraUpdate();
 
     eegeoWorld.Update(dt);
-    pExample->Update(dt);
 
     if(m_pActiveGame != NULL)
     {
@@ -179,7 +137,6 @@ void MyApp::Draw (float dt)
     Eegeo::Rendering::GLState& glState = World().GetRenderContext().GetGLState();
     glState.ClearColor(0.8f, 0.8f, 0.8f, 1.f);
     World().Draw(dt);
-    pExample->Draw();
 
     if(m_pActiveGame != NULL)
     {
@@ -198,66 +155,9 @@ void MyApp::JumpTo(double latitudeDegrees, double longitudeDegrees, double altit
     m_globeCameraController->SetView(interestBasis, distanceToInterestMetres);
 }
 
-Examples::IExample* MyApp::CreateExample(ExampleTypes::Examples example,
-        Eegeo::Rendering::RenderContext& renderContext,
-        Eegeo::Space::LatLongAltitude interestLocation,
-        Eegeo::Camera::ICameraProvider& cameraProvider,
-        Eegeo::Camera::GlobeCamera::GlobeCameraController& globeCameraController,
-        Eegeo::ITouchController& cameraTouchController,
-        Eegeo::Resources::Terrain::Heights::TerrainHeightProvider& terrainHeightProvider,
-        Eegeo::Helpers::ITextureFileLoader& textureLoader,
-        Eegeo::Helpers::IFileIO& fileIO,
-        Eegeo::Resources::Terrain::TerrainStreaming& terrainStreaming,
-        Eegeo::Web::IWebLoadRequestFactory& webRequestFactory,
-        Eegeo::Resources::Roads::Navigation::NavigationGraphRepository& navigationGraphs,
-        Eegeo::Rendering::Scene::SceneElementRepository<Eegeo::Rendering::Renderables::PackedRenderable>& buildingRepository,
-        Eegeo::Rendering::Filters::PackedRenderableFilter& buildingFilter,
-        Eegeo::Rendering::Scene::SceneElementRepository<Eegeo::Rendering::Renderables::PackedRenderable>& shadowRepository,
-        Eegeo::Rendering::Filters::PackedRenderableFilter& shadowFilter,
-        Eegeo::Streaming::IStreamingVolume& visibleVolume,
-        Eegeo::Lighting::GlobalLighting& lighting,
-        Eegeo::Lighting::GlobalFogging& fogging,
-        Eegeo::Traffic::TrafficSimulationController& trafficSimulation,
-        Eegeo::Resources::ResourceSpatialQueryService& resourceSpatialQueryService,
-        Eegeo::Rendering::EnvironmentFlatteningService& environmentFlatteningService,
-        Eegeo::Search::Service::SearchService* searchService,
-        Eegeo::UI::NativeUIFactories& nativeInputFactories,
-        Eegeo::Location::IInterestPointProvider& interestPointProvider,
-        Eegeo::Routes::RouteService& routeService,
-        const Eegeo::Resources::Terrain::Collision::ICollisionMeshResourceProvider& collisionMeshResourceProvider,
-        Eegeo::EegeoWorld& world
-        )
-{
-    switch(example)
-    {
-/*
-    	case ExampleTypes::ShowJavaPlaceJumpUI:
-        	return new Examples::ShowJavaPlaceJumpUIExample(m_nativeState, *m_cameraJumpController);
-
-        case ExampleTypes::PositionJavaPinButton:
-        	return new Examples::PositionJavaPinButtonExample(world, m_nativeState, renderContext);
-*/
-        case ExampleTypes::JavaHudCrossThreadCommunication:
-        {
-        	return new Examples::JavaHudCrossThreadCommunicationExample(
-        			m_nativeState,
-        			World().GetCityThemesService(),
-                    World().GetCityThemesRepository(),
-                    World().GetCityThemesUpdater(),
-                    *this);
-        }
-
-        default:
-        	Eegeo_ASSERT(false, "Unhandled ExampleType");
-        	break;
-
-        return NULL;
-    }
-}
-
 void MyApp::Event_TouchRotate(const AppInterface::RotateData& data)
 {
-    if(!pExample->Event_TouchRotate(data))
+//    if(!pExample->Event_TouchRotate(data))
     {
         m_cameraTouchController->Event_TouchRotate(data);
     }
@@ -265,7 +165,7 @@ void MyApp::Event_TouchRotate(const AppInterface::RotateData& data)
 
 void MyApp::Event_TouchRotate_Start(const AppInterface::RotateData& data)
 {
-    if(!pExample->Event_TouchRotate_Start(data))
+//    if(!pExample->Event_TouchRotate_Start(data))
     {
         m_cameraTouchController->Event_TouchRotate_Start(data);
     }
@@ -273,7 +173,7 @@ void MyApp::Event_TouchRotate_Start(const AppInterface::RotateData& data)
 
 void MyApp::Event_TouchRotate_End(const AppInterface::RotateData& data)
 {
-    if(!pExample->Event_TouchRotate_End(data))
+//    if(!pExample->Event_TouchRotate_End(data))
     {
         m_cameraTouchController->Event_TouchRotate_End(data);
     }
@@ -281,7 +181,7 @@ void MyApp::Event_TouchRotate_End(const AppInterface::RotateData& data)
 
 void MyApp::Event_TouchPinch(const AppInterface::PinchData& data)
 {
-    if(!pExample->Event_TouchPinch(data))
+//    if(!pExample->Event_TouchPinch(data))
     {
         m_cameraTouchController->Event_TouchPinch(data);
     }
@@ -289,7 +189,7 @@ void MyApp::Event_TouchPinch(const AppInterface::PinchData& data)
 
 void MyApp::Event_TouchPinch_Start(const AppInterface::PinchData& data)
 {
-    if(!pExample->Event_TouchPinch_Start(data))
+//    if(!pExample->Event_TouchPinch_Start(data))
     {
         m_cameraTouchController->Event_TouchPinch_Start(data);
     }
@@ -297,7 +197,7 @@ void MyApp::Event_TouchPinch_Start(const AppInterface::PinchData& data)
 
 void MyApp::Event_TouchPinch_End(const AppInterface::PinchData& data)
 {
-    if(!pExample->Event_TouchPinch_End(data))
+//    if(!pExample->Event_TouchPinch_End(data))
     {
         m_cameraTouchController->Event_TouchPinch_End(data);
     }
@@ -305,7 +205,7 @@ void MyApp::Event_TouchPinch_End(const AppInterface::PinchData& data)
 
 void MyApp::Event_TouchPan(const AppInterface::PanData& data)
 {
-    if(!pExample->Event_TouchPan(data))
+//    if(!pExample->Event_TouchPan(data))
     {
         m_cameraTouchController->Event_TouchPan(data);
     }
@@ -313,7 +213,7 @@ void MyApp::Event_TouchPan(const AppInterface::PanData& data)
 
 void MyApp::Event_TouchPan_Start(const AppInterface::PanData& data)
 {
-    if(!pExample->Event_TouchPan_Start(data))
+//    if(!pExample->Event_TouchPan_Start(data))
     {
         m_cameraTouchController->Event_TouchPan_Start(data);
     }
@@ -321,7 +221,7 @@ void MyApp::Event_TouchPan_Start(const AppInterface::PanData& data)
 
 void MyApp::Event_TouchPan_End(const AppInterface::PanData& data)
 {
-    if(!pExample->Event_TouchPan_End(data))
+//    if(!pExample->Event_TouchPan_End(data))
     {
         m_cameraTouchController->Event_TouchPan_End(data);
     }
@@ -329,7 +229,7 @@ void MyApp::Event_TouchPan_End(const AppInterface::PanData& data)
 
 void MyApp::Event_TouchTap(const AppInterface::TapData& data)
 {
-    if(!pExample->Event_TouchTap(data))
+//    if(!pExample->Event_TouchTap(data))
     {
         m_cameraTouchController->Event_TouchTap(data);
     }
@@ -337,7 +237,7 @@ void MyApp::Event_TouchTap(const AppInterface::TapData& data)
 
 void MyApp::Event_TouchDoubleTap(const AppInterface::TapData& data)
 {
-    if(!pExample->Event_TouchDoubleTap(data))
+//    if(!pExample->Event_TouchDoubleTap(data))
     {
         m_cameraTouchController->Event_TouchDoubleTap(data);
     }
@@ -345,7 +245,7 @@ void MyApp::Event_TouchDoubleTap(const AppInterface::TapData& data)
 
 void MyApp::Event_TouchDown(const AppInterface::TouchData& data)
 {
-    if(!pExample->Event_TouchDown(data))
+//    if(!pExample->Event_TouchDown(data))
     {
         m_cameraTouchController->Event_TouchDown(data);
     }
@@ -353,7 +253,7 @@ void MyApp::Event_TouchDown(const AppInterface::TouchData& data)
 
 void MyApp::Event_TouchMove(const AppInterface::TouchData& data)
 {
-    if(!pExample->Event_TouchMove(data))
+//    if(!pExample->Event_TouchMove(data))
     {
         m_cameraTouchController->Event_TouchMove(data);
     }
@@ -361,27 +261,24 @@ void MyApp::Event_TouchMove(const AppInterface::TouchData& data)
 
 void MyApp::Event_TouchUp(const AppInterface::TouchData& data)
 {
-    if(!pExample->Event_TouchUp(data))
+//    if(!pExample->Event_TouchUp(data))
     {
         m_cameraTouchController->Event_TouchUp(data);
     }
 }
 
-void MyApp::ActivateGame(int gameIndex)
+void MyApp::ActivateGame(GameId::Values gameIndex)
 {
-	if(m_pActiveGame)
-	{
-		m_pActiveGame->OnDeactivated();
-	}
+	IGame* pNewGame = m_games.at(gameIndex);
 
-	if(gameIndex >= 0)
+	if(pNewGame != m_pActiveGame)
 	{
-		m_pActiveGame = m_games.at(gameIndex);
+		if(m_pActiveGame != NULL)
+		{
+			m_pActiveGame->OnDeactivated();
+		}
+		m_pActiveGame = pNewGame;
 		m_pActiveGame->OnActivated();
-	}
-	else
-	{
-		m_pActiveGame = NULL;
 	}
 }
 

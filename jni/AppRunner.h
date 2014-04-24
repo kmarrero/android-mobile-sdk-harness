@@ -37,6 +37,7 @@ private:
 	bool HandleMessage(const AppLifecycleMessages::AppPauseMessage& message);
 	bool HandleMessage(const AppLifecycleMessages::AppDisplayAvailableMessage& message);
 	bool HandleMessage(const InputMessages::TouchEventMessage& message);
+	bool HandleMessage(const AppMessages::AppStartGameMessage& message);
 
     GlDisplayService m_displayService;
 	void ReleaseDisplay();

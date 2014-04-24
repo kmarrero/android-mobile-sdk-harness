@@ -10,6 +10,7 @@
 #include "TouchEventMessage.h"
 #include "AppPauseMessage.h"
 #include "AppDisplayAvailableMessage.h"
+#include "AppStartGameMessage.h"
 
 AppProxy::AppProxy(AppRunner& appRunner)
 : m_appRunner(appRunner)
@@ -31,6 +32,12 @@ void AppProxy::Resume()
 void AppProxy::ActivateSurface()
 {
 	AppLifecycleMessages::AppDisplayAvailableMessage* pMessage = Eegeo_NEW(AppLifecycleMessages::AppDisplayAvailableMessage)();
+	m_appRunner.SendMessage(pMessage);
+}
+
+void AppProxy::StartGame(GameId::Values gameId)
+{
+	AppMessages::AppStartGameMessage* pMessage = Eegeo_NEW(AppMessages::AppStartGameMessage)(gameId);
 	m_appRunner.SendMessage(pMessage);
 }
 

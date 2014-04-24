@@ -213,6 +213,11 @@ void AppHost::OnStopped()
     m_pAndroidLocationService->StopListening();
 }
 
+void AppHost::StartGame(GameId::Values gameId)
+{
+	m_pAppOnMap->ActivateGame(gameId);
+}
+
 void AppHost::SetSharedSurface(EGLSurface sharedSurface)
 {
 	m_pTaskQueue->UpdateSurface(sharedSurface);

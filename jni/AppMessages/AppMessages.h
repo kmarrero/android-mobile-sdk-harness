@@ -11,6 +11,8 @@ namespace AppMessages
 {
 	class IAppMessage;
 	class IAppMessageDispatcher;
+
+	class AppStartGameMessage;
 };
 
 #endif /* APPMESSAGES_H_ */

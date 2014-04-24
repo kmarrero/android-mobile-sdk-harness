@@ -9,6 +9,7 @@
 
 #include "AppRunner.h"
 #include "InputMessages.h"
+#include "GameId.h"
 
 class AppProxy
 {
@@ -19,6 +20,8 @@ public:
 	void Pause();
 	void Resume();
 	void ActivateSurface();
+
+	void StartGame(GameId::Values gameId);
 
 	void SendTouchEvent(const InputMessages::TouchEventMessage* pTouchEvent);
 

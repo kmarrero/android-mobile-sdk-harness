@@ -9,6 +9,7 @@
 #include "AndroidThreadHelper.h"
 #include "AppDisplayAvailableMessage.h"
 #include "TouchEventMessage.h"
+#include "AppStartGameMessage.h"
 
 AppRunner::AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState)
 : m_apiKey(apiKey)
@@ -80,6 +81,16 @@ bool AppRunner::HandleMessage(const InputMessages::TouchEventMessage& message)
 	{
 		m_pAppHost->ProcessTouchInputEvent(message.GetTouchInputEvent());
 	}
+
+	const bool continueRunning = true;
+	return continueRunning;
+}
+
+bool AppRunner::HandleMessage(const AppMessages::AppStartGameMessage& message)
+{
+	Eegeo_TTY("Change game %d\n", message.GetGameId());
+
+	m_pAppHost->StartGame(message.GetGameId());
 
 	const bool continueRunning = true;
 	return continueRunning;

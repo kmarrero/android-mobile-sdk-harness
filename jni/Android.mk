@@ -16,18 +16,13 @@ LOCAL_SRC_FILES += ./AppRunner.cpp
 LOCAL_SRC_FILES += ./AppHost.cpp
 LOCAL_SRC_FILES += ./AppOnMap.cpp
 LOCAL_SRC_FILES += ./AppMessageQueue.cpp
+LOCAL_SRC_FILES += ./AppMessages/AppStartGameMessage.cpp
 LOCAL_SRC_FILES += ./AppLifecycleMessages/AppPauseMessage.cpp
 LOCAL_SRC_FILES += ./AppLifecycleMessages/AppDisplayAvailableMessage.cpp
 LOCAL_SRC_FILES += ./InputMessages/TouchEventMessage.cpp
 LOCAL_SRC_FILES += ./GlDisplayService.cpp
 LOCAL_SRC_FILES += ./Thread.cpp
 LOCAL_SRC_FILES += ./ExampleCameraJumpController.cpp
-LOCAL_SRC_FILES += ./UiThreadToNativeThreadTaskQueue.cpp
-
-LOCAL_SRC_FILES += ./Examples/PinsWithAttachedJavaUIExample.cpp
-LOCAL_SRC_FILES += ./Examples/ShowJavaPlaceJumpUIExample.cpp
-LOCAL_SRC_FILES += ./Examples/PositionJavaPinButtonExample.cpp
-LOCAL_SRC_FILES += ./Examples/JavaHudCrossThreadCommunicationExample.cpp
 
 os_name:=$(shell uname -s)
 

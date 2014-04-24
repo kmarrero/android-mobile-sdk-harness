@@ -18,9 +18,11 @@ public class ThemeReaderWriterHud
 {
 	private MainActivity m_activity;
 	private View m_view;
-    
-    public static native void setCurrentTheme(long nativeCallerPointer, String location);
-    public static native void readCurrentThemeName(long nativeCallerPointer);
+
+	public static native void activateGame(long nativeCallerPointer, int gameId);
+
+//    public static native void setCurrentTheme(long nativeCallerPointer, String location);
+//    public static native void readCurrentThemeName(long nativeCallerPointer);
     
 	public ThemeReaderWriterHud(MainActivity activity)
     {
@@ -58,7 +60,7 @@ public class ThemeReaderWriterHud
 	            	getTheme.setOnClickListener(new OnClickListener() {
 	                    @Override
 	                    public void onClick(View v) {
-	                    	readCurrentThemeName(nativeCallerPointer);
+	                    	//readCurrentThemeName(nativeCallerPointer);
 	                    }
 	                });
 	            	
@@ -66,7 +68,7 @@ public class ThemeReaderWriterHud
 	                    @Override
 	                    public void onClick(View v) {
 	                    	String selection = (String)spinner.getSelectedItem();
-	                    	setCurrentTheme(nativeCallerPointer, selection);
+	                    	//setCurrentTheme(nativeCallerPointer, selection);
 	                    }
 	                });
 	            	

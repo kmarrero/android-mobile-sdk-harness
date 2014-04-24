@@ -30,6 +30,8 @@
 #include "GlobalShadowing.h"
 #include "AppOnMap.h"
 #include "TouchEventWrapper.h"
+#include "GameId.h"
+#include "Blitter.h"
 #include <vector>
 
 class AppHost : protected Eegeo::NonCopyable
@@ -52,6 +54,8 @@ public:
 
 	void OnStarted();
 	void OnStopped();
+
+	void StartGame(GameId::Values gameId);
 
 	// Suspect.
 	void SetSharedSurface(EGLSurface sharedSurface);
