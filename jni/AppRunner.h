@@ -13,28 +13,28 @@
 #include "GlDisplayService.h"
 #include "IMessageQueue.h"
 #include "MessageHandlerChain.h"
-#include "MessageQueue.h"
 #include "IAppMessage.h"
+#include "ActiveObject.h"
+#include "Types.h"
 #include <algorithm>
 
-class AppRunner : public IRunnable, private AppMessages::IAppMessageDispatcher
+class AppRunner :
+	public ActiveObject<const AppMessages::IAppMessage*, AppMessages::IAppMessageDispatcher>
 {
 public:
 	AppRunner(const std::string& apiKey, AndroidNativeState* pNativeState);
 	~AppRunner();
 
-	void SendMessage(const AppMessages::IAppMessage* pMessage);
-
 protected:
-	bool operator()();
 	void OnStarted();
 	void OnStopped();
+	void OnUpdate();
+	void OnMessageHandled(const AppMessages::IAppMessage* message);
 
 private:
 	const std::string& m_apiKey;
 	AndroidNativeState* m_pNativeState;
 
-    MessageQueue<const AppMessages::IAppMessage*> m_messageQueue;
 	bool HandleMessage(const AppLifecycleMessages::AppPauseMessage& message);
 	bool HandleMessage(const AppLifecycleMessages::AppDisplayAvailableMessage& message);
 	bool HandleMessage(const InputMessages::TouchEventMessage& message);

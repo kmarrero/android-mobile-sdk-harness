@@ -29,11 +29,6 @@ AppRunner::~AppRunner()
 	}
 }
 
-void AppRunner::SendMessage(const AppMessages::IAppMessage* pMessage)
-{
-	m_messageQueue.Enqueue(pMessage);
-}
-
 void AppRunner::OnStarted()
 {
 	Eegeo::Helpers::ThreadHelpers::SetThisThreadAsMainThread();
@@ -66,7 +61,7 @@ bool AppRunner::HandleMessage(const AppLifecycleMessages::AppDisplayAvailableMes
 
 	if(!TryBindDisplay())
 	{
-		m_messageQueue.Enqueue(&message);
+		SendMessage(&message);
 	}
 
 	CreateAppHost();
@@ -138,29 +133,7 @@ void AppRunner::CreateAppHost()
 	}
 }
 
-bool AppRunner::operator()()
-{
-	const AppMessages::IAppMessage* pMessage = NULL;
-
-	while(m_messageQueue.TryDequeue(pMessage))
-	{
-		Eegeo_ASSERT(pMessage);
-
-		bool continueRunning = pMessage->Handle(*this);
-		Eegeo_DELETE(pMessage);
-
-		if(!continueRunning)
-		{
-			return false;
-		}
-	}
-
-	Update();
-
-	return true;
-}
-
-void AppRunner::Update()
+void AppRunner::OnUpdate()
 {
 	if(m_pAppHost != NULL && m_displayService.IsDisplayAvailable())
 	{
@@ -174,7 +147,10 @@ void AppRunner::Update()
 	}
 }
 
-
+void AppRunner::OnMessageHandled(const AppMessages::IAppMessage* message)
+{
+	Eegeo_DELETE(message);
+}
 
 
 
