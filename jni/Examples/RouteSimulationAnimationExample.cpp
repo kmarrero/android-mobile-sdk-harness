@@ -12,6 +12,7 @@
 #include "TransformHelpers.h"
 #include "ICameraProvider.h"
 #include "Logger.h"
+#include "GlobeCameraTouchController.h"
 
 using namespace Examples;
 using namespace Eegeo;

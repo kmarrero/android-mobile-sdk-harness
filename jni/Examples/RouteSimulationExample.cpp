@@ -13,6 +13,7 @@
 #include "VectorMath.h"
 #include "GlobeCameraTouchControllerConfiguration.h"
 #include "Logger.h"
+#include "GlobeCameraTouchController.h"
 
 using namespace Examples;
 using namespace Eegeo;
