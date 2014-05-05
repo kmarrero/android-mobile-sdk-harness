@@ -82,6 +82,8 @@ namespace Examples
         Eegeo::Routes::Simulation::RouteSimulationSession* m_pSessionAlternatingSpeedChanger;
         Eegeo::Routes::Simulation::RouteSimulationSession* m_pSessionCamera;
 
+        float m_linkSpeedMultiplier;
+
         Eegeo::Routes::Simulation::View::RouteSimulationModelBinding* m_pViewBindingForCycleSession;
         Eegeo::Routes::Simulation::View::RouteSimulationModelBinding* m_pViewBindingForOscillatingSession;
         Eegeo::Routes::Simulation::View::RouteSimulationModelBinding* m_pViewBindingForCameraSession;

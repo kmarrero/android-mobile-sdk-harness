@@ -36,11 +36,10 @@ void RouteSimulationExampleObserver::OnLinkReached(const Eegeo::Routes::Simulati
     // At each new link, we change the model being drawn
     m_pModelBinding->SetModel(GetRandomModelNode());
 
-    dv3 ecef;
-    if(session.TryGetCurrentPositionEcef(ecef)) {
-        Eegeo::Space::LatLongAltitude latLongAltitude = Eegeo::Space::LatLongAltitude::FromECEF(ecef);
-        Eegeo_TTY("New link reached at %f, %f\n", latLongAltitude.GetLatitudeInDegrees(), latLongAltitude.GetLongitudeInDegrees());
-    }
+    const dv3& ecef = session.GetCurrentPositionEcef();
+    Eegeo::Space::LatLongAltitude latLongAltitude = Eegeo::Space::LatLongAltitude::FromECEF(ecef);
+    Eegeo_TTY("New link reached at %f, %f\n", latLongAltitude.GetLatitudeInDegrees(), latLongAltitude.GetLongitudeInDegrees());
+
 }
 
 RouteSimulationExample::RouteSimulationExample(RouteService& routeService,
@@ -68,6 +67,7 @@ RouteSimulationExample::RouteSimulationExample(RouteService& routeService,
 ,m_initialised(false)
 ,m_route(NULL)
 ,m_usingFollowCamera(false)
+,m_linkSpeedMultiplier(1.0f)
 {
 }
 
@@ -105,7 +105,8 @@ void RouteSimulationExample::Initialise()
     m_pSessionAlternatingSpeedChanger->StartPlaybackFromBeginning();
 
     //Dynamically double the playback speed for the second route to illustrate fast-forward.
-    m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(2.f);
+    m_linkSpeedMultiplier = 2.f;
+    m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(m_linkSpeedMultiplier);
 
     //Create a local transform for the views which will be bound to the route simulation
     //session. The source vehicle models are small so must be scaled up - a scale factor
@@ -255,23 +256,28 @@ void RouteSimulationExample::ChangeFollowDirection()
     m_pSessionAlternatingSpeedChanger->TogglePlaybackDirection();
 }
 
+float ClampedLinkSpeed(float linkSpeed)
+{
+	return Math::Clamp(linkSpeed, 0.5f, 32.f);
+}
+
 void RouteSimulationExample::IncreaseSpeedFollowed()
 {
     Eegeo_ASSERT(m_usingFollowCamera);
 
-    float newSpeed = (m_pSessionAlternatingSpeedChanger->GetPlaybackSpeedMultiplier() + 0.5f);
-    m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(newSpeed);
+    m_linkSpeedMultiplier += 0.5f;
+    m_linkSpeedMultiplier = ClampedLinkSpeed(m_linkSpeedMultiplier);
+    m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(m_linkSpeedMultiplier);
 }
 
 void RouteSimulationExample::DecreaseSpeedFollowed()
 {
     Eegeo_ASSERT(m_usingFollowCamera);
 
-    float newSpeed = (m_pSessionAlternatingSpeedChanger->GetPlaybackSpeedMultiplier() - 0.5f);
+    m_linkSpeedMultiplier -= 0.5f;
+    m_linkSpeedMultiplier = ClampedLinkSpeed(m_linkSpeedMultiplier);
 
-    if(newSpeed < 0.5f) { newSpeed = 0.5f; }
-
-    m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(newSpeed);
+    m_pSessionAlternatingSpeedChanger->UseLinkSpeedValueWithMultiplier(m_linkSpeedMultiplier);
 }
 
 void RouteSimulationExample::ToggleDirectFollow()

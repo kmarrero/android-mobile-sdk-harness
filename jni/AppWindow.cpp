@@ -19,6 +19,7 @@
 #include "LoadingScreen.h"
 #include "PlatformConfig.h"
 #include "AndroidPlatformConfigBuilder.h"
+#include "EnvironmentFlatteningService.h"
 
 using namespace Eegeo::Android;
 using namespace Eegeo::Android::Input;
